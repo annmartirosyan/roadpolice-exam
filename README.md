@@ -15,7 +15,7 @@ Interactive, offline-ready web application for preparing for the Armenian Road P
 - **Հուշաթերթ (Cheat Sheet & Regulator Simulator):** Interactive 3-pose traffic regulator simulator, 5-step right-of-way priority ladder, and a quick-reference sheet for all exam speeds, distances, tire/steering limits, license ages, first-aid thresholds, and common traps.
 - **Որոնում (Search & Browse):** Full-text search across all questions and options (normalizing Armenian `և` / `եւ`), group and image-only filters, and an answer-reveal toggle.
 - **Offline PWA Support:** Installable to Home Screen on iPhone, iPad, Android, and desktop (`manifest.webmanifest` + `sw.js`) for ad-free offline study.
-- **Progress Backup:** Persisted automatically in browser `localStorage` (`roadpolice_abc_v1`) with 1-click JSON Export/Import.
+- **Progress Persistence:** Saved automatically in browser `localStorage` (`roadpolice_abc_v1`).
 - **Visitor Tracking:** Counts unique visitors (`Այցելուներ`, once per browser) and total page opens (`Բացումներ`, every time anyone opens the page, including repeat visits) in the footer via [Abacus](https://abacus.jasoncameron.dev) when served from a live domain (automatically skipped on `localhost` / `file://`).
   - Check unique visitors JSON: `https://abacus.jasoncameron.dev/get/annmartirosyan-roadpolice-exam/unique-visitors`
   - Check page opens JSON: `https://abacus.jasoncameron.dev/get/annmartirosyan-roadpolice-exam/page-opens`

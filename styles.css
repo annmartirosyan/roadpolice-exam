@@ -116,12 +116,6 @@ label {
   color: var(--text-muted);
 }
 
-.header-actions {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
 .tab-nav {
   max-width: 1080px;
   margin: 0 auto;
@@ -293,10 +287,6 @@ label {
 .btn-sm {
   padding: 6px 11px;
   font-size: 13px;
-}
-
-.import-label {
-  cursor: pointer;
 }
 
 /* Group selector pills */
@@ -1647,13 +1637,3 @@ label {
   }
 }
 
-/* Very small phones (<= 400px) */
-@media (max-width: 400px) {
-  .header-actions {
-    width: 100%;
-  }
-
-  .header-actions .btn {
-    flex: 1;
-  }
-}
