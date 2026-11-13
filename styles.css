@@ -1899,7 +1899,7 @@ label {
   white-space: pre-line;
 }
 
-/* Floating Draggable Yellow Sticky Note */
+/* Floating Draggable Butter-Yellow Sticky Note */
 .sticky-note[hidden] {
   display: none;
 }
@@ -1910,12 +1910,12 @@ label {
   bottom: max(18px, env(safe-area-inset-bottom));
   width: 280px;
   max-width: calc(100vw - 24px);
-  background: #fef08a;
-  border: 1px solid #eab308;
+  background: #fffbeb;
+  border: 1px solid #f5e1a4;
   border-radius: 12px;
-  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.22);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.16);
   z-index: 85;
-  color: #422006;
+  color: #4a3b18;
   overflow: hidden;
   user-select: none;
 }
@@ -1930,7 +1930,7 @@ label {
 }
 
 .sticky-note-header {
-  background: #fde047;
+  background: #fef3c7;
   padding: 8px 10px;
   display: flex;
   align-items: center;
@@ -1938,7 +1938,7 @@ label {
   gap: 8px;
   cursor: grab;
   touch-action: none;
-  border-bottom: 1px solid rgba(161, 98, 7, 0.25);
+  border-bottom: 1px solid rgba(180, 140, 50, 0.22);
 }
 
 .sticky-note-header:active {
@@ -1948,7 +1948,7 @@ label {
 .sticky-note-title {
   font-size: 13px;
   font-weight: 700;
-  color: #713f12;
+  color: #785a1c;
   white-space: nowrap;
 }
 
@@ -1960,9 +1960,9 @@ label {
 
 .sticky-icon-btn {
   appearance: none;
-  border: 1px solid rgba(161, 98, 7, 0.25);
-  background: rgba(255, 255, 255, 0.55);
-  color: #713f12;
+  border: 1px solid rgba(180, 140, 50, 0.25);
+  background: rgba(255, 255, 255, 0.72);
+  color: #785a1c;
   width: 28px;
   height: 26px;
   border-radius: 6px;
@@ -1974,7 +1974,7 @@ label {
 }
 
 .sticky-icon-btn:hover {
-  background: rgba(255, 255, 255, 0.9);
+  background: #ffffff;
 }
 
 .sticky-note-body {
@@ -1992,12 +1992,12 @@ label {
   font: inherit;
   font-size: 14px;
   line-height: 1.5;
-  color: #422006;
+  color: #4a3b18;
   user-select: text;
 }
 
 .sticky-note-textarea::placeholder {
-  color: rgba(113, 63, 18, 0.65);
+  color: rgba(120, 90, 28, 0.58);
 }
 
 @media (max-width: 760px) {
