@@ -2132,10 +2132,24 @@
   function renderRulesResults() {
     const { docId, query, highlightRuleId } = session.cheatsheet;
     const docs = RULES_DATA.documents || [];
-    const items = Core.filterRules(docs, { docId, query });
+    const trimmedQuery = (query || '').trim();
+    const countEl = document.getElementById('rules-count-pill');
+    const container = document.getElementById('rules-results-container');
+    if (!container) return;
+
+    // Don't dump all rules by default; only show results when searching or jumping to a cited rule
+    if (!trimmedQuery && !highlightRuleId) {
+      if (countEl) countEl.textContent = 'Որոնման համար մուտքագրեք բառ կամ կետ';
+      container.innerHTML = '';
+      return;
+    }
+
+    let items = Core.filterRules(docs, { docId, query });
+    if (!trimmedQuery && highlightRuleId) {
+      items = items.filter((it) => it.id === highlightRuleId);
+    }
     const shown = items.slice(0, 120);
 
-    const countEl = document.getElementById('rules-count-pill');
     if (countEl) {
       countEl.textContent =
         items.length > shown.length
@@ -2143,8 +2157,6 @@
           : `${items.length} կետ`;
     }
 
-    const container = document.getElementById('rules-results-container');
-    if (!container) return;
     if (shown.length === 0) {
       container.innerHTML =
         '<div class="card empty-state"><h2>Օրենքի կետեր չեն գտնվել</h2><p>Փորձեք փոխել որոնման բառը կամ փաստաթուղթը։</p></div>';
