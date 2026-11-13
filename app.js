@@ -1284,4 +1284,45 @@
   });
 
   render();
+
+  // Lightweight privacy-friendly visitor & page-open tracking on deployed hosts
+  (function initVisitorTracking() {
+    if (!Core.shouldTrackAnalytics(window.location) || typeof fetch !== 'function') return;
+    const ops = Core.getAnalyticsOperations(window.localStorage, window.sessionStorage);
+    const base = `https://abacus.jasoncameron.dev`;
+    const ns = Core.ANALYTICS_NAMESPACE;
+
+    const callCounter = (endpoint, key) =>
+      fetch(`${base}/${endpoint}/${ns}/${key}`, { method: 'GET', mode: 'cors' })
+        .then((r) => (r.ok ? r.json() : null))
+        .catch(() => null);
+
+    Promise.all([
+      callCounter(ops.visitorEndpoint, 'unique-visitors').then((res) => {
+        if (res && typeof res.value === 'number' && ops.visitorEndpoint === 'hit') {
+          ops.markVisitorCounted();
+        }
+        return res;
+      }),
+      callCounter(ops.sessionEndpoint, 'page-opens').then((res) => {
+        if (res && typeof res.value === 'number' && ops.sessionEndpoint === 'hit') {
+          ops.markSessionCounted();
+        }
+        return res;
+      }),
+    ]).then(([visitorsRes, opensRes]) => {
+      const wrap = document.getElementById('visit-stats');
+      const vEl = document.getElementById('stat-visitors');
+      const oEl = document.getElementById('stat-opens');
+      if (!wrap || !vEl || !oEl) return;
+      if (visitorsRes && typeof visitorsRes.value === 'number') {
+        vEl.textContent = String(visitorsRes.value);
+        wrap.hidden = false;
+      }
+      if (opensRes && typeof opensRes.value === 'number') {
+        oEl.textContent = String(opensRes.value);
+        wrap.hidden = false;
+      }
+    });
+  })();
 })();

@@ -12,6 +12,9 @@ Interactive, offline-ready web application for preparing for the Armenian Road P
 - **Նշաններ (Road Signs):** Complete catalog of **282 Armenian road signs** across **8 categories** with images and descriptions, searchable by sign code (e.g. `1.1`, `3.24`), title, or description.
 - **Որոնում (Search & Browse):** Full-text search across all questions and options (normalizing Armenian `և` / `եւ`), group and image-only filters, and an answer-reveal toggle.
 - **Progress Backup:** Persisted automatically in browser `localStorage` (`roadpolice_abc_v1`) with 1-click JSON Export/Import.
+- **Visitor Tracking:** Counts unique visitors and per-session page opens in the footer via [Abacus](https://abacus.jasoncameron.dev) when served from a live domain (automatically skipped on `localhost` / `file://`).
+  - Check unique visitors JSON: `https://abacus.jasoncameron.dev/get/annmartirosyan-roadpolice-exam/unique-visitors`
+  - Check page opens JSON: `https://abacus.jasoncameron.dev/get/annmartirosyan-roadpolice-exam/page-opens`
 
 ## Data Sources
 

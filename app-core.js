@@ -347,10 +347,59 @@
     return out;
   }
 
+  const ANALYTICS_NAMESPACE = 'annmartirosyan-roadpolice-exam';
+  const VISITOR_FLAG_KEY = 'roadpolice_visitor_counted_v1';
+  const SESSION_FLAG_KEY = 'roadpolice_session_counted_v1';
+
+  function shouldTrackAnalytics(locationObj) {
+    if (!locationObj) return false;
+    const protocol = String(locationObj.protocol || '');
+    const host = String(locationObj.hostname || '').toLowerCase();
+    if (protocol !== 'http:' && protocol !== 'https:') return false;
+    if (!host || host === 'localhost' || host === '127.0.0.1' || host === '[::1]') {
+      return false;
+    }
+    return true;
+  }
+
+  function getAnalyticsOperations(localStore, sessionStore) {
+    let alreadyCountedVisitor = false;
+    let alreadyCountedSession = false;
+    try {
+      alreadyCountedVisitor = Boolean(localStore && localStore.getItem(VISITOR_FLAG_KEY));
+    } catch {
+      alreadyCountedVisitor = false;
+    }
+    try {
+      alreadyCountedSession = Boolean(sessionStore && sessionStore.getItem(SESSION_FLAG_KEY));
+    } catch {
+      alreadyCountedSession = false;
+    }
+    return {
+      visitorEndpoint: alreadyCountedVisitor ? 'get' : 'hit',
+      sessionEndpoint: alreadyCountedSession ? 'get' : 'hit',
+      markVisitorCounted: () => {
+        try {
+          if (localStore) localStore.setItem(VISITOR_FLAG_KEY, '1');
+        } catch {
+          // ignore
+        }
+      },
+      markSessionCounted: () => {
+        try {
+          if (sessionStore) sessionStore.setItem(SESSION_FLAG_KEY, '1');
+        } catch {
+          // ignore
+        }
+      },
+    };
+  }
+
   return {
     STORAGE_KEY,
     EXAM_DURATION_SEC,
     EXAM_PASS_SCORE,
+    ANALYTICS_NAMESPACE,
     normalizeArmenian,
     createInitialState,
     loadState,
@@ -367,5 +416,7 @@
     clearAllMistakes,
     filterQuestions,
     filterSigns,
+    shouldTrackAnalytics,
+    getAnalyticsOperations,
   };
 });

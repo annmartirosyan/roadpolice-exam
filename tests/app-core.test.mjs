@@ -163,3 +163,39 @@ test('filterSigns filters by categoryId and normalized Armenian query', () => {
   assert.equal(Core.filterSigns(categories, { query: 'երթեւեկ', categoryId: 2 }).length, 1);
   assert.equal(Core.filterSigns(categories, { query: '2.1', categoryId: 1 }).length, 0);
 });
+
+test('shouldTrackAnalytics skips file:// and localhost and tracks deployed hosts', () => {
+  assert.equal(Core.shouldTrackAnalytics({ protocol: 'file:', hostname: '' }), false);
+  assert.equal(Core.shouldTrackAnalytics({ protocol: 'http:', hostname: 'localhost' }), false);
+  assert.equal(Core.shouldTrackAnalytics({ protocol: 'http:', hostname: '127.0.0.1' }), false);
+  assert.equal(Core.shouldTrackAnalytics({ protocol: 'https:', hostname: 'annmartirosyan.github.io' }), true);
+});
+
+test('getAnalyticsOperations deduplicates unique visitors and per-session opens', () => {
+  const makeMem = () => {
+    const map = new Map();
+    return {
+      getItem: (k) => (map.has(k) ? map.get(k) : null),
+      setItem: (k, v) => map.set(k, String(v)),
+    };
+  };
+  const local = makeMem();
+  const session = makeMem();
+
+  const first = Core.getAnalyticsOperations(local, session);
+  assert.equal(first.visitorEndpoint, 'hit');
+  assert.equal(first.sessionEndpoint, 'hit');
+  first.markVisitorCounted();
+  first.markSessionCounted();
+
+  // Same session reload: neither should hit again
+  const reload = Core.getAnalyticsOperations(local, session);
+  assert.equal(reload.visitorEndpoint, 'get');
+  assert.equal(reload.sessionEndpoint, 'get');
+
+  // New session, same browser: session hits, visitor does get
+  const newSession = makeMem();
+  const revisit = Core.getAnalyticsOperations(local, newSession);
+  assert.equal(revisit.visitorEndpoint, 'get');
+  assert.equal(revisit.sessionEndpoint, 'hit');
+});

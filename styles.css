@@ -173,8 +173,39 @@ label {
 
 .app-main {
   max-width: 1080px;
-  margin: 20px auto max(48px, env(safe-area-inset-bottom));
+  margin: 20px auto 28px;
   padding: 0 max(16px, env(safe-area-inset-right)) 0 max(16px, env(safe-area-inset-left));
+}
+
+.app-footer {
+  max-width: 1080px;
+  margin: 0 auto max(28px, env(safe-area-inset-bottom));
+  padding: 0 max(16px, env(safe-area-inset-right)) 0 max(16px, env(safe-area-inset-left));
+}
+
+.footer-inner {
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.visit-stats {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.visit-stats strong {
+  color: var(--text);
 }
 
 .card {
