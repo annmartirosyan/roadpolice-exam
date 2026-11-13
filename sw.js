@@ -1,12 +1,13 @@
-const CACHE_NAME = 'varordakan-v7';
+const CACHE_NAME = 'varordakan-v8';
 const CORE_ASSETS = [
   './',
   './index.html',
-  './styles.css?v=20261113b',
+  './styles.css?v=20261113c',
   './app-core.js?v=20261113b',
   './app.js?v=20261113b',
   './manifest.webmanifest',
-  './icon.svg',
+  './logo-192.png',
+  './logo-512.png',
   './data/questions.js?v=20261113b',
   './data/signs.js?v=20261113b',
   './data/color_tests.js?v=20261113b',
