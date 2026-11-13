@@ -2015,3 +2015,50 @@ label {
   }
 }
 
+/* SEO FAQ & Footer Links */
+.seo-faq-section {
+  margin-top: 0;
+  margin-bottom: 18px;
+}
+
+.seo-faq-body {
+  display: grid;
+  gap: 12px;
+}
+
+.seo-faq-item h3 {
+  margin: 0 0 4px;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.seo-faq-item p {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+
+.footer-seo-links {
+  max-width: 1080px;
+  margin: 8px auto 0;
+  padding-top: 8px;
+  border-top: 1px dashed var(--border);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 16px;
+  font-size: 12.5px;
+}
+
+.footer-seo-links a {
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.footer-seo-links a:hover {
+  color: var(--primary);
+  text-decoration: underline;
+}
+

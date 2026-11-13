@@ -330,6 +330,30 @@
       searchOpenInPractice: 'Բացել ուսուցման մեջ',
       searchPrevPage: '← Նախորդ էջ',
       searchNextPage: 'Հաջորդ էջ →',
+      seoFaqSummary: '❓ Հաճախ տրվող հարցեր (ՀՀ վարորդական քննություն 2026)',
+      seoFaqs: [
+        [
+          'Քանի՞ հարց կա ՀՀ վարորդական տեսական քննության հարցաշարում։',
+          'Պաշտոնական ABC տեսական քննության հարցաշարը ներառում է 1050 հարց՝ բաժանված 10 խմբի (յուրաքանչյուրում 105 հարց)։ Varordakan.com կայքում առկա են բոլոր 1050 հարցերը՝ հայերեն, ռուսերեն և անգլերեն բացատրություններով։',
+        ],
+        [
+          'Ինչպե՞ս է անցկացվում իրական ՃՈ տեսական քննությունը։',
+          'Քննությունը սկսվում է գունաընկալման 3 հոգեբանական հարցով (0 սխալ)։ Ապա տրվում է 20 հարց՝ 30 րոպեում (15 իրավիճակ/նշան + 2 օրենք/ՃԵԿ + 2 անսարքություն + 1 առաջին բուժօգնություն)։ Անցնելու համար անհրաժեշտ է առնվազն 18 ճիշտ պատասխան։',
+        ],
+        [
+          'Արդյո՞ք կայքը անվճար է և աշխատում է առանց ինտերնետի։',
+          'Այո, Varordakan.com-ը 100% անվճար է, առանց գրանցման և առաջին բացումից հետո աշխատում է նաև օֆլայն՝ հեռախոսի և համակարգչի վրա։',
+        ],
+      ],
+      footerLinks: [
+        ['/', 'Հարցաշար (ՀԱՅ)'],
+        ['/qnnutyun/', 'Քննություն (20)'],
+        ['/nshanner/', 'Նշաններ'],
+        ['/gunaenkalum/', 'Գունաընկալում'],
+        ['/orenq-jek/', 'Օրենք և ՃԵԿ'],
+        ['/ru/', 'Русский'],
+        ['/en/', 'English'],
+      ],
     },
 
     ru: {
@@ -654,6 +678,30 @@
       searchOpenInPractice: 'Открыть в обучении',
       searchPrevPage: '← Пред. стр.',
       searchNextPage: 'След. стр. →',
+      seoFaqSummary: '❓ Частые вопросы об экзамене ПДД в Армении (2026)',
+      seoFaqs: [
+        [
+          'Можно ли сдавать теоретический экзамен по ПДД в Армении на русском языке?',
+          'Да, на официальном компьютерном экзамене в Полиции РА можно выбрать армянский, русский или английский язык. Все 1050 вопросов, объяснений и знаков на Varordakan.com полностью переведены на русский.',
+        ],
+        [
+          'Сколько вопросов и ошибок допускается на экзамене в Армении?',
+          'Сначала даются 3 вопроса на цветовосприятие (0 ошибок), затем 20 основных вопросов на 30 минут. Для сдачи нужно минимум 18 правильных ответов.',
+        ],
+        [
+          'Работает ли тренажёр бесплатно и без интернета?',
+          'Да, Varordakan.com полностью бесплатный, не требует регистрации и после первого открытия работает офлайн на телефоне и компьютере.',
+        ],
+      ],
+      footerLinks: [
+        ['/', 'Армянская версия'],
+        ['/qnnutyun/', 'Экзамен (20)'],
+        ['/nshanner/', 'Дорожные знаки'],
+        ['/gunaenkalum/', 'Цветовосприятие'],
+        ['/orenq-jek/', 'ПДД и законы'],
+        ['/ru/', 'Русский'],
+        ['/en/', 'English'],
+      ],
     },
 
     en: {
@@ -978,6 +1026,30 @@
       searchOpenInPractice: 'Open in Practice',
       searchPrevPage: '← Prev Page',
       searchNextPage: 'Next Page →',
+      seoFaqSummary: '❓ Frequently Asked Questions (Armenia Driving Exam 2026)',
+      seoFaqs: [
+        [
+          'Can I take the Armenia driving theory test in English?',
+          'Yes. The Armenia Road Police theoretical exam is available in Armenian, Russian, and English. Varordakan.com provides all 1,050 official questions, explanations, signs, and color plates in English.',
+        ],
+        [
+          'What is the passing score for the Armenia Road Police theory exam?',
+          'You must first pass 3 color-perception questions with 0 mistakes, followed by 20 theory questions in 30 minutes. At least 18 out of 20 correct answers are required to pass.',
+        ],
+        [
+          'Is Varordakan.com free and available offline?',
+          'Yes, Varordakan.com is 100% free with no sign-up required, and works offline as a PWA on mobile and desktop after the first load.',
+        ],
+      ],
+      footerLinks: [
+        ['/', 'Armenian Version'],
+        ['/qnnutyun/', 'Mock Exam (20)'],
+        ['/nshanner/', 'Road Signs'],
+        ['/gunaenkalum/', 'Color Test'],
+        ['/orenq-jek/', 'Traffic Rules'],
+        ['/ru/', 'Русский'],
+        ['/en/', 'English'],
+      ],
     },
   };
 

@@ -141,6 +141,21 @@
 
   let state = Core.loadState(window.localStorage);
 
+  const INITIAL_SEO_TITLE = document.title;
+  const INITIAL_FAQ_SUMMARY = document.getElementById('seo-faq-summary')?.textContent || '';
+  const INITIAL_FAQ_BODY = document.getElementById('seo-faq-body')?.innerHTML || '';
+  const ROUTE_LANG_META = document.querySelector('meta[name="varordakan-route-lang"]')?.getAttribute('content') || '';
+  const ROUTE_TAB_META = document.querySelector('meta[name="varordakan-route-tab"]')?.getAttribute('content') || '';
+  const ROUTE_HTML_LANG = document.documentElement.getAttribute('lang') || 'hy';
+  const ROUTE_HAS_EXPLICIT_ENTRY = Boolean(ROUTE_LANG_META || ROUTE_TAB_META);
+
+  if (ROUTE_LANG_META && STRINGS[ROUTE_LANG_META]) {
+    state.ui.lang = ROUTE_LANG_META;
+  }
+  if (ROUTE_TAB_META) {
+    state.ui.activeTab = ROUTE_TAB_META;
+  }
+
   // Ephemeral session state (not persisted mid-flight unless completed)
   const session = {
     shuffledOrderByGroup: {},
@@ -300,13 +315,46 @@
     const lang = getLang();
     const strings = STRINGS[lang];
     document.documentElement.lang = lang;
-    document.title = strings.pageTitle;
+    const expectedRouteLang = ROUTE_LANG_META || ROUTE_HTML_LANG;
+    const expectedRouteTab = ROUTE_TAB_META || 'home';
+    if (state.ui.activeTab === expectedRouteTab && lang === expectedRouteLang && INITIAL_SEO_TITLE) {
+      document.title = INITIAL_SEO_TITLE;
+    } else {
+      document.title = strings.pageTitle;
+    }
 
     const brandTitleEl = document.getElementById('brand-title-text');
     if (brandTitleEl) brandTitleEl.textContent = strings.brandTitle;
 
     const footerEl = document.getElementById('footer-brand-text');
     if (footerEl) footerEl.textContent = strings.footer;
+
+    const faqSummaryEl = document.getElementById('seo-faq-summary');
+    const faqBodyEl = document.getElementById('seo-faq-body');
+    if (faqSummaryEl && faqBodyEl) {
+      if (ROUTE_HAS_EXPLICIT_ENTRY && lang === ROUTE_HTML_LANG && INITIAL_FAQ_BODY) {
+        faqSummaryEl.textContent = INITIAL_FAQ_SUMMARY;
+        faqBodyEl.innerHTML = INITIAL_FAQ_BODY;
+      } else {
+        faqSummaryEl.textContent = strings.seoFaqSummary;
+        faqBodyEl.innerHTML = (strings.seoFaqs || [])
+          .map(
+            ([q, a]) => `
+        <div class="seo-faq-item">
+          <h3>${escapeHtml(q)}</h3>
+          <p>${escapeHtml(a)}</p>
+        </div>`
+          )
+          .join('');
+      }
+    }
+
+    const footerLinksEl = document.getElementById('footer-seo-links');
+    if (footerLinksEl && Array.isArray(strings.footerLinks)) {
+      footerLinksEl.innerHTML = strings.footerLinks
+        .map(([href, label]) => `<a href="${escapeHtml(href)}">${escapeHtml(label)}</a>`)
+        .join('');
+    }
 
     const visitWrap = document.getElementById('visit-stats');
     if (visitWrap) {
@@ -579,7 +627,7 @@
       <section class="hero-card ${animCls}">
         <div>
           <span class="hero-eyebrow"><span class="live-dot"></span> ${escapeHtml(t('homeEyebrow'))}</span>
-          <h2 class="hero-title">${escapeHtml(t('homeTitle'))}</h2>
+          <h1 class="hero-title">${escapeHtml(t('homeTitle'))}</h1>
           <p class="hero-subtitle">${escapeHtml(t('homeSubtitle'))}</p>
           <div class="hero-actions">
             <button type="button" class="btn btn-primary" data-nav-tab="practice">${escapeHtml(t('homeStartPractice'))}</button>
@@ -3356,7 +3404,7 @@
     (window.location.protocol === 'https:' || window.location.protocol === 'http:')
   ) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js').catch(() => {});
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
     });
   }
 })();
