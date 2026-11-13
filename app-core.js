@@ -276,7 +276,7 @@
     const practice = (state && state.practice) || {};
     const mistakes = (state && state.mistakes) || {};
 
-    let overallScore = 0;
+    let overallExact = 0;
     const buckets = {};
 
     for (const [key, cfg] of Object.entries(OFFICIAL_EXAM_WEIGHTS)) {
@@ -284,34 +284,39 @@
       const total = qs.length;
       let answered = 0;
       let correct = 0;
+      let mastered = 0;
       let unresolvedMistakes = 0;
       for (const q of qs) {
-        if (mistakes[q.uid]) unresolvedMistakes += 1;
+        const hasMistake = Boolean(mistakes[q.uid]);
+        if (hasMistake) unresolvedMistakes += 1;
         const rec = practice[q.uid];
         if (rec) {
           answered += 1;
           if (rec.correct) correct += 1;
+          if (!hasMistake) mastered += 1;
         }
       }
-      const coverage = total > 0 ? answered / total : 0;
-      const accuracy = answered > 0 ? correct / answered : 0;
-      // Blend accuracy (70%) and coverage (30%), penalized slightly by unresolved mistakes
-      const rawPct = answered === 0 ? 0 : Math.round((accuracy * 0.7 + coverage * 0.3) * 100);
-      const penalty = total > 0 ? Math.round((unresolvedMistakes / total) * 20) : 0;
-      const pct = Math.max(0, Math.min(100, rawPct - penalty));
+      const ratio = total > 0 ? mastered / total : 0;
+      const pct = Math.round(ratio * 100);
       buckets[key] = {
         label: cfg.label,
         total,
         answered,
         correct,
+        mastered,
         unresolvedMistakes,
         pct,
       };
-      overallScore += pct * cfg.weight;
+      overallExact += ratio * cfg.weight * 100;
     }
 
+    const overallPct =
+      overallExact > 0 && overallExact < 1
+        ? Math.round(overallExact * 10) / 10
+        : Math.round(overallExact);
+
     return {
-      overallPct: Math.round(overallScore),
+      overallPct,
       buckets,
     };
   }

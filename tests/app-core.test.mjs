@@ -209,6 +209,42 @@ test('computeReadiness and generateSmartDrill prioritize mistakes and weak quest
   assert.equal(new Set(drill.map((q) => q.uid)).size, 10);
 });
 
+test('computeReadiness scales proportionally with mastered questions on full 1050-question bank', () => {
+  const realSizes = { 1: 147, 2: 82, 3: 59, 4: 181, 5: 136, 6: 95, 7: 127, 8: 53, 9: 119, 10: 51 };
+  const bigGroups = Object.entries(realSizes).map(([gidStr, count]) => {
+    const gid = Number(gidStr);
+    return {
+      id: gid,
+      title: `ԽՈՒՄԲ ${gid}`,
+      questionCount: count,
+      questions: Array.from({ length: count }, (_, idx) => ({
+        uid: `g${gid}-q${idx + 1}`,
+        groupId: gid,
+        number: idx + 1,
+        text: `Q ${gid}-${idx + 1}`,
+        images: [],
+        options: ['A', 'B'],
+        correctIndex: 0,
+      })),
+    };
+  });
+
+  let state = Core.createInitialState();
+  // Answering 2 out of 1050 questions correctly must be ~0.2%, not 26% or 53%
+  state = Core.recordPracticeAnswer(state, 'g1-q1', 0, 0).state;
+  state = Core.recordPracticeAnswer(state, 'g1-q2', 0, 0).state;
+  const r2 = Core.computeReadiness(bigGroups, state);
+  assert.ok(r2.overallPct > 0 && r2.overallPct <= 0.5, `Expected <= 0.5%, got ${r2.overallPct}%`);
+
+  // Answering all 1050 correctly yields 100%
+  for (const g of bigGroups) {
+    for (const q of g.questions) {
+      state = Core.recordPracticeAnswer(state, q.uid, 0, 0).state;
+    }
+  }
+  assert.equal(Core.computeReadiness(bigGroups, state).overallPct, 100);
+});
+
 test('sign cross-linking ignores measurement units and rule numbers while linking real sign codes', () => {
   const categories = [
     {

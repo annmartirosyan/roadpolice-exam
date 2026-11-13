@@ -525,7 +525,7 @@
                 (item) => `
               <div class="readiness-chip">
                 <strong>${escapeHtml(item.label)} · ${item.pct}%</strong>
-                <span>${item.correct}/${item.total} ճիշտ</span>
+                <span>${item.mastered}/${item.total} յուրացված</span>
               </div>`
               )
               .join('')}
