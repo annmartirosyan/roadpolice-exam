@@ -3280,6 +3280,7 @@
   (function initStickyNote() {
     const noteEl = document.getElementById('sticky-note');
     const dragHandle = document.getElementById('sticky-note-drag');
+    const dlBtn = document.getElementById('sticky-btn-dl');
     const minBtn = document.getElementById('sticky-btn-min');
     const delBtn = document.getElementById('sticky-btn-del');
     const textarea = document.getElementById('sticky-note-text');
@@ -3329,6 +3330,27 @@
       state.stickyNote.text = textarea.value;
       persist();
     });
+
+    if (dlBtn) {
+      dlBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const content = (state.stickyNote.text || '').trim();
+        if (!content) {
+          showToast('Նշումների դաշտը դատարկ է');
+          return;
+        }
+        const blob = new Blob(['\uFEFF' + state.stickyNote.text], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `varordakan-notes-${Core.getLocalDateKey()}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+        showToast('Նշումները ներբեռնվեցին');
+      });
+    }
 
     minBtn.addEventListener('click', (e) => {
       e.stopPropagation();
