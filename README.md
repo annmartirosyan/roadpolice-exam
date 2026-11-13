@@ -6,6 +6,7 @@ Interactive, offline-ready web application for preparing for the Armenian Road P
 
 ## Features
 
+- **Գլխավոր (Landing Page):** Overview of the platform, live Readiness %, key stats, feature directory with direct navigation, and a step-by-step guide to the official exam format.
 - **Ուսուցում (Practice Mode):** Study all **1,050 official questions** across **10 groups** (`1.pdf`–`10.pdf`) with instant green/red feedback, **Exam Readiness %** weighted by official topic rules, **⚡ Խելացի մարզում** (10-question Smart Drill prioritizing mistakes and weak areas), per-group accuracy/progress bars, shuffle mode, keyboard shortcuts (`1`–`5`, `←`/`→`, `Enter`), question-number jump grid, click-to-zoom images, and an expandable **Բացատրություն (Ինչու է ճիշտ)** reasoning tab with clickable road-sign popups.
 - **Քննություն (Timed Mock Exam):** Official-style **20-question** mock exam weighted by official rules (**15** Rules/Signs, **2** Law, **2** Malfunctions, **1** First Aid), optional **Color-Perception Pre-Test (`Գունաընկալման թեստ`)**, **30-minute** countdown timer, auto-submit on expiry, `18/20` passing threshold, full answer breakdown with reasoning, and saved exam history.
 - **Սխալներ (Mistakes Retry):** Automatically collects wrong or missed questions from Practice and Mock Exams so you can focus on weak spots; answering a saved mistake correctly resolves and removes it from the queue.

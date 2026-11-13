@@ -259,6 +259,194 @@
     `;
   }
 
+  // ---------- Tab 0: Home / Landing Page ----------
+  function renderHome() {
+    const readiness = Core.computeReadiness(DATA.groups, state);
+    const answeredTotal = Object.keys(state.practice).length;
+    const mistakeCount = Object.keys(state.mistakes).length;
+    const totalSigns = SIGNS_DATA.totalSigns || 282;
+
+    const resumeHtml =
+      answeredTotal > 0 || mistakeCount > 0
+        ? `<div class="card readiness-card">
+             <div class="readiness-main">
+               <div class="readiness-top">
+                 <span class="readiness-pct">${readiness.overallPct}%</span>
+                 <strong>Ձեր ընթացիկ պատրաստվածությունը</strong>
+                 <span style="font-size: 13px; color: var(--text-muted);">(${answeredTotal} / ${DATA.totalQuestions} հարց անցած)</span>
+               </div>
+               <div class="progress-bar-wrap" style="margin-bottom: 0;">
+                 <div class="progress-bar-fill" style="width: ${readiness.overallPct}%"></div>
+               </div>
+             </div>
+             <div class="toolbar-group">
+               <button type="button" class="btn btn-primary" data-nav-tab="practice">Շարունակել ուսուցումը</button>
+               ${
+                 mistakeCount > 0
+                   ? `<button type="button" class="btn btn-danger" data-nav-tab="mistakes">Ուղղել սխալները (${mistakeCount})</button>`
+                   : ''
+               }
+             </div>
+           </div>`
+        : '';
+
+    rootEl.innerHTML = `
+      <section class="hero-card">
+        <span class="hero-eyebrow">ՀՀ Ճանապարհային ոստիկանություն · ABC կարգեր (2026 թ. խմբագրություն)</span>
+        <h2 class="hero-title">Սովորի՛ր ճանապարհային կանոնները հասկանալով, ոչ թե անգիր անելով</h2>
+        <p class="hero-subtitle">
+          ՀՀ ՃՈ տեսական քննության պաշտոնական բոլոր <strong>${DATA.totalQuestions}</strong> հարցերը,
+          ամեն հարցի հիմնավորված հայերեն բացատրությունը, <strong>${totalSigns}</strong> ճանապարհային նշանները,
+          կարգավորողի ինտերակտիվ մարզիչը և իրական քննության սիմուլյացիան՝ <strong>100% անվճար, առանց գովազդի և գրանցման</strong>։
+        </p>
+        <div class="hero-actions">
+          <button type="button" class="btn btn-hero-primary" data-nav-tab="practice">Սկսել ուսուցումը</button>
+          <button type="button" class="btn btn-hero-secondary" data-nav-tab="exam">Հանձնել փորձնական քննություն</button>
+          <button type="button" class="btn btn-hero-secondary" data-nav-tab="signs">Դիտել նշանները (${totalSigns})</button>
+        </div>
+      </section>
+
+      ${resumeHtml}
+
+      <section class="stats-strip" aria-label="Հարթակի տվյալները">
+        <div class="stat-tile">
+          <div class="stat-value">${DATA.totalQuestions}</div>
+          <div class="stat-label">Պաշտոնական ABC հարց՝ 10 խմբում, օրիգինալ նկարներով</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-value">${DATA.totalQuestions}</div>
+          <div class="stat-label">Հիմնավորված բացատրություն՝ ՃԵԿ և օրենքի հղումով</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-value">${totalSigns}</div>
+          <div class="stat-label">Ճանապարհային նշան՝ 8 խմբում, նկարագրություններով</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-value">100%</div>
+          <div class="stat-label">Անվճար, առանց գովազդի և հասանելի նաև օֆլայն</div>
+        </div>
+      </section>
+
+      <section style="margin-bottom: 18px;">
+        <h2 class="section-heading">Ի՞նչ ենք առաջարկում և ինչպե՞ս ենք օգնում</h2>
+        <p class="section-lead">Ընտրեք Ձեզ հարմար բաժինը՝ կանոնները քայլ առ քայլ յուրացնելու և քննությունը առաջին փորձից հանձնելու համար։</p>
+
+        <div class="features-grid">
+          <article class="feature-card">
+            <div>
+              <div class="feature-icon" aria-hidden="true">📘</div>
+              <h3 class="feature-title">Ուսուցում ըստ 10 խմբերի + Խելացի մարզում</h3>
+              <p class="feature-desc">
+                Պարապեք խմբերով՝ ստանալով ակնթարթային կանաչ/կարմիր արձագանք, տեսեք պատրաստվածության տոկոսը և
+                թողեք համակարգը ընտրի 10 թույլ հարց՝ արագ կրկնության համար։
+              </p>
+            </div>
+            <div>
+              <button type="button" class="btn btn-sm btn-primary" data-nav-tab="practice">Բացել ուսուցումը →</button>
+            </div>
+          </article>
+
+          <article class="feature-card">
+            <div>
+              <div class="feature-icon" aria-hidden="true">⏱️</div>
+              <h3 class="feature-title">Իրական քննության սիմուլյացիա</h3>
+              <p class="feature-desc">
+                Ներառում է 3-աղյուսակ գունաընկալման նախաթեստ (0 սխալ) և 20 հարցանոց թեստ՝ պաշտոնական 15+2+2+1 կշիռներով,
+                30 րոպե ժամանակաչափով և 18/20 անցողիկ շեմով։
+              </p>
+            </div>
+            <div>
+              <button type="button" class="btn btn-sm btn-primary" data-nav-tab="exam">Անցնել քննությունը →</button>
+            </div>
+          </article>
+
+          <article class="feature-card">
+            <div>
+              <div class="feature-icon" aria-hidden="true">💡</div>
+              <h3 class="feature-title">«Ինչու է ճիշտ» բացատրություն ամեն հարցում</h3>
+              <p class="feature-desc">
+                Ամեն հարցի տակ կա փակվող բացատրություն՝ կոնկրետ ՃԵԿ կետերով, կողմնակի տարբերակների բացառմամբ և
+                սեղմվող նշանների հղումներով։
+              </p>
+            </div>
+            <div>
+              <button type="button" class="btn btn-sm" data-nav-tab="search">Որոնել հարցերում →</button>
+            </div>
+          </article>
+
+          <article class="feature-card">
+            <div>
+              <div class="feature-icon" aria-hidden="true">🔁</div>
+              <h3 class="feature-title">Սխալների ավտոմատ ուղղում</h3>
+              <p class="feature-desc">
+                Ուսուցման կամ քննության ընթացքում սխալված և բաց թողնված հարցերը ինքնաշխատ հավաքվում են մեկ բաժնում
+                և մաքրվում են միայն ճիշտ պատասխանելուց հետո։
+              </p>
+            </div>
+            <div>
+              <button type="button" class="btn btn-sm" data-nav-tab="mistakes">Բացել սխալները (${mistakeCount}) →</button>
+            </div>
+          </article>
+
+          <article class="feature-card">
+            <div>
+              <div class="feature-icon" aria-hidden="true">🚸</div>
+              <h3 class="feature-title">Նշանագիրք, հարցերի կապ և նշանների թեստ</h3>
+              <p class="feature-desc">
+                Բոլոր ${totalSigns} ճանապարհային նշանները 8 խմբով, նկարագրություններով, տվյալ նշանին վերաբերող քննական
+                հարցերով և առանձին 10-հարցանոց նշանների վիկտորինայով։
+              </p>
+            </div>
+            <div>
+              <button type="button" class="btn btn-sm" data-nav-tab="signs">Բացել նշանները →</button>
+            </div>
+          </article>
+
+          <article class="feature-card">
+            <div>
+              <div class="feature-icon" aria-hidden="true">🧭</div>
+              <h3 class="feature-title">Հուշաթերթ և կարգավորողի մարզիչ</h3>
+              <p class="feature-desc">
+                Կարգավորողի 3 դիրքերի ինտերակտիվ սխեմա, գերակայության 5-քայլանոց սանդուղք և արագությունների,
+                հեռավորությունների ու դողերի բոլոր թվերը՝ մեկ էջում։
+              </p>
+            </div>
+            <div>
+              <button type="button" class="btn btn-sm" data-nav-tab="cheatsheet">Բացել հուշաթերթը →</button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 class="section-heading">Ինչպե՞ս է անցնում պաշտոնական տեսական քննությունը</h2>
+        <p class="section-lead">Ծանոթացեք իրական ընթացակարգին՝ վստահ գնալու համար․</p>
+        <div class="how-steps">
+          <div class="how-step">
+            <span class="how-step-num">Քայլ 1</span>
+            <h3 style="margin: 4px 0; font-size: 15px;">Գունաընկալման ստուգում</h3>
+            <p class="feature-desc">3 հարց գունավոր աղյուսակներով՝ սխալ չի թույլատրվում։ Կարող եք փորձել «Քննություն» բաժնում։</p>
+          </div>
+          <div class="how-step">
+            <span class="how-step-num">Քայլ 2</span>
+            <h3 style="margin: 4px 0; font-size: 15px;">20 հարց · 30 րոպե</h3>
+            <p class="feature-desc">Թեստը հանձնած է համարվում առնվազն 18 ճիշտ պատասխանի դեպքում (առավելագույնը 2 սխալ)։</p>
+          </div>
+          <div class="how-step">
+            <span class="how-step-num">Քայլ 3</span>
+            <h3 style="margin: 4px 0; font-size: 15px;">Թեմաների կշիռը</h3>
+            <p class="feature-desc">15 հարց՝ ՃԵԿ և նշաններ, 2՝ Օրենք, 2՝ Անսարքություններ, 1՝ Առաջին օգնություն։</p>
+          </div>
+          <div class="how-step">
+            <span class="how-step-num">Հավելյալ</span>
+            <h3 style="margin: 4px 0; font-size: 15px;">Պահեք հեռախոսի էկրանին</h3>
+            <p class="feature-desc">Ավելացրեք կայքը հեռախոսի կամ iPad-ի գլխավոր էկրանին (Add to Home Screen) և սովորեք նույնիսկ առանց ինտերնետի։</p>
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
   // ---------- Tab 1: Practice ----------
   function renderReadinessBannerHtml() {
     const r = Core.computeReadiness(DATA.groups, state);
@@ -1529,12 +1717,23 @@
   function render() {
     updateHeaderStats();
     const tab = state.ui.activeTab;
-    if (tab === 'practice') renderPractice();
+    if (tab === 'home') renderHome();
+    else if (tab === 'practice') renderPractice();
     else if (tab === 'exam') renderExam();
     else if (tab === 'mistakes') renderMistakes();
     else if (tab === 'signs') renderSigns();
     else if (tab === 'cheatsheet') renderCheatSheet();
     else if (tab === 'search') renderSearch();
+  }
+
+  const brandHomeBtn = document.getElementById('btn-brand-home');
+  if (brandHomeBtn) {
+    brandHomeBtn.addEventListener('click', () => {
+      state.ui.activeTab = 'home';
+      persist();
+      render();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
   }
 
   document.querySelectorAll('.tab-btn').forEach((btn) => {
@@ -1614,6 +1813,19 @@
   }
 
   rootEl.addEventListener('click', (e) => {
+    const navTabBtn = e.target.closest('[data-nav-tab]');
+    if (navTabBtn) {
+      const target = navTabBtn.dataset.navTab;
+      if (target === 'mistakes') {
+        syncMistakeQueue(true);
+      }
+      state.ui.activeTab = target;
+      persist();
+      render();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
     const signRefBtn = e.target.closest('[data-open-sign]');
     if (signRefBtn) {
       openSignModal(signRefBtn.dataset.openSign);

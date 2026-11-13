@@ -17,13 +17,13 @@
 <body>
   <header class="app-header">
     <div class="header-inner">
-      <div class="brand">
+      <button type="button" class="brand brand-btn" id="btn-brand-home" title="Վերադառնալ գլխավոր էջ">
         <div class="brand-badge" aria-hidden="true">ABC</div>
         <div>
-          <h1 class="brand-title">ՃՈ Քննական Հարցաշար</h1>
+          <h1 class="brand-title">Varordakan · ՃՈ Քննական Հարցաշար</h1>
           <p class="brand-subtitle" id="overall-progress-text">Բեռնվում է...</p>
         </div>
-      </div>
+      </button>
 
       <div class="header-actions">
         <button type="button" class="btn btn-ghost btn-sm" id="btn-export" title="Արտահանել առաջընթացը JSON ֆայլով">
@@ -37,6 +37,9 @@
     </div>
 
     <nav class="tab-nav" aria-label="Հիմնական բաժիններ">
+      <button type="button" class="tab-btn" data-tab="home">
+        Գլխավոր
+      </button>
       <button type="button" class="tab-btn" data-tab="practice">
         Ուսուցում
       </button>

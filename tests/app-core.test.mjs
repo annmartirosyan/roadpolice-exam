@@ -43,14 +43,14 @@ test('loadState recovers safely from corrupted JSON and importStateJson validate
   assert.deepEqual(state.practice, {});
   assert.deepEqual(state.mistakes, {});
   assert.deepEqual(state.examHistory, []);
-  assert.equal(state.ui.activeTab, 'practice');
+  assert.equal(state.ui.activeTab, 'home');
 
   assert.throws(() => Core.importStateJson('not-json'), /JSON|անվավեր/i);
   assert.throws(() => Core.importStateJson('{"practice": "wrong"}'), /անվավեր|invalid/i);
 
   const exported = Core.exportStateJson(state);
   const reimported = Core.importStateJson(exported);
-  assert.equal(reimported.ui.activeTab, 'practice');
+  assert.equal(reimported.ui.activeTab, 'home');
 });
 
 test('recordPracticeAnswer locks first selection and tracks mistakes', () => {

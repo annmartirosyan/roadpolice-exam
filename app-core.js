@@ -28,7 +28,7 @@
       mistakes: {},
       examHistory: [],
       ui: {
-        activeTab: 'practice',
+        activeTab: 'home',
         activeGroupId: 1,
         activeQuestionIndexByGroup: {},
         shuffleByGroup: {},
@@ -86,7 +86,7 @@
     }
 
     if (_isPlainObject(raw.ui)) {
-      const validTabs = new Set(['practice', 'exam', 'mistakes', 'signs', 'cheatsheet', 'search']);
+      const validTabs = new Set(['home', 'practice', 'exam', 'mistakes', 'signs', 'cheatsheet', 'search']);
       if (validTabs.has(raw.ui.activeTab)) {
         base.ui.activeTab = raw.ui.activeTab;
       }
