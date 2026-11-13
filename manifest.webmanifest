@@ -1,0 +1,19 @@
+{
+  "name": "ՃՈ Քննական Հարցաշար · Varordakan",
+  "short_name": "Varordakan",
+  "description": "ՀՀ Ճանապարհային ոստիկանության ABC տեսական քննության 1050 հարցերը բացատրություններով, 282 նշաններով և փորձնական քննությամբ",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f3f5f9",
+  "theme_color": "#1d4ed8",
+  "lang": "hy",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

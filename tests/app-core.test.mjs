@@ -82,16 +82,18 @@ test('resetGroupPractice clears only the target group practice entries', () => {
   assert.ok(next.mistakes['g2-q1']);
 });
 
-test('generateMockExam picks 20 unique questions (2 per group)', () => {
+test('generateMockExam picks 20 unique questions with official 15+2+2+1 distribution', () => {
   const groups = makeSampleGroups();
   const exam = Core.generateMockExam(groups, () => 0.42);
   assert.equal(exam.length, 20);
   const uids = new Set(exam.map((q) => q.uid));
   assert.equal(uids.size, 20);
-  for (let gid = 1; gid <= 10; gid++) {
-    const count = exam.filter((q) => q.groupId === gid).length;
-    assert.equal(count, 2);
-  }
+
+  const rulesSet = new Set([1, 4, 5, 6, 7, 8, 9]);
+  assert.equal(exam.filter((q) => rulesSet.has(q.groupId)).length, 15);
+  assert.equal(exam.filter((q) => q.groupId === 2).length, 2);
+  assert.equal(exam.filter((q) => q.groupId === 3).length, 2);
+  assert.equal(exam.filter((q) => q.groupId === 10).length, 1);
 });
 
 test('gradeMockExam handles unanswered questions on timer expiry and saves history', () => {
@@ -187,4 +189,59 @@ test('getAnalyticsOperations counts unique visitors once and every repeat visit'
   const repeat = Core.getAnalyticsOperations(local);
   assert.equal(repeat.visitorEndpoint, 'get');
   assert.equal(repeat.visitEndpoint, 'hit');
+});
+
+test('computeReadiness and generateSmartDrill prioritize mistakes and weak questions', () => {
+  const groups = makeSampleGroups();
+  let state = Core.createInitialState();
+  assert.equal(Core.computeReadiness(groups, state).overallPct, 0);
+
+  state = Core.recordPracticeAnswer(state, 'g1-q1', 0, 1).state; // wrong -> in mistakes
+  state = Core.recordPracticeAnswer(state, 'g2-q1', 1, 1).state; // correct
+
+  const readiness = Core.computeReadiness(groups, state);
+  assert.ok(readiness.overallPct > 0 && readiness.overallPct < 100);
+  assert.equal(readiness.buckets.law.correct, 1);
+
+  const drill = Core.generateSmartDrill(groups, state, 10);
+  assert.equal(drill.length, 10);
+  assert.equal(drill[0].uid, 'g1-q1');
+  assert.equal(new Set(drill.map((q) => q.uid)).size, 10);
+});
+
+test('sign cross-linking ignores measurement units and rule numbers while linking real sign codes', () => {
+  const categories = [
+    {
+      id: 1,
+      title: '1. ՆԱԽԱԶԳՈՒՇԱՑՆՈՂ',
+      signs: [
+        { id: 's1', categoryId: 1, code: '1.2', title: '1.2. «Առանց ուղեփակոցի»', description: 'desc' },
+        { id: 's2', categoryId: 1, code: '1.6', title: '1.6. «Հավասարազոր հատում»', description: 'desc' },
+        { id: 's3', categoryId: 1, code: '1.34', title: '1.34.1«Շրջադարձի ուղղություն»', description: 'desc' },
+      ],
+    },
+    {
+      id: 4,
+      title: '4. ԹԵԼԱԴՐՈՂ',
+      signs: [
+        { id: 's4', categoryId: 4, code: '4.2.2', title: '4.2.2. «Արգելքի շրջանցումը ձախից»', description: 'desc' },
+        { id: 's5', categoryId: 4, code: '4.4', title: '4.4.1 «Հեծանվային արահետ»', description: 'desc' },
+      ],
+    },
+  ];
+  const { byCode } = Core.buildSignIndex(categories);
+  assert.ok(byCode['1.34.1']);
+  assert.ok(byCode['4.4.1']);
+
+  const text = 'Նշան 4.2.2-ը պարտադրում է շրջանցում ձախից, իսկ դողերի 1.6 մմ բարձրությունը և կետ 1.2-ը թվեր են։';
+  const tokens = Core.tokenizeExplanationWithSigns(text, byCode);
+  const linkedCodes = tokens.filter((t) => t.type === 'sign').map((t) => t.code);
+  assert.deepEqual(linkedCodes, ['4.2.2']);
+
+  const quiz = Core.generateSignQuiz(categories, 'all', 4);
+  assert.equal(quiz.length, 4);
+  for (const item of quiz) {
+    assert.equal(item.options.length, 4);
+    assert.equal(item.options[item.correctIndex].id, item.target.id);
+  }
 });

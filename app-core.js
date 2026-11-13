@@ -86,7 +86,7 @@
     }
 
     if (_isPlainObject(raw.ui)) {
-      const validTabs = new Set(['practice', 'exam', 'mistakes', 'signs', 'search']);
+      const validTabs = new Set(['practice', 'exam', 'mistakes', 'signs', 'cheatsheet', 'search']);
       if (validTabs.has(raw.ui.activeTab)) {
         base.ui.activeTab = raw.ui.activeTab;
       }
@@ -212,16 +212,158 @@
     return copy;
   }
 
+  const OFFICIAL_RULES_GROUPS = [1, 4, 5, 6, 7, 8, 9];
+  const OFFICIAL_EXAM_WEIGHTS = {
+    rules: { groupIds: OFFICIAL_RULES_GROUPS, count: 15, weight: 0.75, label: 'ՃԵԿ և նշաններ' },
+    law: { groupIds: [2], count: 2, weight: 0.10, label: 'Օրենք' },
+    malfunctions: { groupIds: [3], count: 2, weight: 0.10, label: 'Անսարքություններ' },
+    firstAid: { groupIds: [10], count: 1, weight: 0.05, label: 'Առաջին օգնություն' },
+  };
+
   function generateMockExam(groups, rng = Math.random) {
-    const picked = [];
-    for (const group of groups) {
-      const pool = shuffleArray(group.questions, rng);
-      const count = Math.min(2, pool.length);
-      for (let i = 0; i < count; i++) {
-        picked.push(pool[i]);
-      }
+    const byId = {};
+    for (const g of groups) {
+      byId[g.id] = g.questions || [];
     }
-    return shuffleArray(picked, rng);
+    const picked = [];
+    const seen = new Set();
+
+    function takeFromPool(pool, count) {
+      const shuffled = shuffleArray(pool, rng);
+      let taken = 0;
+      for (const q of shuffled) {
+        if (taken >= count) break;
+        if (!seen.has(q.uid)) {
+          seen.add(q.uid);
+          picked.push(q);
+          taken += 1;
+        }
+      }
+      return taken;
+    }
+
+    // Official distribution: 15 from Rules (groups 1,4,5,6,7,8,9), 2 from Law (2), 2 from Malfunctions (3), 1 from First Aid (10)
+    const rulesPool = [];
+    for (const gid of OFFICIAL_RULES_GROUPS) {
+      const gqs = byId[gid] || [];
+      // Take up to 2 from each rules group first for broad coverage, then top up to 15
+      takeFromPool(gqs, 2);
+      for (const q of gqs) rulesPool.push(q);
+    }
+    const rulesSoFar = picked.length;
+    if (rulesSoFar < 15) {
+      takeFromPool(rulesPool, 15 - rulesSoFar);
+    }
+
+    takeFromPool(byId[2] || [], 2);
+    takeFromPool(byId[3] || [], 2);
+    takeFromPool(byId[10] || [], 1);
+
+    // Fallback top-up to 20 if synthetic small group pools were passed
+    if (picked.length < 20) {
+      const allPool = groups.flatMap((g) => g.questions || []);
+      takeFromPool(allPool, 20 - picked.length);
+    }
+
+    return shuffleArray(picked.slice(0, 20), rng);
+  }
+
+  function computeReadiness(groups, state) {
+    const byId = {};
+    for (const g of groups || []) {
+      byId[g.id] = g.questions || [];
+    }
+    const practice = (state && state.practice) || {};
+    const mistakes = (state && state.mistakes) || {};
+
+    let overallScore = 0;
+    const buckets = {};
+
+    for (const [key, cfg] of Object.entries(OFFICIAL_EXAM_WEIGHTS)) {
+      const qs = cfg.groupIds.flatMap((gid) => byId[gid] || []);
+      const total = qs.length;
+      let answered = 0;
+      let correct = 0;
+      let unresolvedMistakes = 0;
+      for (const q of qs) {
+        if (mistakes[q.uid]) unresolvedMistakes += 1;
+        const rec = practice[q.uid];
+        if (rec) {
+          answered += 1;
+          if (rec.correct) correct += 1;
+        }
+      }
+      const coverage = total > 0 ? answered / total : 0;
+      const accuracy = answered > 0 ? correct / answered : 0;
+      // Blend accuracy (70%) and coverage (30%), penalized slightly by unresolved mistakes
+      const rawPct = answered === 0 ? 0 : Math.round((accuracy * 0.7 + coverage * 0.3) * 100);
+      const penalty = total > 0 ? Math.round((unresolvedMistakes / total) * 20) : 0;
+      const pct = Math.max(0, Math.min(100, rawPct - penalty));
+      buckets[key] = {
+        label: cfg.label,
+        total,
+        answered,
+        correct,
+        unresolvedMistakes,
+        pct,
+      };
+      overallScore += pct * cfg.weight;
+    }
+
+    return {
+      overallPct: Math.round(overallScore),
+      buckets,
+    };
+  }
+
+  function generateSmartDrill(groups, state, count = 10, rng = Math.random) {
+    const allQs = (groups || []).flatMap((g) => g.questions || []);
+    const practice = (state && state.practice) || {};
+    const mistakes = (state && state.mistakes) || {};
+
+    // Compute per-group accuracy to prioritize weak groups
+    const groupAcc = {};
+    for (const g of groups || []) {
+      let a = 0;
+      let c = 0;
+      for (const q of g.questions || []) {
+        if (practice[q.uid]) {
+          a += 1;
+          if (practice[q.uid].correct) c += 1;
+        }
+      }
+      groupAcc[g.id] = a > 0 ? c / a : 0.5;
+    }
+
+    const picked = [];
+    const seen = new Set();
+    const pushFrom = (list) => {
+      for (const q of shuffleArray(list, rng)) {
+        if (picked.length >= count) break;
+        if (!seen.has(q.uid)) {
+          seen.add(q.uid);
+          picked.push(q);
+        }
+      }
+    };
+
+    // Priority 1: Active unresolved mistakes
+    pushFrom(allQs.filter((q) => Boolean(mistakes[q.uid])));
+    // Priority 2: Previously answered wrong in practice
+    pushFrom(allQs.filter((q) => practice[q.uid] && !practice[q.uid].correct));
+    // Priority 3: Unanswered questions sorted by lowest-accuracy groups first
+    if (picked.length < count) {
+      const unanswered = allQs.filter((q) => !practice[q.uid]);
+      const weakUnanswered = unanswered.filter((q) => groupAcc[q.groupId] < 0.8);
+      pushFrom(weakUnanswered);
+      pushFrom(unanswered);
+    }
+    // Priority 4: Any remaining questions for review
+    if (picked.length < count) {
+      pushFrom(allQs);
+    }
+
+    return picked.slice(0, count);
   }
 
   function gradeMockExam(state, examQuestions, answersByUid, durationSec, now = Date.now()) {
@@ -347,6 +489,135 @@
     return out;
   }
 
+  function getCanonicalSignCode(sign) {
+    if (!sign) return '';
+    const title = String(sign.title || '');
+    const m = title.match(/^(\d+(?:\.\d+)+)/);
+    if (m) return m[1];
+    return String(sign.code || '').trim();
+  }
+
+  function buildSignIndex(categories) {
+    const byCode = {};
+    const list = [];
+    for (const cat of categories || []) {
+      for (const sign of cat.signs || []) {
+        const canonical = getCanonicalSignCode(sign);
+        const enriched = {
+          ...sign,
+          canonicalCode: canonical,
+          categoryTitle: cat.title,
+        };
+        list.push(enriched);
+        if (canonical && !byCode[canonical]) {
+          byCode[canonical] = enriched;
+        }
+        if (sign.code && !byCode[sign.code]) {
+          byCode[sign.code] = enriched;
+        }
+      }
+    }
+    return { byCode, list };
+  }
+
+  const SIGN_CODE_TOKEN_RE = /(?<![\d.,])(\d+\.\d+(?:\.\d+)?)(?![\d.,])/g;
+  const UNIT_FOLLOW_RE = /^\s*(?:մմ|սմ|կմ|մ(?!\p{L})|տ(?!\p{L})|կգ|ժ|րոպե|վ(?!\p{L})|%|աստիճան)/u;
+  const RULE_PREFIX_RE = /(?:կետ|կետեր|ենթակետ|ենթ\.|հոդված|մաս|N|հավելված)\s*$/iu;
+
+  function extractSignCodesFromText(text, byCode) {
+    if (!text || !byCode) return [];
+    const found = new Set();
+    SIGN_CODE_TOKEN_RE.lastIndex = 0;
+    let m;
+    while ((m = SIGN_CODE_TOKEN_RE.exec(text)) !== null) {
+      const code = m[1];
+      if (!byCode[code]) continue;
+      const before = text.slice(Math.max(0, m.index - 20), m.index);
+      const after = text.slice(m.index + code.length, m.index + code.length + 14);
+      if (UNIT_FOLLOW_RE.test(after) || RULE_PREFIX_RE.test(before)) continue;
+      found.add(code);
+    }
+    return Array.from(found);
+  }
+
+  function tokenizeExplanationWithSigns(text, byCode) {
+    if (!text) return [];
+    if (!byCode) return [{ type: 'text', value: text }];
+    const tokens = [];
+    let lastIdx = 0;
+    SIGN_CODE_TOKEN_RE.lastIndex = 0;
+    let m;
+    while ((m = SIGN_CODE_TOKEN_RE.exec(text)) !== null) {
+      const code = m[1];
+      if (!byCode[code]) continue;
+      const before = text.slice(Math.max(0, m.index - 20), m.index);
+      const after = text.slice(m.index + code.length, m.index + code.length + 14);
+      if (UNIT_FOLLOW_RE.test(after) || RULE_PREFIX_RE.test(before)) continue;
+      if (m.index > lastIdx) {
+        tokens.push({ type: 'text', value: text.slice(lastIdx, m.index) });
+      }
+      tokens.push({ type: 'sign', code, sign: byCode[code] });
+      lastIdx = m.index + code.length;
+    }
+    if (lastIdx < text.length) {
+      tokens.push({ type: 'text', value: text.slice(lastIdx) });
+    }
+    return tokens;
+  }
+
+  function getQuestionsForSign(groups, signCode, byCode) {
+    if (!signCode || !groups) return [];
+    const target = String(signCode).trim();
+    const out = [];
+    for (const g of groups) {
+      for (const q of g.questions || []) {
+        const blob = `${q.text || ''} ${(q.options || []).join(' ')} ${q.explanation || ''}`;
+        const codes = extractSignCodesFromText(blob, byCode || { [target]: true });
+        if (codes.includes(target)) {
+          out.push(q);
+        }
+      }
+    }
+    return out;
+  }
+
+  function generateSignQuiz(categories, categoryId = 'all', count = 10, rng = Math.random) {
+    const pool = [];
+    const allSigns = [];
+    for (const cat of categories || []) {
+      for (const sign of cat.signs || []) {
+        const enriched = { ...sign, categoryTitle: cat.title };
+        allSigns.push(enriched);
+        if (categoryId === 'all' || Number(categoryId) === cat.id) {
+          pool.push(enriched);
+        }
+      }
+    }
+    const chosen = shuffleArray(pool, rng).slice(0, Math.min(count, pool.length));
+    return chosen.map((target) => {
+      const sameCat = allSigns.filter(
+        (s) => s.id !== target.id && s.categoryId === target.categoryId && s.title !== target.title
+      );
+      const fallback = allSigns.filter((s) => s.id !== target.id && s.title !== target.title);
+      const distractorPool = sameCat.length >= 3 ? sameCat : fallback;
+      const distractors = [];
+      const usedTitles = new Set([target.title]);
+      for (const cand of shuffleArray(distractorPool, rng)) {
+        if (distractors.length >= 3) break;
+        if (!usedTitles.has(cand.title)) {
+          usedTitles.add(cand.title);
+          distractors.push(cand);
+        }
+      }
+      const options = shuffleArray([target, ...distractors], rng);
+      return {
+        target,
+        options,
+        correctIndex: options.findIndex((o) => o.id === target.id),
+      };
+    });
+  }
+
   const ANALYTICS_NAMESPACE = 'annmartirosyan-roadpolice-exam';
   const VISITOR_FLAG_KEY = 'roadpolice_visitor_counted_v1';
 
@@ -396,12 +667,20 @@
     resetGroupPractice,
     shuffleArray,
     generateMockExam,
+    computeReadiness,
+    generateSmartDrill,
     gradeMockExam,
     retryMistakeAnswer,
     resolveMistake,
     clearAllMistakes,
     filterQuestions,
     filterSigns,
+    getCanonicalSignCode,
+    buildSignIndex,
+    extractSignCodesFromText,
+    tokenizeExplanationWithSigns,
+    getQuestionsForSign,
+    generateSignQuiz,
     shouldTrackAnalytics,
     getAnalyticsOperations,
   };

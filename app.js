@@ -18,6 +18,15 @@
     }
   }
 
+  const SIGN_INDEX = Core.buildSignIndex(SIGNS_DATA.categories || []);
+  const QUESTIONS_BY_SIGN_CODE = {};
+  for (const sign of SIGN_INDEX.list) {
+    const code = sign.canonicalCode || sign.code;
+    if (code && !QUESTIONS_BY_SIGN_CODE[code]) {
+      QUESTIONS_BY_SIGN_CODE[code] = Core.getQuestionsForSign(DATA.groups, code, SIGN_INDEX.byCode);
+    }
+  }
+
   let state = Core.loadState(window.localStorage);
 
   // Ephemeral session state (not persisted mid-flight unless completed)
@@ -50,7 +59,18 @@
     signs: {
       query: '',
       categoryId: 'all',
+      mode: 'browse', // 'browse' | 'quiz'
+      quiz: {
+        items: [],
+        index: 0,
+        answers: {},
+      },
     },
+    cheatsheet: {
+      pose: 'side', // 'up' | 'side' | 'forward'
+      approach: 'left', // 'left' | 'right' | 'front' | 'back'
+    },
+    practiceFocus: null, // null | { mode: 'smart' | 'sign', label: string, questions: [], index: 0 }
     openExplanations: {},
   };
 
@@ -59,6 +79,9 @@
   const mistakesBadgeEl = document.getElementById('mistakes-badge');
   const lightboxEl = document.getElementById('lightbox');
   const lightboxImgEl = document.getElementById('lightbox-img');
+  const signModalEl = document.getElementById('sign-modal');
+  const signModalTitleEl = document.getElementById('sign-modal-title');
+  const signModalBodyEl = document.getElementById('sign-modal-body');
   const toastEl = document.getElementById('toast');
   let toastTimer = null;
 
@@ -84,6 +107,42 @@
   function closeLightbox() {
     lightboxEl.hidden = true;
     lightboxImgEl.src = '';
+  }
+
+  function openSignModal(code) {
+    const sign = SIGN_INDEX.byCode[code];
+    if (!sign || !signModalEl) return;
+    const canonical = sign.canonicalCode || sign.code;
+    const linkedQs = QUESTIONS_BY_SIGN_CODE[canonical] || [];
+    signModalTitleEl.textContent = sign.title;
+    signModalBodyEl.innerHTML = `
+      ${
+        sign.image
+          ? `<div class="modal-sign-preview"><img src="${escapeHtml(sign.image)}" alt="${escapeHtml(sign.title)}" /></div>`
+          : ''
+      }
+      <span class="pill-tag">${escapeHtml(sign.categoryTitle)}</span>
+      <p style="margin: 10px 0 14px; font-size: 14.5px; color: var(--text-muted); line-height: 1.6;">
+        ${sign.description ? escapeHtml(sign.description) : 'Լրացուցիչ նկարագրություն չկա։'}
+      </p>
+      <div class="toolbar-group">
+        ${
+          linkedQs.length > 0
+            ? `<button type="button" class="btn btn-primary" data-practice-sign="${escapeHtml(canonical)}">
+                 Պարապել այս նշանի հարցերը (${linkedQs.length})
+               </button>`
+            : ''
+        }
+        <button type="button" class="btn" id="sign-modal-done">Փակել</button>
+      </div>
+    `;
+    signModalEl.hidden = false;
+  }
+
+  function closeSignModal() {
+    if (signModalEl) {
+      signModalEl.hidden = true;
+    }
   }
 
   function escapeHtml(str) {
@@ -164,6 +223,18 @@
     `;
   }
 
+  function renderLinkedExplanationHtml(text) {
+    const tokens = Core.tokenizeExplanationWithSigns(text, SIGN_INDEX.byCode);
+    return tokens
+      .map((tok) => {
+        if (tok.type === 'sign') {
+          return `<button type="button" class="sign-ref-link" data-open-sign="${escapeHtml(tok.code)}" title="${escapeHtml(tok.sign.title)}">${escapeHtml(tok.code)}</button>`;
+        }
+        return escapeHtml(tok.value);
+      })
+      .join('');
+  }
+
   function renderExplanationTabHtml(q, scopeKey) {
     if (!q || !q.explanation) return '';
     const key = `${scopeKey}:${q.uid}`;
@@ -181,7 +252,7 @@
         </button>
         ${
           isOpen
-            ? `<div class="explanation-content">${escapeHtml(q.explanation)}</div>`
+            ? `<div class="explanation-content">${renderLinkedExplanationHtml(q.explanation)}</div>`
             : ''
         }
       </div>
@@ -189,7 +260,136 @@
   }
 
   // ---------- Tab 1: Practice ----------
+  function renderReadinessBannerHtml() {
+    const r = Core.computeReadiness(DATA.groups, state);
+    const b = r.buckets;
+    return `
+      <div class="card readiness-card">
+        <div class="readiness-main">
+          <div class="readiness-top">
+            <span class="readiness-pct">${r.overallPct}%</span>
+            <strong>Քննության պատրաստվածություն</strong>
+            <span style="font-size: 13px; color: var(--text-muted);">(ըստ պաշտոնական 15+2+2+1 կշիռների)</span>
+          </div>
+          <div class="progress-bar-wrap" style="margin-bottom: 8px;">
+            <div class="progress-bar-fill" style="width: ${r.overallPct}%"></div>
+          </div>
+          <div class="readiness-buckets">
+            ${Object.values(b)
+              .map(
+                (item) => `
+              <div class="readiness-chip">
+                <strong>${escapeHtml(item.label)} · ${item.pct}%</strong>
+                <span>${item.correct}/${item.total} ճիշտ</span>
+              </div>`
+              )
+              .join('')}
+          </div>
+        </div>
+        <div class="toolbar-group">
+          <button type="button" class="btn btn-primary" id="btn-smart-drill">
+            ⚡ Խելացի մարզում (10 հարց)
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderPracticeFocus() {
+    const focus = session.practiceFocus;
+    const questions = focus.questions;
+    const total = questions.length;
+    if (total === 0) {
+      session.practiceFocus = null;
+      renderPractice();
+      return;
+    }
+    const qIdx = Math.min(Math.max(0, focus.index), total - 1);
+    focus.index = qIdx;
+    const q = questions[qIdx];
+    const attempt = focus.attemptByUid[q.uid];
+
+    const optionsHtml = q.options
+      .map((opt, idx) => {
+        const cls = ['option-btn'];
+        if (attempt) {
+          if (idx === q.correctIndex) cls.push('correct');
+          else if (idx === attempt.selectedIndex) cls.push('wrong');
+        }
+        return `
+          <button
+            type="button"
+            class="${cls.join(' ')}"
+            data-focus-opt="${idx}"
+            ${attempt ? 'disabled' : ''}
+          >
+            <span class="option-num">${idx + 1}</span>
+            <span>${escapeHtml(opt)}</span>
+          </button>
+        `;
+      })
+      .join('');
+
+    const feedbackHtml = attempt
+      ? `<div class="feedback-banner ${attempt.isCorrect ? 'correct' : 'wrong'}">
+           <span>${
+             attempt.isCorrect
+               ? '✓ Ճիշտ պատասխան է'
+               : `✕ Սխալ է · Ճիշտ պատասխանն է՝ ${q.correctIndex + 1}. ${escapeHtml(q.options[q.correctIndex])}`
+           }</span>
+         </div>`
+      : '';
+
+    const gridHtml = questions
+      .map((item, idx) => {
+        const att = focus.attemptByUid[item.uid];
+        const cls = ['q-dot'];
+        if (idx === qIdx) cls.push('current');
+        if (att) cls.push(att.isCorrect ? 'correct' : 'wrong');
+        return `<button type="button" class="${cls.join(' ')}" data-focus-jump="${idx}">${idx + 1}</button>`;
+      })
+      .join('');
+
+    rootEl.innerHTML = `
+      <div class="card">
+        <div class="toolbar">
+          <div class="toolbar-group">
+            <strong>${escapeHtml(focus.label)}</strong>
+            <span class="pill-tag">${qIdx + 1} / ${total}</span>
+          </div>
+          <div class="toolbar-group">
+            <button type="button" class="btn btn-sm" id="btn-exit-focus">← Վերադառնալ խմբերին</button>
+          </div>
+        </div>
+
+        <div class="question-meta">
+          <span>Խումբ ${q.groupId} · Հարց №${q.number}</span>
+        </div>
+
+        <h2 class="question-text">${escapeHtml(q.text)}</h2>
+        ${renderImagesHtml(q.images)}
+        <div class="options-list">${optionsHtml}</div>
+        ${feedbackHtml}
+        ${renderExplanationTabHtml(q, 'focus')}
+
+        <div class="question-footer">
+          <div class="toolbar-group">
+            <button type="button" class="btn" id="btn-focus-prev" ${qIdx === 0 ? 'disabled' : ''}>← Նախորդը</button>
+            <button type="button" class="btn btn-primary" id="btn-focus-next" ${qIdx >= total - 1 ? 'disabled' : ''}>Հաջորդը →</button>
+          </div>
+        </div>
+
+        <div class="q-grid">${gridHtml}</div>
+      </div>
+    `;
+  }
+
   function renderPractice() {
+    if (session.practiceFocus) {
+      renderPracticeFocus();
+      return;
+    }
+
     const activeGid = state.ui.activeGroupId || 1;
     const group = GROUPS_BY_ID[activeGid] || DATA.groups[0];
     const questions = getGroupQuestionsInOrder(group.id);
@@ -265,6 +465,7 @@
       .join('');
 
     rootEl.innerHTML = `
+      ${renderReadinessBannerHtml()}
       <div class="group-pills">${pillsHtml}</div>
 
       <div class="card">
@@ -310,7 +511,76 @@
     `;
   }
 
-  // ---------- Tab 2: Mock Exam ----------
+  // ---------- Tab 2: Mock Exam & Color Perception Pre-Test ----------
+  const COLOR_PLATES = [
+    {
+      answer: '12',
+      options: ['12', '17', '72', 'Ոչ մի թիվ չի երևում'],
+      bgColors: ['#d97706', '#ea580c', '#f59e0b', '#c2410c'],
+      fgColors: ['#15803d', '#16a34a', '#22c55e', '#166534'],
+      text: '12',
+    },
+    {
+      answer: '8',
+      options: ['3', '8', '6', 'Ոչ մի թիվ չի երևում'],
+      bgColors: ['#16a34a', '#22c55e', '#4ade80', '#15803d'],
+      fgColors: ['#dc2626', '#ef4444', '#b91c1c', '#e11d48'],
+      text: '8',
+    },
+    {
+      answer: '5',
+      options: ['2', '5', '9', 'Ոչ մի թիվ չի երևում'],
+      bgColors: ['#dc2626', '#f97316', '#ef4444', '#fb923c'],
+      fgColors: ['#0284c7', '#0ea5e9', '#0369a1', '#0d9488'],
+      text: '5',
+    },
+  ];
+
+  function buildIshiharaPlateSvg(plate, seedIdx) {
+    // Deterministic pseudo-random circle grid + distinct contrasting numeral dots
+    const circles = [];
+    let seed = (seedIdx + 1) * 9301 + 49297;
+    const nextRand = () => {
+      seed = (seed * 16807) % 2147483647;
+      return (seed - 1) / 2147483646;
+    };
+    for (let i = 0; i < 240; i++) {
+      const ang = nextRand() * Math.PI * 2;
+      const rad = Math.sqrt(nextRand()) * 102;
+      const cx = (120 + Math.cos(ang) * rad).toFixed(1);
+      const cy = (120 + Math.sin(ang) * rad).toFixed(1);
+      const r = (3.5 + nextRand() * 5.2).toFixed(1);
+      const col = plate.bgColors[Math.floor(nextRand() * plate.bgColors.length)];
+      circles.push(`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${col}" opacity="0.9"/>`);
+    }
+    const fg = plate.fgColors[0];
+    const fg2 = plate.fgColors[1];
+    return `
+      <svg class="ishihara-svg" viewBox="0 0 240 240" aria-label="Գունաընկալման աղյուսակ">
+        <circle cx="120" cy="120" r="116" fill="#f8fafc"/>
+        ${circles.join('')}
+        <text x="120" y="148" text-anchor="middle" font-family="system-ui, sans-serif" font-size="94" font-weight="900" fill="${fg}" stroke="${fg2}" stroke-width="3" stroke-dasharray="6 4" opacity="0.92">${escapeHtml(plate.text)}</text>
+      </svg>
+    `;
+  }
+
+  function startColorPreTest() {
+    stopExamTimer();
+    session.exam = {
+      status: 'color_test',
+      colorStep: 0,
+      colorFailed: false,
+      questions: [],
+      answersByUid: {},
+      currentIndex: 0,
+      remainingSec: Core.EXAM_DURATION_SEC,
+      startedAtMs: 0,
+      timerId: null,
+      result: null,
+    };
+    render();
+  }
+
   function stopExamTimer() {
     if (session.exam.timerId) {
       clearInterval(session.exam.timerId);
@@ -371,6 +641,51 @@
   }
 
   function renderExam() {
+    if (session.exam.status === 'color_test') {
+      if (session.exam.colorFailed) {
+        rootEl.innerHTML = `
+          <div class="card empty-state">
+            <h2>Գունաընկալման թեստը չի հանձնվել</h2>
+            <p>Պաշտոնական քննության ժամանակ գունաընկալման 3 հարցերում սխալ չի թույլատրվում։</p>
+            <div class="toolbar-group" style="justify-content: center;">
+              <button type="button" class="btn btn-primary" id="btn-start-color-exam">Կրկին փորձել</button>
+              <button type="button" class="btn" id="btn-start-exam">Անցնել տեսական քննությանը</button>
+            </div>
+          </div>
+        `;
+        return;
+      }
+      const step = session.exam.colorStep || 0;
+      const plate = COLOR_PLATES[step];
+      rootEl.innerHTML = `
+        <div class="card">
+          <div class="toolbar">
+            <strong>Փուլ 1 · Գունաընկալման թեստ</strong>
+            <span class="pill-tag">Աղյուսակ ${step + 1} / ${COLOR_PLATES.length} (0 սխալ)</span>
+          </div>
+          <p style="color: var(--text-muted); margin-top: 0;">
+            Ինչպե՞ս է նշված թիվը պատկերված գունավոր շրջանակների ներսում։ Անցնելուց հետո ավտոմատ կսկսվի 20 հարցանոց տեսական քննությունը։
+          </p>
+          <div class="ishihara-wrap">${buildIshiharaPlateSvg(plate, step)}</div>
+          <div class="options-list">
+            ${plate.options
+              .map(
+                (opt, i) => `
+              <button type="button" class="option-btn" data-color-opt="${escapeHtml(opt)}">
+                <span class="option-num">${i + 1}</span>
+                <span>${escapeHtml(opt)}</span>
+              </button>`
+              )
+              .join('')}
+          </div>
+          <div class="question-footer">
+            <button type="button" class="btn btn-sm btn-ghost" id="btn-start-exam">Բաց թողնել և սկսել 20 հարցը →</button>
+          </div>
+        </div>
+      `;
+      return;
+    }
+
     if (session.exam.status === 'idle') {
       const historyHtml =
         state.examHistory.length === 0
@@ -395,14 +710,17 @@
         <div class="card">
           <h2 style="margin-top: 0;">Տեսական քննության սիմուլյացիա</h2>
           <p style="color: var(--text-muted);">
-            Քննությունը կազմված է <strong>20 պատահական հարցից</strong> (2-ական հարց 1–10 խմբերից)՝
-            ճիշտ պաշտոնական ձևաչափով։ Տրվում է <strong>30 րոպե</strong>։ Անցողիկ շեմը՝
-            <strong>18 / 20</strong> (առավելագույնը 2 սխալ)։
+            Քննությունը կազմված է <strong>20 հարցից</strong>՝ պաշտոնական կշիռներով
+            (<strong>15</strong>՝ ՃԵԿ և նշաններ, <strong>2</strong>՝ Օրենք, <strong>2</strong>՝ Անսարքություններ, <strong>1</strong>՝ Առաջին օգնություն)։
+            Տրվում է <strong>30 րոպե</strong>։ Անցողիկ շեմը՝ <strong>18 / 20</strong> (առավելագույնը 2 սխալ)։
           </p>
           <p style="color: var(--text-muted);">
-            Ավարտելուց հետո բոլոր սխալված կամ բաց թողնված հարցերը ավտոմատ կավելացվեն «Սխալներ» բաժնում։
+            Իրական քննության նման կարող եք սկսել նաև 3-հարցանոց գունաընկալման նախաթեստով։ Ավարտելուց հետո բոլոր սխալված հարցերը կավելացվեն «Սխալներ» բաժնում։
           </p>
-          <button type="button" class="btn btn-primary" id="btn-start-exam">Սկսել քննությունը</button>
+          <div class="toolbar-group">
+            <button type="button" class="btn btn-primary" id="btn-start-color-exam">Սկսել գունաընկալումով (իրական ձևաչափ)</button>
+            <button type="button" class="btn" id="btn-start-exam">Սկսել միայն 20 հարցը</button>
+          </div>
         </div>
 
         <div class="card">
@@ -669,7 +987,103 @@
     `;
   }
 
-  // ---------- Tab 4: Road Signs ----------
+  // ---------- Tab 4: Road Signs & Sign Quiz ----------
+  function startSignQuiz() {
+    const categories = SIGNS_DATA.categories || [];
+    const items = Core.generateSignQuiz(categories, session.signs.categoryId, 10);
+    session.signs.mode = 'quiz';
+    session.signs.quiz = {
+      items,
+      index: 0,
+      answers: {},
+    };
+    renderSigns();
+  }
+
+  function renderSignQuiz(categories) {
+    const { items, index, answers } = session.signs.quiz;
+    if (!items || items.length === 0) {
+      session.signs.mode = 'browse';
+      renderSigns();
+      return;
+    }
+    const idx = Math.min(Math.max(0, index), items.length - 1);
+    session.signs.quiz.index = idx;
+    const current = items[idx];
+    const selected = answers[idx];
+    const answeredCount = Object.keys(answers).length;
+    const correctCount = Object.entries(answers).filter(
+      ([qi, optIdx]) => items[Number(qi)] && items[Number(qi)].correctIndex === optIdx
+    ).length;
+
+    const optionsHtml = current.options
+      .map((opt, oi) => {
+        const cls = ['option-btn'];
+        if (typeof selected === 'number') {
+          if (oi === current.correctIndex) cls.push('correct');
+          else if (oi === selected) cls.push('wrong');
+        }
+        return `
+          <button
+            type="button"
+            class="${cls.join(' ')}"
+            data-sign-quiz-opt="${oi}"
+            ${typeof selected === 'number' ? 'disabled' : ''}
+          >
+            <span class="option-num">${oi + 1}</span>
+            <span>${escapeHtml(opt.title)}</span>
+          </button>
+        `;
+      })
+      .join('');
+
+    const feedbackHtml =
+      typeof selected === 'number'
+        ? `<div class="feedback-banner ${selected === current.correctIndex ? 'correct' : 'wrong'}">
+             <span>${
+               selected === current.correctIndex
+                 ? '✓ Ճիշտ է'
+                 : `✕ Սխալ է · Ճիշտ նշանն է՝ ${escapeHtml(current.target.title)}`
+             }</span>
+           </div>
+           ${
+             current.target.description
+               ? `<p style="margin: 10px 0 0; font-size: 14px; color: var(--text-muted);">${escapeHtml(current.target.description)}</p>`
+               : ''
+           }`
+        : '';
+
+    rootEl.innerHTML = `
+      <div class="card">
+        <div class="toolbar">
+          <div class="toolbar-group">
+            <strong>🎯 Նշանների թեստ</strong>
+            <span class="pill-tag">${idx + 1} / ${items.length} · Ճիշտ՝ ${correctCount}/${answeredCount}</span>
+          </div>
+          <div class="toolbar-group">
+            <button type="button" class="btn btn-sm" id="btn-sign-quiz-restart">Նոր 10 նշան</button>
+            <button type="button" class="btn btn-sm btn-ghost" id="btn-sign-mode-browse">← Նշանագիրք</button>
+          </div>
+        </div>
+
+        <div class="modal-sign-preview" style="margin: 12px 0 16px;">
+          <img src="${escapeHtml(current.target.image)}" alt="Ճանապարհային նշան" />
+        </div>
+
+        <h2 class="question-text" style="text-align: center;">Ո՞ր նշանն է պատկերված նկարում։</h2>
+        <div class="options-list">${optionsHtml}</div>
+        ${feedbackHtml}
+
+        <div class="question-footer">
+          <div class="toolbar-group">
+            <button type="button" class="btn" id="btn-sign-quiz-prev" ${idx === 0 ? 'disabled' : ''}>← Նախորդը</button>
+            <button type="button" class="btn btn-primary" id="btn-sign-quiz-next" ${idx >= items.length - 1 ? 'disabled' : ''}>Հաջորդը →</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
   function renderSignsResults(categories) {
     const { query, categoryId } = session.signs;
     const filtered = Core.filterSigns(categories, { query, categoryId });
@@ -690,8 +1104,10 @@
         ? '<div class="card empty-state"><h2>Նշաններ չեն գտնվել</h2><p>Փորձեք փոխել որոնման բառը կամ ընտրել այլ խումբ։</p></div>'
         : `<div class="signs-list">
             ${filtered
-              .map(
-                (sign) => `
+              .map((sign) => {
+                const canonical = Core.getCanonicalSignCode(sign);
+                const linkedQs = QUESTIONS_BY_SIGN_CODE[canonical] || [];
+                return `
               <article class="sign-card">
                 ${
                   sign.image
@@ -701,7 +1117,16 @@
                     : ''
                 }
                 <div class="sign-body">
-                  <span class="pill-tag">${escapeHtml(sign.categoryTitle)}</span>
+                  <div style="display: flex; justify-content: space-between; align-items: center; gap: 6px; flex-wrap: wrap;">
+                    <span class="pill-tag">${escapeHtml(sign.categoryTitle)}</span>
+                    ${
+                      linkedQs.length > 0
+                        ? `<button type="button" class="btn btn-sm btn-ghost" data-practice-sign="${escapeHtml(canonical)}">
+                             Հարցեր (${linkedQs.length})
+                           </button>`
+                        : ''
+                    }
+                  </div>
                   <h3 class="sign-title">${escapeHtml(sign.title)}</h3>
                   ${
                     sign.description
@@ -709,8 +1134,8 @@
                       : '<p class="sign-desc">Լրացուցիչ նկարագրություն չկա։</p>'
                   }
                 </div>
-              </article>`
-              )
+              </article>`;
+              })
               .join('')}
           </div>`;
 
@@ -725,6 +1150,11 @@
     if (categories.length === 0) {
       rootEl.innerHTML =
         '<div class="card empty-state"><h2>Ճանապարհային նշանների տվյալները բացակայում են</h2><p>Գործարկեք <code>scripts/extract_signs.py</code> սկրիպտը։</p></div>';
+      return;
+    }
+
+    if (session.signs.mode === 'quiz') {
+      renderSignQuiz(categories);
       return;
     }
 
@@ -749,7 +1179,10 @@
       <div class="card" style="margin-bottom: 16px;">
         <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 10px;">
           <h2 style="margin: 0; font-size: 19px;">Ճանապարհային նշաններ և նկարագրություններ</h2>
-          <span class="pill-tag" id="signs-count-pill"></span>
+          <div class="toolbar-group">
+            <span class="pill-tag" id="signs-count-pill"></span>
+            <button type="button" class="btn btn-sm btn-primary" id="btn-sign-mode-quiz">🎯 Նշանների թեստ (10)</button>
+          </div>
         </div>
         <input
           type="search"
@@ -771,6 +1204,197 @@
       session.signs.query = e.target.value;
       renderSignsResults(categories);
     });
+  }
+
+  // ---------- Tab 5: Cheat Sheet & Interactive Regulator ----------
+  const REGULATOR_RULES = {
+    up: {
+      poseLabel: 'Ձեռքը բարձրացված է վեր',
+      sides: {
+        left: { cars: 'Արգելված է (կանգ առնել)', trams: 'Արգելված է', allowed: false },
+        right: { cars: 'Արգելված է (կանգ առնել)', trams: 'Արգելված է', allowed: false },
+        front: { cars: 'Արգելված է (կանգ առնել)', trams: 'Արգելված է', allowed: false },
+        back: { cars: 'Արգելված է (կանգ առնել)', trams: 'Արգելված է', allowed: false },
+      },
+      note: 'Բացառություն՝ եթե վարորդը չի կարող կանգ առնել առանց կտրուկ արգելակելու, կարող է շարունակել երթևեկությունը (ՃԵԿ, կետ 19)։',
+    },
+    side: {
+      poseLabel: 'Ձեռքերը կողմ պարզված կամ իջեցված են',
+      sides: {
+        left: { cars: 'Ուղիղ և դեպի աջ', trams: 'Միայն ուղիղ', allowed: true },
+        right: { cars: 'Ուղիղ և դեպի աջ', trams: 'Միայն ուղիղ', allowed: true },
+        front: { cars: 'Արգելված է', trams: 'Արգելված է', allowed: false },
+        back: { cars: 'Արգելված է', trams: 'Արգելված է', allowed: false },
+      },
+      note: 'Կրծքի և թիկունքի կողմից երթևեկությունն արգելված է, իսկ կողքերից ոչ ռելսագնացները կարող են գնալ ուղիղ և աջ, տրամվայը՝ միայն ուղիղ (ՃԵԿ, կետ 16)։',
+    },
+    forward: {
+      poseLabel: 'Աջ ձեռքը պարզված է առաջ',
+      sides: {
+        left: { cars: 'Բոլոր ուղղություններով (ուղիղ, աջ, ձախ, հետադարձ)', trams: 'Միայն դեպի ձախ', allowed: true },
+        front: { cars: 'Միայն դեպի աջ', trams: 'Միայն դեպի աջ', allowed: true },
+        right: { cars: 'Արգելված է', trams: 'Արգելված է', allowed: false },
+        back: { cars: 'Արգելված է', trams: 'Արգելված է', allowed: false },
+      },
+      note: '«Ձախից՝ ինչպես թագավոր (բոլոր ուղղություններով), կրծքից՝ միայն աջ, աջից և թիկունքից՝ արգելված է» (ՃԵԿ, կետ 16)։',
+    },
+  };
+
+  function buildRegulatorSvg(pose, approach) {
+    const rule = REGULATOR_RULES[pose].sides[approach];
+    const carColor = rule.allowed ? '#15803d' : '#b91c1c';
+    const armLeft = pose === 'side' ? '<line x1="88" y1="120" x2="112" y2="120" stroke="#1e293b" stroke-width="6" stroke-linecap="round"/>' : '';
+    const armRight =
+      pose === 'side'
+        ? '<line x1="128" y1="120" x2="152" y2="120" stroke="#1e293b" stroke-width="6" stroke-linecap="round"/>'
+        : pose === 'forward'
+        ? '<line x1="128" y1="120" x2="128" y2="152" stroke="#1d4ed8" stroke-width="6" stroke-linecap="round"/>'
+        : '<line x1="128" y1="120" x2="144" y2="96" stroke="#b91c1c" stroke-width="6" stroke-linecap="round"/>';
+
+    const carCoords = {
+      left: { x: 26, y: 110, label: 'Ձախ' },
+      right: { x: 186, y: 110, label: 'Աջ' },
+      front: { x: 106, y: 192, label: 'Կուրծք' },
+      back: { x: 106, y: 24, label: 'Թիկունք' },
+    }[approach];
+
+    return `
+      <svg class="regulator-svg" viewBox="0 0 240 240" aria-label="Կարգավորողի սխեմա">
+        <rect x="0" y="75" width="240" height="90" fill="#e2e8f0"/>
+        <rect x="75" y="0" width="90" height="240" fill="#e2e8f0"/>
+        <circle cx="120" cy="120" r="14" fill="#1e293b"/>
+        <circle cx="120" cy="120" r="5" fill="#fff"/>
+        <text x="120" y="99" text-anchor="middle" font-size="10" fill="#475569">Թիկունք</text>
+        <text x="120" y="149" text-anchor="middle" font-size="10" fill="#475569">Կուրծք</text>
+        ${armLeft}${armRight}
+        <rect x="${carCoords.x}" y="${carCoords.y}" width="28" height="20" rx="5" fill="${carColor}"/>
+        <text x="${carCoords.x + 14}" y="${carCoords.y + 13}" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">ԱՎՏՈ</text>
+      </svg>
+    `;
+  }
+
+  function renderCheatSheet() {
+    const { pose, approach } = session.cheatsheet;
+    const poseObj = REGULATOR_RULES[pose];
+    const sideInfo = poseObj.sides[approach];
+
+    const poseLabels = {
+      up: '1. Ձեռքը վեր բարձրացրած',
+      side: '2. Ձեռքերը կողմ / իջեցված',
+      forward: '3. Աջ ձեռքը առաջ պարզած',
+    };
+    const sideLabels = {
+      left: 'Ձախ կողմից',
+      front: 'Կրծքի կողմից',
+      right: 'Աջ կողմից',
+      back: 'Թիկունքի կողմից',
+    };
+
+    rootEl.innerHTML = `
+      <div class="card">
+        <h2 style="margin-top: 0;">Հուշաթերթ · Խաչմերուկներ, կարգավորող և հիմնական թվեր</h2>
+        <p style="color: var(--text-muted); margin-top: 0;">
+          Արագ կրկնություն քննությունից առաջ՝ կարգավորողի ինտերակտիվ մարզիչ, գերակայության հերթականություն և բոլոր քննական թվերը մեկ տեղում։
+        </p>
+
+        <h3 style="margin-bottom: 6px;">1. Երթևեկության կարգավորման գերակայության սանդուղք</h3>
+        <div class="priority-steps">
+          <div class="priority-step"><span class="priority-step-num">1</span><strong>Կարգավորող</strong> (գերակայում է ամեն ինչին՝ ՃԵԿ, կետ 20)</div>
+          <div class="priority-step"><span class="priority-step-num">2</span><strong>Լուսացույց</strong> (գերակայում է առավելության նշաններին՝ կետ 173)</div>
+          <div class="priority-step"><span class="priority-step-num">3</span><strong>Ժամանակավոր նշաններ / նարնջագույն գիծ</strong> (գերակայում են հաստատունին)</div>
+          <div class="priority-step"><span class="priority-step-num">4</span><strong>Առավելության նշաններ / գծանշում</strong> (երբ լուսացույցն անջատված է կամ դեղին թարթող է)</div>
+          <div class="priority-step"><span class="priority-step-num">5</span><strong>Հավասարազոր խաչմերուկ</strong> (Տրամվայ → Աջից արգելք, բացի 4.3 շրջանաձևից)</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-top: 0;">2. Կարգավորողի ազդանշանների ինտերակտիվ մարզիչ</h3>
+        <div class="regulator-layout">
+          <div class="regulator-svg-box">
+            ${buildRegulatorSvg(pose, approach)}
+          </div>
+          <div>
+            <div style="font-size: 13px; font-weight: 700; color: var(--text-muted);">Ընտրեք կարգավորողի դիրքը․</div>
+            <div class="choice-pills">
+              ${Object.entries(poseLabels)
+                .map(
+                  ([k, lbl]) => `
+                <button type="button" class="sign-cat-pill ${pose === k ? 'active' : ''}" data-reg-pose="${k}">${lbl}</button>`
+                )
+                .join('')}
+            </div>
+
+            <div style="font-size: 13px; font-weight: 700; color: var(--text-muted);">Ո՞ր կողմից եք մոտենում (կարգավորողը կանգնած է դեմքով դեպի ներքև)․</div>
+            <div class="choice-pills">
+              ${Object.entries(sideLabels)
+                .map(
+                  ([k, lbl]) => `
+                <button type="button" class="sign-cat-pill ${approach === k ? 'active' : ''}" data-reg-side="${k}">${lbl}</button>`
+                )
+                .join('')}
+            </div>
+
+            <div class="feedback-banner ${sideInfo.allowed ? 'correct' : 'wrong'}" style="margin-top: 8px;">
+              <div>
+                <div><strong>Ավտոմոբիլներ․</strong> ${escapeHtml(sideInfo.cars)}</div>
+                <div><strong>Տրամվայ․</strong> ${escapeHtml(sideInfo.trams)}</div>
+              </div>
+            </div>
+            <p style="font-size: 13.5px; color: var(--text-muted); margin: 10px 0 0;">${escapeHtml(poseObj.note)}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="cheat-grid">
+        <div class="card">
+          <h3 style="margin-top: 0;">🚗 Առավելագույն արագություններ</h3>
+          <ul class="cheat-list">
+            <li><strong>20 կմ/ժ</strong> — բնակելի գոտի (5.21) և բակային տարածքներ</li>
+            <li><strong>50 կմ/ժ</strong> — քարշակում</li>
+            <li><strong>60 կմ/ժ</strong> — բնակավայրերում, երեխաներ/թափքում մարդ տեղափոխելիս</li>
+            <li><strong>70 կմ/ժ</strong> — բնակավայրից դուրս՝ կցորդով թեթև մարդատար, 3.5տ+ բեռնատար</li>
+            <li><strong>90 կմ/ժ</strong> — բնակավայրից դուրս (թեթև մարդատար, մինչև 3.5տ բեռնատար, մոտոցիկլ, միջքաղաքային ավտոբուս)</li>
+            <li><strong>110 կմ/ժ</strong> — ավտոմայրուղում (թեթև մարդատար և մինչև 3.5տ բեռնատար)</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3 style="margin-top: 0;">📏 Հեռավորություններ և կանգառ</h3>
+          <ul class="cheat-list">
+            <li><strong>3 մ</strong> — նվազագույն տարածք մեքենայի և հոծ գծի միջև կանգառելիս</li>
+            <li><strong>5 մ</strong> — հետիոտնային անցումից առաջ և խաչմերուկից. ուղեփակոցից կանգնելիս</li>
+            <li><strong>10 մ</strong> — մոտակա ռելսից կանգնելիս (առանց ուղեփակոցի)</li>
+            <li><strong>15 մ</strong> — տրանսպորտի կանգառից. վթարային նշանը բնակավայրում</li>
+            <li><strong>30 մ</strong> — վթարային նշանը բնակավայրից դուրս</li>
+            <li><strong>50 մ</strong> — կայանումն արգելված է գծանցներից մոտ</li>
+            <li><strong>100 մ</strong> — վազանց/հետադարձ/կանգառ արգելված է տեսանելիության սահմանից պակաս</li>
+            <li><strong>150 մ / 300 մ</strong> — լույսերի փոխարկում (150մ), անբավարար տեսանելիություն (300մ)</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3 style="margin-top: 0;">🛞 Դողեր, ղեկ և օրենք</h3>
+          <ul class="cheat-list">
+            <li><strong>Դողի նախշանկար՝</strong> 2.0 մմ (ավտոբուս), 1.6 մմ (թեթև մարդատար), 1.0 մմ (բեռնատար), 0.8 մմ (մոտոցիկլ), ≤ 4.0 մմ (ձմեռային՝ ձյան վրա)</li>
+            <li><strong>Ձմեռային դողեր՝</strong> պարտադիր են <strong>նոյեմբերի 15 – մարտի 31</strong>, բութակավորներն արգելված են <strong>հունիս–օգոստոսին</strong></li>
+            <li><strong>Ղեկի խաղացք՝</strong> max 10° (թեթև), 20° (ավտոբուս), 25° (բեռնատար)</li>
+            <li><strong>Վկայական՝</strong> «AM» 16-ից, «A/B/C» 18-ից, «D» 21-ից · ուժի մեջ է 10 տարի · գրանցումը՝ 15 օրում</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3 style="margin-top: 0;">🩹 Առաջին օգնություն և թակարդներ</h3>
+          <ul class="cheat-list">
+            <li><strong>Լարան՝</strong> տաք եղանակին max <strong>1 ժամ</strong>, ցուրտ եղանակին՝ <strong>30 րոպե</strong></li>
+            <li><strong>Շնչառության ստուգում՝</strong> 10 վայրկյան · նորմալ պուլս՝ 60–80, շնչառություն՝ 12–18</li>
+            <li><strong>Այրվածք՝</strong> 20 րոպե սառեցնել ջրով, բշտիկները <strong>չբացել</strong></li>
+            <li><strong>Ազդանշանը՝</strong> առավելություն չի տալիս (ՃԵԿ, կետ 36)</li>
+            <li><strong>Միաժամանակ վերադասավորում՝</strong> զիջում է <strong>ձախից</strong> ընթացողը (կետ 39)</li>
+            <li><strong>Կտրուկ վայրէջք/վերելք՝</strong> զիջում է <strong>վայրէջքով</strong> ընթացողը (կետ 46)</li>
+          </ul>
+        </div>
+      </div>
+    `;
   }
 
   // ---------- Tab 5: Search & Browse ----------
@@ -909,6 +1533,7 @@
     else if (tab === 'exam') renderExam();
     else if (tab === 'mistakes') renderMistakes();
     else if (tab === 'signs') renderSigns();
+    else if (tab === 'cheatsheet') renderCheatSheet();
     else if (tab === 'search') renderSearch();
   }
 
@@ -960,7 +1585,60 @@
     if (e.target === lightboxEl) closeLightbox();
   });
 
+  if (signModalEl) {
+    document.getElementById('sign-modal-close').addEventListener('click', closeSignModal);
+    signModalEl.addEventListener('click', (e) => {
+      if (e.target === signModalEl || e.target.id === 'sign-modal-done') {
+        closeSignModal();
+        return;
+      }
+      const pSignBtn = e.target.closest('[data-practice-sign]');
+      if (pSignBtn) {
+        const code = pSignBtn.dataset.practiceSign;
+        const qs = QUESTIONS_BY_SIGN_CODE[code] || [];
+        closeSignModal();
+        if (qs.length > 0) {
+          session.practiceFocus = {
+            mode: 'sign',
+            label: `Նշան ${code}-ի հարցեր`,
+            questions: qs,
+            index: 0,
+            attemptByUid: {},
+          };
+          state.ui.activeTab = 'practice';
+          persist();
+          render();
+        }
+      }
+    });
+  }
+
   rootEl.addEventListener('click', (e) => {
+    const signRefBtn = e.target.closest('[data-open-sign]');
+    if (signRefBtn) {
+      openSignModal(signRefBtn.dataset.openSign);
+      return;
+    }
+
+    const pSignBtn = e.target.closest('[data-practice-sign]');
+    if (pSignBtn) {
+      const code = pSignBtn.dataset.practiceSign;
+      const qs = QUESTIONS_BY_SIGN_CODE[code] || [];
+      if (qs.length > 0) {
+        session.practiceFocus = {
+          mode: 'sign',
+          label: `Նշան ${code}-ի հարցեր`,
+          questions: qs,
+          index: 0,
+          attemptByUid: {},
+        };
+        state.ui.activeTab = 'practice';
+        persist();
+        render();
+      }
+      return;
+    }
+
     const expBtn = e.target.closest('[data-toggle-exp]');
     if (expBtn) {
       const key = expBtn.dataset.toggleExp;
@@ -972,6 +1650,68 @@
     const zoomBtn = e.target.closest('[data-zoom-src]');
     if (zoomBtn) {
       openLightbox(zoomBtn.dataset.zoomSrc);
+      return;
+    }
+
+    // Practice focus & smart drill interactions
+    if (e.target.id === 'btn-smart-drill') {
+      const drillQs = Core.generateSmartDrill(DATA.groups, state, 10);
+      session.practiceFocus = {
+        mode: 'smart',
+        label: '⚡ Խելացի մարզում (10 հարց)',
+        questions: drillQs,
+        index: 0,
+        attemptByUid: {},
+      };
+      render();
+      return;
+    }
+
+    if (e.target.id === 'btn-exit-focus') {
+      session.practiceFocus = null;
+      render();
+      return;
+    }
+
+    const focusOpt = e.target.closest('[data-focus-opt]');
+    if (focusOpt && session.practiceFocus) {
+      const q = session.practiceFocus.questions[session.practiceFocus.index];
+      if (!q || session.practiceFocus.attemptByUid[q.uid]) return;
+      const selIdx = Number(focusOpt.dataset.focusOpt);
+      const isCorrect = selIdx === q.correctIndex;
+      session.practiceFocus.attemptByUid[q.uid] = { selectedIndex: selIdx, isCorrect };
+      // Also record into practice/mistakes so readiness stays up to date
+      const res = Core.recordPracticeAnswer(state, q.uid, selIdx, q.correctIndex);
+      state = res.state;
+      if (isCorrect && state.mistakes[q.uid]) {
+        state = Core.resolveMistake(state, q.uid);
+      } else if (!isCorrect && !res.newlyRecorded) {
+        state = Core.retryMistakeAnswer(state, q.uid, selIdx, q.correctIndex).state;
+      }
+      persist();
+      render();
+      return;
+    }
+
+    const focusJump = e.target.closest('[data-focus-jump]');
+    if (focusJump && session.practiceFocus) {
+      session.practiceFocus.index = Number(focusJump.dataset.focusJump);
+      render();
+      return;
+    }
+
+    if (e.target.id === 'btn-focus-prev' && session.practiceFocus) {
+      session.practiceFocus.index = Math.max(0, session.practiceFocus.index - 1);
+      render();
+      return;
+    }
+
+    if (e.target.id === 'btn-focus-next' && session.practiceFocus) {
+      session.practiceFocus.index = Math.min(
+        session.practiceFocus.questions.length - 1,
+        session.practiceFocus.index + 1
+      );
+      render();
       return;
     }
 
@@ -1073,6 +1813,30 @@
     }
 
     // Exam interactions
+    if (e.target.id === 'btn-start-color-exam') {
+      startColorPreTest();
+      return;
+    }
+
+    const colorOpt = e.target.closest('[data-color-opt]');
+    if (colorOpt && session.exam.status === 'color_test') {
+      const step = session.exam.colorStep || 0;
+      const plate = COLOR_PLATES[step];
+      if (colorOpt.dataset.colorOpt === plate.answer) {
+        if (step + 1 >= COLOR_PLATES.length) {
+          showToast('Գունաընկալումը հանձնված է · սկսում ենք քննությունը');
+          startExam();
+        } else {
+          session.exam.colorStep = step + 1;
+          render();
+        }
+      } else {
+        session.exam.colorFailed = true;
+        render();
+      }
+      return;
+    }
+
     if (e.target.id === 'btn-start-exam') {
       startExam();
       return;
@@ -1190,11 +1954,62 @@
     }
 
     // Signs interactions
+    if (e.target.id === 'btn-sign-mode-quiz' || e.target.id === 'btn-sign-quiz-restart') {
+      startSignQuiz();
+      return;
+    }
+
+    if (e.target.id === 'btn-sign-mode-browse') {
+      session.signs.mode = 'browse';
+      renderSigns();
+      return;
+    }
+
+    const signQuizOpt = e.target.closest('[data-sign-quiz-opt]');
+    if (signQuizOpt && session.signs.mode === 'quiz') {
+      const qi = session.signs.quiz.index;
+      if (typeof session.signs.quiz.answers[qi] !== 'number') {
+        session.signs.quiz.answers[qi] = Number(signQuizOpt.dataset.signQuizOpt);
+        renderSigns();
+      }
+      return;
+    }
+
+    if (e.target.id === 'btn-sign-quiz-prev' && session.signs.mode === 'quiz') {
+      session.signs.quiz.index = Math.max(0, session.signs.quiz.index - 1);
+      renderSigns();
+      return;
+    }
+
+    if (e.target.id === 'btn-sign-quiz-next' && session.signs.mode === 'quiz') {
+      session.signs.quiz.index = Math.min(
+        session.signs.quiz.items.length - 1,
+        session.signs.quiz.index + 1
+      );
+      renderSigns();
+      return;
+    }
+
     const signCatBtn = e.target.closest('[data-sign-cat]');
     if (signCatBtn) {
       const val = signCatBtn.dataset.signCat;
       session.signs.categoryId = val === 'all' ? 'all' : Number(val);
       renderSigns();
+      return;
+    }
+
+    // Cheat Sheet / Regulator interactions
+    const regPoseBtn = e.target.closest('[data-reg-pose]');
+    if (regPoseBtn) {
+      session.cheatsheet.pose = regPoseBtn.dataset.regPose;
+      renderCheatSheet();
+      return;
+    }
+
+    const regSideBtn = e.target.closest('[data-reg-side]');
+    if (regSideBtn) {
+      session.cheatsheet.approach = regSideBtn.dataset.regSide;
+      renderCheatSheet();
       return;
     }
 
@@ -1229,6 +2044,10 @@
 
   // Keyboard shortcuts
   document.addEventListener('keydown', (e) => {
+    if (signModalEl && !signModalEl.hidden && e.key === 'Escape') {
+      closeSignModal();
+      return;
+    }
     if (!lightboxEl.hidden && e.key === 'Escape') {
       closeLightbox();
       return;
@@ -1320,4 +2139,14 @@
       }
     });
   })();
+
+  // Register offline PWA service worker on http/https hosts
+  if (
+    'serviceWorker' in navigator &&
+    (window.location.protocol === 'https:' || window.location.protocol === 'http:')
+  ) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    });
+  }
 })();
