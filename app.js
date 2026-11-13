@@ -290,20 +290,53 @@
            </div>`
         : '';
 
+    const previewCodes = ['2.1', '3.27', '4.2.2'];
+    const previewSignsHtml = previewCodes
+      .map((code) => {
+        const s = SIGN_INDEX.byCode[code];
+        if (!s || !s.image) return '';
+        return `
+          <button type="button" class="hero-sign-mini" data-open-sign="${escapeHtml(code)}" title="${escapeHtml(s.title)}">
+            <img src="${escapeHtml(s.image)}" alt="${escapeHtml(s.title)}" />
+            <span>${escapeHtml(code)}</span>
+          </button>`;
+      })
+      .join('');
+
     rootEl.innerHTML = `
       <section class="hero-card">
-        <span class="hero-eyebrow">ՀՀ Ճանապարհային ոստիկանություն · ABC կարգեր (2026 թ. խմբագրություն)</span>
-        <h2 class="hero-title">Սովորի՛ր ճանապարհային կանոնները հասկանալով, ոչ թե անգիր անելով</h2>
-        <p class="hero-subtitle">
-          ՀՀ ՃՈ տեսական քննության պաշտոնական բոլոր <strong>${DATA.totalQuestions}</strong> հարցերը,
-          ամեն հարցի հիմնավորված հայերեն բացատրությունը, <strong>${totalSigns}</strong> ճանապարհային նշանները,
-          կարգավորողի ինտերակտիվ մարզիչը և իրական քննության սիմուլյացիան՝ <strong>100% անվճար, առանց գովազդի և գրանցման</strong>։
-        </p>
-        <div class="hero-actions">
-          <button type="button" class="btn btn-hero-primary" data-nav-tab="practice">Սկսել ուսուցումը</button>
-          <button type="button" class="btn btn-hero-secondary" data-nav-tab="exam">Հանձնել փորձնական քննություն</button>
-          <button type="button" class="btn btn-hero-secondary" data-nav-tab="signs">Դիտել նշանները (${totalSigns})</button>
+        <div>
+          <span class="hero-eyebrow">ՀՀ Ճանապարհային ոստիկանություն · ABC կարգեր (2026 թ. խմբագրություն)</span>
+          <h2 class="hero-title">Սովորի՛ր ճանապարհային կանոնները հասկանալով, ոչ թե անգիր անելով</h2>
+          <p class="hero-subtitle">
+            ՀՀ ՃՈ տեսական քննության պաշտոնական բոլոր <strong>${DATA.totalQuestions}</strong> հարցերը,
+            ամեն հարցի հիմնավորված հայերեն բացատրությունը, <strong>${totalSigns}</strong> ճանապարհային նշանները,
+            կարգավորողի ինտերակտիվ մարզիչը և իրական քննության սիմուլյացիան՝ <strong>100% անվճար, առանց գովազդի և գրանցման</strong>։
+          </p>
+          <div class="hero-actions">
+            <button type="button" class="btn btn-primary" data-nav-tab="practice">Սկսել ուսուցումը</button>
+            <button type="button" class="btn" data-nav-tab="exam">Հանձնել փորձնական քննություն</button>
+            <button type="button" class="btn btn-ghost" data-nav-tab="signs">Դիտել նշանները (${totalSigns})</button>
+          </div>
         </div>
+
+        <aside class="hero-preview" aria-label="Քննական ձևաչափի ամփոփում">
+          <div class="hero-preview-header">
+            <span>Քննական արագ ամփոփում</span>
+            <span class="pill-tag success">Անվճար · Օֆլայն</span>
+          </div>
+          <div class="hero-signs-row">${previewSignsHtml}</div>
+          <div class="hero-preview-meta">
+            <div class="hero-preview-pill">
+              <strong>18 / 20</strong>
+              <span>Անցողիկ շեմը (30 ր)</span>
+            </div>
+            <div class="hero-preview-pill">
+              <strong>15+2+2+1</strong>
+              <span>Պաշտոնական կշիռ</span>
+            </div>
+          </div>
+        </aside>
       </section>
 
       ${resumeHtml}
