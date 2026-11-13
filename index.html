@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ՃՈ Քննական Հարցաշար · ABC Կարգեր</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Armenian:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-badge" aria-hidden="true">ABC</div>
+        <div>
+          <h1 class="brand-title">ՃՈ Քննական Հարցաշար</h1>
+          <p class="brand-subtitle" id="overall-progress-text">Բեռնվում է...</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button type="button" class="btn btn-ghost btn-sm" id="btn-export" title="Արտահանել առաջընթացը JSON ֆայլով">
+          Արտահանել
+        </button>
+        <label class="btn btn-ghost btn-sm import-label" title="Ներմուծել պահպանված JSON ֆայլը">
+          Ներմուծել
+          <input type="file" id="input-import" accept="application/json,.json" hidden />
+        </label>
+      </div>
+    </div>
+
+    <nav class="tab-nav" aria-label="Հիմնական բաժիններ">
+      <button type="button" class="tab-btn" data-tab="practice">
+        Ուսուցում
+      </button>
+      <button type="button" class="tab-btn" data-tab="exam">
+        Քննություն (20 հարց)
+      </button>
+      <button type="button" class="tab-btn" data-tab="mistakes">
+        Սխալներ
+        <span class="badge" id="mistakes-badge">0</span>
+      </button>
+      <button type="button" class="tab-btn" data-tab="signs">
+        Նշաններ
+      </button>
+      <button type="button" class="tab-btn" data-tab="search">
+        Որոնում
+      </button>
+    </nav>
+  </header>
+
+  <main class="app-main" id="app-root">
+    <div class="loading-box">Բեռնվում են հարցերը...</div>
+  </main>
+
+  <div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-label="Մեծացված նկար">
+    <button type="button" class="lightbox-close" id="lightbox-close" aria-label="Փակել">✕</button>
+    <img class="lightbox-img" id="lightbox-img" alt="Ճանապարհային իրավիճակի մեծացված նկար" />
+  </div>
+
+  <div class="toast" id="toast" hidden role="status" aria-live="polite"></div>
+
+  <script src="data/questions.js"></script>
+  <script src="data/signs.js"></script>
+  <script src="app-core.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
