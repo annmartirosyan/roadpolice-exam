@@ -240,7 +240,7 @@
       examPassed: false,
     },
     cheatsheet: {
-      subtab: 'rules', // 'rules' | 'guide'
+      subtab: 'guide', // 'guide' | 'rules'
       docId: 'all',
       query: '',
       highlightRuleId: '',
@@ -2185,11 +2185,11 @@
     const { subtab, docId, query, pose, approach } = session.cheatsheet;
     const subBar = `
       <div class="subtab-bar">
-        <button type="button" class="sign-cat-pill ${subtab === 'rules' ? 'active' : ''}" data-cs-subtab="rules">
-          📖 Օրենք և ՃԵԿ (որոնելի)
-        </button>
         <button type="button" class="sign-cat-pill ${subtab === 'guide' ? 'active' : ''}" data-cs-subtab="guide">
           🧭 Կարգավորող և հիմնական թվեր
+        </button>
+        <button type="button" class="sign-cat-pill ${subtab === 'rules' ? 'active' : ''}" data-cs-subtab="rules">
+          📖 Օրենք և ՃԵԿ (որոնելի)
         </button>
       </div>
     `;
