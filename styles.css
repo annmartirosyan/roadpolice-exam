@@ -1273,6 +1273,28 @@ label {
   background: #fff;
 }
 
+.color-plate-btn {
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: #fff;
+  cursor: zoom-in;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 100%;
+}
+
+.color-plate-btn img {
+  display: block;
+  max-width: 300px;
+  max-height: 280px;
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  object-fit: contain;
+}
+
 /* Cheat Sheet & Interactive Regulator */
 .regulator-layout {
   display: grid;

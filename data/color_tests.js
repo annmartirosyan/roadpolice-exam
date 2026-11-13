@@ -1,0 +1,743 @@
+window.COLOR_TESTS_DATA = {
+  "generatedAt": "2026-11-13T12:43:45.800108+00:00",
+  "sources": [
+    "https://agdrive.am/am/Tests/psychological-tests",
+    "https://www.varord.am/%D6%84%D5%B6%D5%B6%D5%A1%D5%AF%D5%A1%D5%B6-%D5%B0%D5%A1%D6%80%D6%81%D5%A5%D6%80/%D5%B0%D5%B8%D5%A3%D5%A5%D5%A2%D5%A1%D5%B6%D5%A1%D5%AF%D5%A1%D5%B6-%D5%A9%D5%A5%D5%BD%D5%BF%D5%A5%D6%80"
+  ],
+  "totalPlates": 53,
+  "plates": [
+    {
+      "id": "ct-1",
+      "number": 1,
+      "question": "Ինչ գույն ունի նկարում պատկերված թիվը",
+      "image": "data/color_tests/06551d7e4862917b.jpg",
+      "options": [
+        "12",
+        "սև",
+        "նարնջագույն",
+        "դեղին"
+      ],
+      "correctIndex": 3,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-2",
+      "number": 2,
+      "question": "Ինչ թիվ է պատկերված նկարում:",
+      "image": "data/color_tests/19f96c371328581f.jpg",
+      "options": [
+        "դեղին",
+        "8",
+        "7",
+        "ոչ մի։"
+      ],
+      "correctIndex": 3,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-3",
+      "number": 3,
+      "question": "Ինչ թիվ է պատկերված նկարում:",
+      "image": "data/color_tests/f0852e327bfb4a2d.jpg",
+      "options": [
+        "88",
+        "79",
+        "28",
+        "29"
+      ],
+      "correctIndex": 3,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-4",
+      "number": 4,
+      "question": "Ինչ թիվ է պատկերված նկարում:",
+      "image": "data/color_tests/376a4cf1f796217e.png",
+      "options": [
+        "8",
+        "0",
+        "6",
+        "ոչ մի։"
+      ],
+      "correctIndex": 2,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-5",
+      "number": 5,
+      "question": "Ինչ թիվ է պատկերված նկարում:",
+      "image": "data/color_tests/bdfdab54f76027cb.png",
+      "options": [
+        "8",
+        "5",
+        "9",
+        "3"
+      ],
+      "correctIndex": 3,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-6",
+      "number": 6,
+      "question": "Ինչ գույն ունի նկարում պատկերված թիվը",
+      "image": "data/color_tests/e65ba21e84fe7dd2.png",
+      "options": [
+        "15",
+        "դեղին",
+        "կանաչ",
+        "կարմիր"
+      ],
+      "correctIndex": 2,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-7",
+      "number": 7,
+      "question": "Ինչ թիվ է պատկերված նկարում:",
+      "image": "data/color_tests/bbc624ec7f48acde.png",
+      "options": [
+        "74",
+        "14",
+        "75",
+        "77"
+      ],
+      "correctIndex": 0,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-8",
+      "number": 8,
+      "question": "Ինչ թիվ է պատկերված նկարում:",
+      "image": "data/color_tests/0cc44b956f120308.png",
+      "options": [
+        "17",
+        "7",
+        "11",
+        "ոչ մի։"
+      ],
+      "correctIndex": 3,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-9",
+      "number": 9,
+      "question": "Ինչ թիվ է պատկերված նկարում:",
+      "image": "data/color_tests/38de91f78de3969e.png",
+      "options": [
+        "5",
+        "6",
+        "0",
+        "8"
+      ],
+      "correctIndex": 0,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-10",
+      "number": 10,
+      "question": "Ինչ թիվ է պատկերված նկարում:",
+      "image": "data/color_tests/48dbf24e140d8881.png",
+      "options": [
+        "8",
+        "1",
+        "6",
+        "ոչ մի։"
+      ],
+      "correctIndex": 3,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-11",
+      "number": 11,
+      "question": "Ինչ թիվ է պատկերված նկարում:",
+      "image": "data/color_tests/7cc327cd1b29f273.png",
+      "options": [
+        "1",
+        "4",
+        "7",
+        "ոչ մի։"
+      ],
+      "correctIndex": 2,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-12",
+      "number": 12,
+      "question": "Ինչ թիվ է պատկերված նկարում:",
+      "image": "data/color_tests/197f690ec911ebb4.png",
+      "options": [
+        "28",
+        "6",
+        "8",
+        "ոչ մի։"
+      ],
+      "correctIndex": 3,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-13",
+      "number": 13,
+      "question": "Ինչ թիվ է պատկերված նկարում:",
+      "image": "data/color_tests/4e0c7ed01023ab10.png",
+      "options": [
+        "16",
+        "26",
+        "28",
+        "ոչ մի։"
+      ],
+      "correctIndex": 1,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-14",
+      "number": 14,
+      "question": "Ինչ թիվ է պատկերված նկարում:",
+      "image": "data/color_tests/02a9e5ac23d267e0.png",
+      "options": [
+        "13",
+        "12",
+        "42",
+        "47"
+      ],
+      "correctIndex": 2,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-15",
+      "number": 15,
+      "question": "Ինչ թիվ է պատկերված նկարում:",
+      "image": "data/color_tests/53d1d5677c82cc8e.png",
+      "options": [
+        "13",
+        "73",
+        "16",
+        "48"
+      ],
+      "correctIndex": 2,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-16",
+      "number": 16,
+      "question": "Ինչ թիվ է պատկերված նկարում:",
+      "image": "data/color_tests/ede90235df50a84a.png",
+      "options": [
+        "12",
+        "15",
+        "75",
+        "45"
+      ],
+      "correctIndex": 3,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-17",
+      "number": 17,
+      "question": "Ինչ գույն ունի նկարում պատկերված թիվը",
+      "image": "data/color_tests/0da0a5cf109a3540.png",
+      "options": [
+        "73",
+        "կանաչ",
+        "կարմիր",
+        "դեղին"
+      ],
+      "correctIndex": 1,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-18",
+      "number": 18,
+      "question": "Ինչ գույն ունի նկարում պատկերված թիվը",
+      "image": "data/color_tests/efaee3ae392fea59.png",
+      "options": [
+        "5",
+        "մանուշակագույն",
+        "յասամանագույն",
+        "ոչինչ։"
+      ],
+      "correctIndex": 2,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-19",
+      "number": 19,
+      "question": "Ինչ է պատկերված նկարում:",
+      "image": "data/color_tests/31ccd7201789d8f5.jpg",
+      "options": [
+        "եռանկյուն։",
+        "յասամանագույն։",
+        "եռանկյուն և աստղ։",
+        "եռանկյուն և քառակուսի։"
+      ],
+      "correctIndex": 2,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-20",
+      "number": 20,
+      "question": "Ինչ գույն ունի նկարում պատկերված թիվը",
+      "image": "data/color_tests/948cd04d474e356d.png",
+      "options": [
+        "կանաչ",
+        "կարմիր",
+        "8",
+        "դեղին"
+      ],
+      "correctIndex": 1,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-21",
+      "number": 21,
+      "question": "Ինչ թիվ է պատկերված նկարում։",
+      "image": "data/color_tests/db563d543152d113.png",
+      "options": [
+        "68",
+        "69",
+        "86",
+        "96"
+      ],
+      "correctIndex": 3,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-22",
+      "number": 22,
+      "question": "Ինչ է պատկերված նկարում։",
+      "image": "data/color_tests/617bcaed4c715b95.png",
+      "options": [
+        "շրջան և եռանկյուն",
+        "կապույտ եռանկյուն",
+        "քառակուսի և եռանկյուն",
+        "քառակուսի և շրջան"
+      ],
+      "correctIndex": 2,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-23",
+      "number": 23,
+      "question": "Ինչ է թիվ պատկերված նկարում։",
+      "image": "data/color_tests/c4d991e442989240.png",
+      "options": [
+        "շրջան",
+        "0",
+        "6",
+        "9"
+      ],
+      "correctIndex": 3,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-24",
+      "number": 24,
+      "question": "Ինչ է պատկերված նկարում։",
+      "image": "data/color_tests/141cc8c3a39a4b10.png",
+      "options": [
+        "շրջան",
+        "շրջան և եռանկյուն",
+        "եռանկյուն",
+        "9"
+      ],
+      "correctIndex": 2,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-25",
+      "number": 25,
+      "question": "Ինչ թիվ է պատկերված նկարում։",
+      "image": "data/color_tests/51bf477b0a05bde3.png",
+      "options": [
+        "13",
+        "քառակուսի",
+        "78",
+        "43"
+      ],
+      "correctIndex": 0,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-26",
+      "number": 26,
+      "question": "Ինչ է պատկերված նկարում։",
+      "image": "data/color_tests/6587777aa8c443e3.png",
+      "options": [
+        "քառակուսի և եռանկյուն",
+        "շրջան և եռանկյուն",
+        "շրջան",
+        "ոչինչ"
+      ],
+      "correctIndex": 1,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-27",
+      "number": 27,
+      "question": "Ինչ թիվ է պատկերված նկարում։",
+      "image": "data/color_tests/3bb2d5c9a8fac0db.png",
+      "options": [
+        "8",
+        "9",
+        "5",
+        "ոչ մի"
+      ],
+      "correctIndex": 1,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-28",
+      "number": 28,
+      "question": "Ինչ թիվ է պատկերված նկարում։",
+      "image": "data/color_tests/7c091476637fb655.png",
+      "options": [
+        "5",
+        "6",
+        "4",
+        "ոչ մի"
+      ],
+      "correctIndex": 0,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-29",
+      "number": 29,
+      "question": "Ինչ թիվ է պատկերված նկարում։",
+      "image": "data/color_tests/25cc31f3612ff3fa.png",
+      "options": [
+        "8",
+        "9",
+        "5",
+        "ոչ մի"
+      ],
+      "correctIndex": 1,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-30",
+      "number": 30,
+      "question": "Ինչ թիվ է պատկերված նկարում։",
+      "image": "data/color_tests/9d74d07942c20634.png",
+      "options": [
+        "288",
+        "186",
+        "138",
+        "136"
+      ],
+      "correctIndex": 3,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-31",
+      "number": 31,
+      "question": "Ինչ թիվ է պատկերված նկարում։",
+      "image": "data/color_tests/75e66ded3d4ec2e1.png",
+      "options": [
+        "16",
+        "14",
+        "74",
+        "ոչ մի"
+      ],
+      "correctIndex": 1,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-32",
+      "number": 32,
+      "question": "Ինչ թիվ է պատկերված նկարում։",
+      "image": "data/color_tests/44413254f8d5dba3.png",
+      "options": [
+        "12",
+        "72",
+        "22",
+        "18"
+      ],
+      "correctIndex": 0,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-33",
+      "number": 33,
+      "question": "Ինչ է պատկերված նկարում։",
+      "image": "data/color_tests/57f4fd5be9c77d46.png",
+      "options": [
+        "շրջան",
+        "շրջան և եռանկյուն",
+        "շրջան և քառակուսի",
+        "ոչինչ"
+      ],
+      "correctIndex": 1,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-34",
+      "number": 34,
+      "question": "Ինչ թիվ է պատկերված նկարում։",
+      "image": "data/color_tests/ea150c6dc4306512.png",
+      "options": [
+        "1,6,0",
+        "3,6,1",
+        "3,6,0",
+        "1,0"
+      ],
+      "correctIndex": 2,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-35",
+      "number": 35,
+      "question": "Ինչ է պատկերված նկարում։",
+      "image": "data/color_tests/f18a75f365e420a4.png",
+      "options": [
+        "եռանկյուն և քառակուսի",
+        "շրջան և եռանկյուն",
+        "շրջան, եռանկյուն և քառակուսի",
+        "ոչինչ"
+      ],
+      "correctIndex": 2,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-36",
+      "number": 36,
+      "question": "Ինչ թիվ է պատկերված նկարում։",
+      "image": "data/color_tests/a4c1c66e94add423.png",
+      "options": [
+        "9",
+        "69",
+        "88",
+        "96"
+      ],
+      "correctIndex": 3,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-37",
+      "number": 37,
+      "question": "Ինչ է պատկերված նկարում։",
+      "image": "data/color_tests/d22dc3f5174b82a1.png",
+      "options": [
+        "եռանկյուն և շրջան",
+        "շրջան",
+        "եռանկյուն և քառակուսի",
+        "շրջան, եռանկյուն և քառակուսի"
+      ],
+      "correctIndex": 0,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-38",
+      "number": 38,
+      "question": "Ինչ թիվ է պատկերված նկարում։",
+      "image": "data/color_tests/392827abcacd1901.png",
+      "options": [
+        "45",
+        "15",
+        "25",
+        "26"
+      ],
+      "correctIndex": 2,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-39",
+      "number": 39,
+      "question": "Ինչ է պատկերված նկարում։",
+      "image": "data/color_tests/3a884bebb8b3dd31.png",
+      "options": [
+        "եռանկյուն և շրջան",
+        "8",
+        "շրջան",
+        "քառակուսի"
+      ],
+      "correctIndex": 0,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-40",
+      "number": 40,
+      "question": "Ինչ թիվ է պատկերված նկարում։",
+      "image": "data/color_tests/1c40eaead65e7213.png",
+      "options": [
+        "86",
+        "96",
+        "26",
+        "56"
+      ],
+      "correctIndex": 1,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-41",
+      "number": 41,
+      "question": "Ինչ թիվ է պատկերված նկարում։",
+      "image": "data/color_tests/1868d731df23e8fc.png",
+      "options": [
+        "8",
+        "6",
+        "5",
+        "ոչ մի"
+      ],
+      "correctIndex": 2,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-42",
+      "number": 42,
+      "question": "Ինչ թիվ է պատկերված նկարում։",
+      "image": "data/color_tests/373cec49b467785e.png",
+      "options": [
+        "2",
+        "4",
+        "8",
+        "ոչ մի"
+      ],
+      "correctIndex": 0,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-43",
+      "number": 43,
+      "question": "Ինչ է պատկերված նկարում։",
+      "image": "data/color_tests/86923c4363c00413.png",
+      "options": [
+        "շրջան և եռանկյուն",
+        "եռանկյուն և քառակուսի",
+        "շրջան, եռանկյուն և քառակուսի",
+        "ոչինչ"
+      ],
+      "correctIndex": 1,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-44",
+      "number": 44,
+      "question": "Ինչ է պատկերված նկարում։",
+      "image": "data/color_tests/0ba708c40dd43ac0.png",
+      "options": [
+        "եռանկյուն",
+        "շրջան",
+        "քառակուսի",
+        "ոչինչ"
+      ],
+      "correctIndex": 0,
+      "source": "agdrive.am"
+    },
+    {
+      "id": "ct-45",
+      "number": 45,
+      "question": "Ի՞նչ եք տեսնում նկարում։",
+      "image": "data/color_tests/5bfa3f975158a8a7.jpg",
+      "options": [
+        "5",
+        "9",
+        "8"
+      ],
+      "correctIndex": 1,
+      "source": "varord.am"
+    },
+    {
+      "id": "ct-46",
+      "number": 46,
+      "question": "Ի՞նչ եք տեսնում նկարում։",
+      "image": "data/color_tests/f3bef3c582ace221.jpg",
+      "options": [
+        "6",
+        "13",
+        "ոչինչ չեմ տեսնում"
+      ],
+      "correctIndex": 1,
+      "source": "varord.am"
+    },
+    {
+      "id": "ct-47",
+      "number": 47,
+      "question": "Ի՞նչ եք տեսնում նկարում։",
+      "image": "data/color_tests/e3b59e373603b23b.jpg",
+      "options": [
+        "66",
+        "69",
+        "136"
+      ],
+      "correctIndex": 2,
+      "source": "varord.am"
+    },
+    {
+      "id": "ct-48",
+      "number": 48,
+      "question": "Ի՞նչ եք տեսնում նկարում։",
+      "image": "data/color_tests/2941488682806d3e.jpg",
+      "options": [
+        "30",
+        "60",
+        "10"
+      ],
+      "correctIndex": 0,
+      "source": "varord.am"
+    },
+    {
+      "id": "ct-49",
+      "number": 49,
+      "question": "Ի՞նչ պատկեր եք տեսնում նկարում։",
+      "image": "data/color_tests/a081e546c3386992.jpg",
+      "options": [
+        "շրջան",
+        "շրջան և եռանկյուն",
+        "եռանկյուն"
+      ],
+      "correctIndex": 1,
+      "source": "varord.am"
+    },
+    {
+      "id": "ct-50",
+      "number": 50,
+      "question": "Ի՞նչ եք տեսնում նկարում։",
+      "image": "data/color_tests/bb01d91eb47c2429.jpg",
+      "options": [
+        "5",
+        "ոչինչ",
+        "9"
+      ],
+      "correctIndex": 2,
+      "source": "varord.am"
+    },
+    {
+      "id": "ct-51",
+      "number": 51,
+      "question": "Ի՞նչ եք տեսնում նկարում։",
+      "image": "data/color_tests/00bf981b1c452e93.jpg",
+      "options": [
+        "95",
+        "5",
+        "9"
+      ],
+      "correctIndex": 0,
+      "source": "varord.am"
+    },
+    {
+      "id": "ct-52",
+      "number": 52,
+      "question": "Ի՞նչ եք տեսնում նկարում։",
+      "image": "data/color_tests/940cf8cb43016a71.jpg",
+      "options": [
+        "13",
+        "3",
+        "10"
+      ],
+      "correctIndex": 0,
+      "source": "varord.am"
+    },
+    {
+      "id": "ct-53",
+      "number": 53,
+      "question": "Ի՞նչ պատկեր եք տեսնում նկարում։",
+      "image": "data/color_tests/404a0cb4f316118b.jpg",
+      "options": [
+        "շրջան",
+        "եռանկյուն",
+        "ոչ մի պատկեր չեմ տեսնում"
+      ],
+      "correctIndex": 1,
+      "source": "varord.am"
+    }
+  ]
+};

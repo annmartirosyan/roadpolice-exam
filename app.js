@@ -2,6 +2,7 @@
   const Core = window.RoadPoliceCore;
   const DATA = window.EXAM_DATA;
   const SIGNS_DATA = window.SIGNS_DATA || { totalSigns: 0, categories: [] };
+  const COLOR_TESTS_DATA = window.COLOR_TESTS_DATA || { totalPlates: 0, plates: [] };
 
   if (!Core || !DATA || !Array.isArray(DATA.groups)) {
     document.getElementById('app-root').innerHTML =
@@ -65,6 +66,15 @@
         index: 0,
         answers: {},
       },
+    },
+    colortest: {
+      mode: 'practice', // 'practice' | 'exam3'
+      index: 0,
+      answers: {}, // { [plateId]: selectedIndex }
+      examPlates: [],
+      examIndex: 0,
+      examFailed: false,
+      examPassed: false,
     },
     cheatsheet: {
       pose: 'side', // 'up' | 'side' | 'forward'
@@ -437,6 +447,20 @@
 
           <article class="feature-card">
             <div>
+              <div class="feature-icon" aria-hidden="true">🎨</div>
+              <h3 class="feature-title">Գունաընկալման և հոգեբանական թեստ (${COLOR_TESTS_DATA.totalPlates || 53} աղյուսակ)</h3>
+              <p class="feature-desc">
+                Պարապեք իրական քննության գունային աղյուսակներով (Ռաբկին / Իշիհարա) և ստուգեք Ձեզ
+                պաշտոնական 3-հարցանոց ռեժիմով, որտեղ սխալ չի թույլատրվում։
+              </p>
+            </div>
+            <div>
+              <button type="button" class="btn btn-sm btn-primary" data-nav-tab="colortest">Բացել գունաընկալումը →</button>
+            </div>
+          </article>
+
+          <article class="feature-card">
+            <div>
               <div class="feature-icon" aria-hidden="true">🧭</div>
               <h3 class="feature-title">Հուշաթերթ և կարգավորողի մարզիչ</h3>
               <p class="feature-desc">
@@ -787,10 +811,14 @@
 
   function startColorPreTest() {
     stopExamTimer();
+    const realPlates = (COLOR_TESTS_DATA.plates || []).length >= 3
+      ? Core.shuffleArray(COLOR_TESTS_DATA.plates).slice(0, 3)
+      : null;
     session.exam = {
       status: 'color_test',
       colorStep: 0,
       colorFailed: false,
+      colorPlates: realPlates,
       questions: [],
       answersByUid: {},
       currentIndex: 0,
@@ -877,6 +905,42 @@
         return;
       }
       const step = session.exam.colorStep || 0;
+      const realList = session.exam.colorPlates;
+      if (realList && realList[step]) {
+        const plate = realList[step];
+        rootEl.innerHTML = `
+          <div class="card">
+            <div class="toolbar">
+              <strong>Փուլ 1 · Գունաընկալման թեստ</strong>
+              <span class="pill-tag">Աղյուսակ ${step + 1} / ${realList.length} (0 սխալ)</span>
+            </div>
+            <p style="color: var(--text-muted); margin-top: 0;">
+              Անցնելուց հետո ավտոմատ կսկսվի 20 հարցանոց տեսական քննությունը։
+            </p>
+            <div class="ishihara-wrap">
+              <button type="button" class="color-plate-btn" data-zoom-src="${escapeHtml(plate.image)}" title="Սեղմեք մեծացնելու համար">
+                <img src="${escapeHtml(plate.image)}" alt="Գունաընկալման աղյուսակ" />
+              </button>
+            </div>
+            <h2 class="question-text" style="text-align: center;">${escapeHtml(plate.question)}</h2>
+            <div class="options-list">
+              ${plate.options
+                .map(
+                  (opt, i) => `
+                <button type="button" class="option-btn" data-color-opt="${i}">
+                  <span class="option-num">${i + 1}</span>
+                  <span>${escapeHtml(opt)}</span>
+                </button>`
+                )
+                .join('')}
+            </div>
+            <div class="question-footer">
+              <button type="button" class="btn btn-sm btn-ghost" id="btn-start-exam">Բաց թողնել և սկսել 20 հարցը →</button>
+            </div>
+          </div>
+        `;
+        return;
+      }
       const plate = COLOR_PLATES[step];
       rootEl.innerHTML = `
         <div class="card">
@@ -1427,7 +1491,190 @@
     });
   }
 
-  // ---------- Tab 5: Cheat Sheet & Interactive Regulator ----------
+  // ---------- Tab 5: Color Blindness / Psychological Test ----------
+  function startColorExam3() {
+    const plates = COLOR_TESTS_DATA.plates || [];
+    session.colortest = {
+      ...session.colortest,
+      mode: 'exam3',
+      examPlates: Core.shuffleArray(plates).slice(0, 3),
+      examIndex: 0,
+      examFailed: false,
+      examPassed: false,
+    };
+    renderColorTest();
+  }
+
+  function renderColorTest() {
+    const plates = COLOR_TESTS_DATA.plates || [];
+    if (plates.length === 0) {
+      rootEl.innerHTML =
+        '<div class="card empty-state"><h2>Գունաընկալման աղյուսակները բացակայում են</h2><p>Գործարկեք <code>scripts/extract_color_tests.py</code> սկրիպտը։</p></div>';
+      return;
+    }
+
+    const ct = session.colortest;
+
+    if (ct.mode === 'exam3') {
+      if (ct.examFailed || ct.examPassed) {
+        rootEl.innerHTML = `
+          <div class="card empty-state">
+            <span class="pill-tag ${ct.examPassed ? 'success' : 'danger'}" style="margin-bottom: 10px; display: inline-block;">
+              ${ct.examPassed ? '✓ Հանձնված է (3 / 3)' : '✕ Չի հանձնվել'}
+            </span>
+            <h2>${
+              ct.examPassed
+                ? 'Գերազանց է։ Բոլոր 3 գունաընկալման հարցերին ճիշտ պատասխանեցիք։'
+                : 'Սխալ պատասխան՝ գունաընկալման փուլում'
+            }</h2>
+            <p>${
+              ct.examPassed
+                ? 'Իրական քննության ժամանակ սա թույլ կտա անցնել հիմնական 20 հարցանոց թեստին։'
+                : 'Պաշտոնական քննության ժամանակ հոգեբանական/գունաընկալման 3 հարցերում սխալ չի թույլատրվում։'
+            }</p>
+            <div class="toolbar-group" style="justify-content: center;">
+              <button type="button" class="btn btn-primary" id="btn-ct-start-exam3">Նոր 3-հարցանոց ստուգում</button>
+              <button type="button" class="btn" id="btn-ct-mode-practice">Պարապել բոլոր ${plates.length} աղյուսակները</button>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      const p = ct.examPlates[ct.examIndex];
+      rootEl.innerHTML = `
+        <div class="card">
+          <div class="toolbar">
+            <div class="toolbar-group">
+              <strong>🎨 Քննական ստուգում (3 հարց · 0 սխալ)</strong>
+              <span class="pill-tag">Հարց ${ct.examIndex + 1} / ${ct.examPlates.length}</span>
+            </div>
+            <div class="toolbar-group">
+              <button type="button" class="btn btn-sm btn-ghost" id="btn-ct-mode-practice">← Ամբողջ ցանկը (${plates.length})</button>
+            </div>
+          </div>
+
+          <div class="ishihara-wrap">
+            <button type="button" class="color-plate-btn" data-zoom-src="${escapeHtml(p.image)}" title="Սեղմեք մեծացնելու համար">
+              <img src="${escapeHtml(p.image)}" alt="Գունաընկալման աղյուսակ №${p.number}" />
+            </button>
+          </div>
+
+          <h2 class="question-text" style="text-align: center;">${escapeHtml(p.question)}</h2>
+          <div class="options-list">
+            ${p.options
+              .map(
+                (opt, oi) => `
+              <button type="button" class="option-btn" data-ct-exam3-opt="${oi}">
+                <span class="option-num">${oi + 1}</span>
+                <span>${escapeHtml(opt)}</span>
+              </button>`
+              )
+              .join('')}
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    // Practice all 53 plates
+    const idx = Math.min(Math.max(0, ct.index), plates.length - 1);
+    ct.index = idx;
+    const plate = plates[idx];
+    const selected = ct.answers[plate.id];
+    const answeredCount = Object.keys(ct.answers).length;
+    const correctCount = plates.filter((pl) => ct.answers[pl.id] === pl.correctIndex).length;
+
+    const optionsHtml = plate.options
+      .map((opt, oi) => {
+        const cls = ['option-btn'];
+        if (typeof selected === 'number') {
+          if (oi === plate.correctIndex) cls.push('correct');
+          else if (oi === selected) cls.push('wrong');
+        }
+        return `
+          <button
+            type="button"
+            class="${cls.join(' ')}"
+            data-ct-opt="${oi}"
+            ${typeof selected === 'number' ? 'disabled' : ''}
+          >
+            <span class="option-num">${oi + 1}</span>
+            <span>${escapeHtml(opt)}</span>
+          </button>
+        `;
+      })
+      .join('');
+
+    const feedbackHtml =
+      typeof selected === 'number'
+        ? `<div class="feedback-banner ${selected === plate.correctIndex ? 'correct' : 'wrong'}">
+             <span>${
+               selected === plate.correctIndex
+                 ? '✓ Ճիշտ է'
+                 : `✕ Սխալ է · Ճիշտ պատասխանն է՝ ${plate.correctIndex + 1}. ${escapeHtml(plate.options[plate.correctIndex])}`
+             }</span>
+           </div>`
+        : '';
+
+    const gridHtml = plates
+      .map((pl, gi) => {
+        const cls = ['q-dot'];
+        if (gi === idx) cls.push('current');
+        const ans = ct.answers[pl.id];
+        if (typeof ans === 'number') {
+          cls.push(ans === pl.correctIndex ? 'correct' : 'wrong');
+        }
+        return `<button type="button" class="${cls.join(' ')}" data-ct-jump="${gi}">${pl.number}</button>`;
+      })
+      .join('');
+
+    rootEl.innerHTML = `
+      <div class="card">
+        <div class="toolbar">
+          <div class="toolbar-group">
+            <strong>🎨 Գունաընկալման և հոգեբանական թեստեր</strong>
+            <span class="pill-tag">${answeredCount} / ${plates.length} · ${correctCount} ճիշտ</span>
+          </div>
+          <div class="toolbar-group">
+            <button type="button" class="btn btn-sm btn-primary" id="btn-ct-start-exam3">Քննական 3 հարց (0 սխալ)</button>
+            <button type="button" class="btn btn-sm btn-danger" id="btn-ct-reset">Վերսկսել</button>
+          </div>
+        </div>
+
+        <p style="color: var(--text-muted); margin-top: 0; font-size: 13.5px;">
+          Իրական քննությունը սկսվում է 3 նմանատիպ հարցով, որտեղ բոլոր 3 պատասխանները պետք է ճիշտ լինեն (ՃԵԿ / Որոշում N 385-Ն)։
+        </p>
+
+        <div class="question-meta">
+          <span>Աղյուսակ №${plate.number} (${idx + 1} / ${plates.length})</span>
+          <span class="pill-tag">Գունաընկալում</span>
+        </div>
+
+        <div class="ishihara-wrap">
+          <button type="button" class="color-plate-btn" data-zoom-src="${escapeHtml(plate.image)}" title="Սեղմեք մեծացնելու համար">
+            <img src="${escapeHtml(plate.image)}" alt="Գունաընկալման աղյուսակ №${plate.number}" />
+          </button>
+        </div>
+
+        <h2 class="question-text" style="text-align: center;">${escapeHtml(plate.question)}</h2>
+        <div class="options-list">${optionsHtml}</div>
+        ${feedbackHtml}
+
+        <div class="question-footer">
+          <div class="toolbar-group">
+            <button type="button" class="btn" id="btn-ct-prev" ${idx === 0 ? 'disabled' : ''}>← Նախորդը</button>
+            <button type="button" class="btn btn-primary" id="btn-ct-next" ${idx >= plates.length - 1 ? 'disabled' : ''}>Հաջորդը →</button>
+          </div>
+          <span class="kbd-hint">Սեղմեք նկարի վրա՝ մեծացնելու համար</span>
+        </div>
+
+        <div class="q-grid">${gridHtml}</div>
+      </div>
+    `;
+  }
+
+  // ---------- Tab 6: Cheat Sheet & Interactive Regulator ----------
   const REGULATOR_RULES = {
     up: {
       poseLabel: 'Ձեռքը բարձրացված է վեր',
@@ -1755,6 +2002,7 @@
     else if (tab === 'exam') renderExam();
     else if (tab === 'mistakes') renderMistakes();
     else if (tab === 'signs') renderSigns();
+    else if (tab === 'colortest') renderColorTest();
     else if (tab === 'cheatsheet') renderCheatSheet();
     else if (tab === 'search') renderSearch();
   }
@@ -2066,9 +2314,16 @@
     const colorOpt = e.target.closest('[data-color-opt]');
     if (colorOpt && session.exam.status === 'color_test') {
       const step = session.exam.colorStep || 0;
-      const plate = COLOR_PLATES[step];
-      if (colorOpt.dataset.colorOpt === plate.answer) {
-        if (step + 1 >= COLOR_PLATES.length) {
+      const realList = session.exam.colorPlates;
+      let isOk = false;
+      if (realList && realList[step]) {
+        isOk = Number(colorOpt.dataset.colorOpt) === realList[step].correctIndex;
+      } else {
+        isOk = colorOpt.dataset.colorOpt === COLOR_PLATES[step].answer;
+      }
+      const totalPlates = realList ? realList.length : COLOR_PLATES.length;
+      if (isOk) {
+        if (step + 1 >= totalPlates) {
           showToast('Գունաընկալումը հանձնված է · սկսում ենք քննությունը');
           startExam();
         } else {
@@ -2240,6 +2495,72 @@
       const val = signCatBtn.dataset.signCat;
       session.signs.categoryId = val === 'all' ? 'all' : Number(val);
       renderSigns();
+      return;
+    }
+
+    // Color Blindness / Psychological test interactions
+    if (e.target.id === 'btn-ct-start-exam3') {
+      startColorExam3();
+      return;
+    }
+
+    if (e.target.id === 'btn-ct-mode-practice') {
+      session.colortest.mode = 'practice';
+      renderColorTest();
+      return;
+    }
+
+    const ctExam3Opt = e.target.closest('[data-ct-exam3-opt]');
+    if (ctExam3Opt && session.colortest.mode === 'exam3') {
+      const p = session.colortest.examPlates[session.colortest.examIndex];
+      if (!p) return;
+      if (Number(ctExam3Opt.dataset.ctExam3Opt) === p.correctIndex) {
+        if (session.colortest.examIndex + 1 >= session.colortest.examPlates.length) {
+          session.colortest.examPassed = true;
+        } else {
+          session.colortest.examIndex += 1;
+        }
+      } else {
+        session.colortest.examFailed = true;
+      }
+      renderColorTest();
+      return;
+    }
+
+    const ctOpt = e.target.closest('[data-ct-opt]');
+    if (ctOpt) {
+      const plates = COLOR_TESTS_DATA.plates || [];
+      const p = plates[session.colortest.index];
+      if (!p || typeof session.colortest.answers[p.id] === 'number') return;
+      session.colortest.answers[p.id] = Number(ctOpt.dataset.ctOpt);
+      renderColorTest();
+      return;
+    }
+
+    const ctJump = e.target.closest('[data-ct-jump]');
+    if (ctJump) {
+      session.colortest.index = Number(ctJump.dataset.ctJump);
+      renderColorTest();
+      return;
+    }
+
+    if (e.target.id === 'btn-ct-prev') {
+      session.colortest.index = Math.max(0, session.colortest.index - 1);
+      renderColorTest();
+      return;
+    }
+
+    if (e.target.id === 'btn-ct-next') {
+      const plates = COLOR_TESTS_DATA.plates || [];
+      session.colortest.index = Math.min(plates.length - 1, session.colortest.index + 1);
+      renderColorTest();
+      return;
+    }
+
+    if (e.target.id === 'btn-ct-reset') {
+      session.colortest.answers = {};
+      session.colortest.index = 0;
+      renderColorTest();
       return;
     }
 

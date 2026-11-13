@@ -1,4 +1,4 @@
-const CACHE_NAME = 'varordakan-v3';
+const CACHE_NAME = 'varordakan-v4';
 const CORE_ASSETS = [
   './',
   './index.html',
@@ -9,6 +9,7 @@ const CORE_ASSETS = [
   './icon.svg',
   './data/questions.js',
   './data/signs.js',
+  './data/color_tests.js',
 ];
 
 self.addEventListener('install', (event) => {
@@ -35,7 +36,10 @@ self.addEventListener('fetch', (event) => {
   }
 
   // Network-first for HTML/code/data so updates arrive fast, cache fallback for offline
-  const isAssetImage = url.pathname.includes('/data/images/') || url.pathname.includes('/data/signs/');
+  const isAssetImage =
+    url.pathname.includes('/data/images/') ||
+    url.pathname.includes('/data/signs/') ||
+    url.pathname.includes('/data/color_tests/');
 
   if (isAssetImage) {
     event.respondWith(
