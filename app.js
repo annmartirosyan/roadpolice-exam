@@ -670,26 +670,20 @@
   }
 
   // ---------- Tab 4: Road Signs ----------
-  function renderSigns() {
-    const categories = SIGNS_DATA.categories || [];
-    if (categories.length === 0) {
-      rootEl.innerHTML =
-        '<div class="card empty-state"><h2>Ճանապարհային նշանների տվյալները բացակայում են</h2><p>Գործարկեք <code>scripts/extract_signs.py</code> սկրիպտը։</p></div>';
-      return;
-    }
-
+  function renderSignsResults(categories) {
     const { query, categoryId } = session.signs;
     const filtered = Core.filterSigns(categories, { query, categoryId });
 
-    const catPillsHtml = [
-      `<button type="button" class="sign-cat-pill ${categoryId === 'all' ? 'active' : ''}" data-sign-cat="all">Բոլորը (${SIGNS_DATA.totalSigns})</button>`,
-      ...categories.map(
-        (cat) => `
-          <button type="button" class="sign-cat-pill ${Number(categoryId) === cat.id ? 'active' : ''}" data-sign-cat="${cat.id}">
-            ${escapeHtml(cat.title)} (${cat.signCount})
-          </button>`
-      ),
-    ].join('');
+    const countEl = document.getElementById('signs-count-pill');
+    if (countEl) {
+      countEl.textContent = `Ցուցադրված է՝ ${filtered.length} / ${SIGNS_DATA.totalSigns}`;
+    }
+
+    document.querySelectorAll('[data-sign-cat]').forEach((btn) => {
+      const val = btn.dataset.signCat;
+      const isAct = val === 'all' ? categoryId === 'all' : Number(categoryId) === Number(val);
+      btn.classList.toggle('active', isAct);
+    });
 
     const cardsHtml =
       filtered.length === 0
@@ -720,11 +714,42 @@
               .join('')}
           </div>`;
 
+    const container = document.getElementById('signs-results-container');
+    if (container) {
+      container.innerHTML = cardsHtml;
+    }
+  }
+
+  function renderSigns() {
+    const categories = SIGNS_DATA.categories || [];
+    if (categories.length === 0) {
+      rootEl.innerHTML =
+        '<div class="card empty-state"><h2>Ճանապարհային նշանների տվյալները բացակայում են</h2><p>Գործարկեք <code>scripts/extract_signs.py</code> սկրիպտը։</p></div>';
+      return;
+    }
+
+    // If the signs shell is already mounted, only update results so mobile keyboard stays open
+    if (document.getElementById('signs-search-input') && document.getElementById('signs-results-container')) {
+      renderSignsResults(categories);
+      return;
+    }
+
+    const { query, categoryId } = session.signs;
+    const catPillsHtml = [
+      `<button type="button" class="sign-cat-pill ${categoryId === 'all' ? 'active' : ''}" data-sign-cat="all">Բոլորը (${SIGNS_DATA.totalSigns})</button>`,
+      ...categories.map(
+        (cat) => `
+          <button type="button" class="sign-cat-pill ${Number(categoryId) === cat.id ? 'active' : ''}" data-sign-cat="${cat.id}">
+            ${escapeHtml(cat.title)} (${cat.signCount})
+          </button>`
+      ),
+    ].join('');
+
     rootEl.innerHTML = `
       <div class="card" style="margin-bottom: 16px;">
         <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 10px;">
           <h2 style="margin: 0; font-size: 19px;">Ճանապարհային նշաններ և նկարագրություններ</h2>
-          <span class="pill-tag">Ցուցադրված է՝ ${filtered.length} / ${SIGNS_DATA.totalSigns}</span>
+          <span class="pill-tag" id="signs-count-pill"></span>
         </div>
         <input
           type="search"
@@ -737,24 +762,19 @@
         <div class="signs-filters">${catPillsHtml}</div>
       </div>
 
-      ${cardsHtml}
+      <div id="signs-results-container"></div>
     `;
 
-    const signsInput = document.getElementById('signs-search-input');
-    signsInput.addEventListener('input', (e) => {
+    renderSignsResults(categories);
+
+    document.getElementById('signs-search-input').addEventListener('input', (e) => {
       session.signs.query = e.target.value;
-      const pos = e.target.selectionStart;
-      renderSigns();
-      const nextInput = document.getElementById('signs-search-input');
-      if (nextInput) {
-        nextInput.focus();
-        nextInput.setSelectionRange(pos, pos);
-      }
+      renderSignsResults(categories);
     });
   }
 
   // ---------- Tab 5: Search & Browse ----------
-  function renderSearch() {
+  function renderSearchResults() {
     const { query, groupId, imagesOnly, showAnswers, page, pageSize } = session.search;
     const filtered = Core.filterQuestions(DATA.groups, { query, groupId, imagesOnly });
     const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
@@ -762,12 +782,13 @@
     session.search.page = safePage;
     const slice = filtered.slice((safePage - 1) * pageSize, safePage * pageSize);
 
-    const groupOptions = [
-      `<option value="all" ${groupId === 'all' ? 'selected' : ''}>Բոլոր խմբերը (1–10)</option>`,
-      ...DATA.groups.map(
-        (g) => `<option value="${g.id}" ${Number(groupId) === g.id ? 'selected' : ''}>Խումբ ${g.id} (${g.questionCount})</option>`
-      ),
-    ].join('');
+    const metaEl = document.getElementById('search-meta-bar');
+    if (metaEl) {
+      metaEl.innerHTML = `
+        <span>Գտնվել է՝ <strong>${filtered.length}</strong> հարց</span>
+        <span>Էջ ${safePage} / ${totalPages}</span>
+      `;
+    }
 
     const resultsHtml =
       slice.length === 0
@@ -797,6 +818,39 @@
             })
             .join('');
 
+    const container = document.getElementById('search-results-container');
+    if (container) {
+      container.innerHTML = resultsHtml;
+    }
+
+    const paginationEl = document.getElementById('search-pagination-bar');
+    if (paginationEl) {
+      paginationEl.innerHTML =
+        totalPages > 1
+          ? `<div class="card pagination-bar">
+               <button type="button" class="btn" id="btn-search-prev" ${safePage <= 1 ? 'disabled' : ''}>← Նախորդ էջ</button>
+               <span>Էջ ${safePage} / ${totalPages}</span>
+               <button type="button" class="btn" id="btn-search-next" ${safePage >= totalPages ? 'disabled' : ''}>Հաջորդ էջ →</button>
+             </div>`
+          : '';
+    }
+  }
+
+  function renderSearch() {
+    // Keep input & controls mounted so iOS/iPadOS virtual keyboard doesn't close while typing
+    if (document.getElementById('search-input') && document.getElementById('search-results-container')) {
+      renderSearchResults();
+      return;
+    }
+
+    const { query, groupId, imagesOnly, showAnswers } = session.search;
+    const groupOptions = [
+      `<option value="all" ${groupId === 'all' ? 'selected' : ''}>Բոլոր խմբերը (1–10)</option>`,
+      ...DATA.groups.map(
+        (g) => `<option value="${g.id}" ${Number(groupId) === g.id ? 'selected' : ''}>Խումբ ${g.id} (${g.questionCount})</option>`
+      ),
+    ].join('');
+
     rootEl.innerHTML = `
       <div class="card" style="margin-bottom: 16px;">
         <div class="search-controls">
@@ -817,53 +871,33 @@
             Ցույց տալ պատասխանները
           </label>
         </div>
-        <div style="margin-top: 10px; font-size: 13px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-          <span>Գտնվել է՝ <strong>${filtered.length}</strong> հարց</span>
-          <span>Էջ ${safePage} / ${totalPages}</span>
-        </div>
+        <div id="search-meta-bar" style="margin-top: 10px; font-size: 13px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;"></div>
       </div>
 
-      <div id="search-results-container">
-        ${resultsHtml}
-      </div>
-
-      ${
-        totalPages > 1
-          ? `<div class="card" style="margin-top: 16px; display: flex; justify-content: space-between; align-items: center;">
-               <button type="button" class="btn" id="btn-search-prev" ${safePage <= 1 ? 'disabled' : ''}>← Նախորդ էջ</button>
-               <span>Էջ ${safePage} / ${totalPages}</span>
-               <button type="button" class="btn" id="btn-search-next" ${safePage >= totalPages ? 'disabled' : ''}>Հաջորդ էջ →</button>
-             </div>`
-          : ''
-      }
+      <div id="search-results-container"></div>
+      <div id="search-pagination-bar"></div>
     `;
 
-    // Re-bind live input handlers
-    const searchInput = document.getElementById('search-input');
-    searchInput.addEventListener('input', (e) => {
+    renderSearchResults();
+
+    document.getElementById('search-input').addEventListener('input', (e) => {
       session.search.query = e.target.value;
       session.search.page = 1;
-      const pos = e.target.selectionStart;
-      renderSearch();
-      const nextInput = document.getElementById('search-input');
-      if (nextInput) {
-        nextInput.focus();
-        nextInput.setSelectionRange(pos, pos);
-      }
+      renderSearchResults();
     });
     document.getElementById('search-group').addEventListener('change', (e) => {
       session.search.groupId = e.target.value;
       session.search.page = 1;
-      renderSearch();
+      renderSearchResults();
     });
     document.getElementById('search-images-only').addEventListener('change', (e) => {
       session.search.imagesOnly = e.target.checked;
       session.search.page = 1;
-      renderSearch();
+      renderSearchResults();
     });
     document.getElementById('search-show-answers').addEventListener('change', (e) => {
       session.search.showAnswers = e.target.checked;
-      renderSearch();
+      renderSearchResults();
     });
   }
 
@@ -887,6 +921,9 @@
       state.ui.activeTab = target;
       persist();
       render();
+      if (typeof btn.scrollIntoView === 'function') {
+        btn.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+      }
     });
   });
 

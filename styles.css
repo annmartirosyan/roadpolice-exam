@@ -24,6 +24,11 @@
   box-sizing: border-box;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+  overflow-x: clip;
+}
+
 body {
   margin: 0;
   font-family: 'Noto Sans Armenian', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -31,6 +36,15 @@ body {
   color: var(--text);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+button,
+input,
+select,
+label {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 .app-header {
@@ -39,12 +53,13 @@ body {
   position: sticky;
   top: 0;
   z-index: 20;
+  padding-top: env(safe-area-inset-top);
 }
 
 .header-inner {
   max-width: 1080px;
   margin: 0 auto;
-  padding: 12px 16px 8px;
+  padding: 12px max(16px, env(safe-area-inset-right)) 8px max(16px, env(safe-area-inset-left));
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -56,6 +71,11 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
+  min-width: 0;
+}
+
+.brand > div {
+  min-width: 0;
 }
 
 .brand-badge {
@@ -94,10 +114,11 @@ body {
 .tab-nav {
   max-width: 1080px;
   margin: 0 auto;
-  padding: 0 16px;
+  padding: 0 max(16px, env(safe-area-inset-right)) 0 max(16px, env(safe-area-inset-left));
   display: flex;
   gap: 6px;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
 }
 
@@ -111,6 +132,7 @@ body {
   border: none;
   border-bottom: 3px solid transparent;
   padding: 10px 14px;
+  min-height: 44px;
   font: inherit;
   font-size: 14px;
   font-weight: 600;
@@ -120,6 +142,7 @@ body {
   align-items: center;
   gap: 8px;
   white-space: nowrap;
+  flex-shrink: 0;
   transition: color 0.15s, border-color 0.15s;
 }
 
@@ -150,8 +173,8 @@ body {
 
 .app-main {
   max-width: 1080px;
-  margin: 20px auto 48px;
-  padding: 0 16px;
+  margin: 20px auto max(48px, env(safe-area-inset-bottom));
+  padding: 0 max(16px, env(safe-area-inset-right)) 0 max(16px, env(safe-area-inset-left));
 }
 
 .card {
@@ -160,6 +183,8 @@ body {
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   padding: 20px;
+  min-width: 0;
+  overflow-wrap: break-word;
 }
 
 .card + .card {
@@ -347,6 +372,7 @@ body {
   font-weight: 600;
   margin: 0 0 16px;
   line-height: 1.55;
+  overflow-wrap: break-word;
 }
 
 .question-images {
@@ -383,6 +409,7 @@ body {
 
 .option-btn {
   width: 100%;
+  min-height: 46px;
   text-align: left;
   background: var(--surface-alt);
   border: 1.5px solid var(--border);
@@ -395,7 +422,13 @@ body {
   display: flex;
   align-items: flex-start;
   gap: 12px;
+  overflow-wrap: break-word;
   transition: border-color 0.15s, background 0.15s;
+}
+
+.option-btn > span:last-child {
+  min-width: 0;
+  overflow-wrap: break-word;
 }
 
 .option-btn:hover:not(:disabled) {
@@ -643,7 +676,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  flex-wrap: wrap;
+  gap: 8px 12px;
   padding: 10px 12px;
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -654,7 +688,7 @@ body {
 /* Search tab */
 .search-controls {
   display: grid;
-  grid-template-columns: 1fr auto auto auto;
+  grid-template-columns: minmax(0, 1fr) auto auto auto;
   gap: 10px;
   align-items: center;
 }
@@ -662,7 +696,9 @@ body {
 .input,
 .select {
   font: inherit;
-  font-size: 14px;
+  font-size: 15px;
+  min-height: 42px;
+  max-width: 100%;
   padding: 9px 12px;
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -691,6 +727,17 @@ body {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--surface);
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+.pagination-bar {
+  margin-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .search-result-card + .search-result-card {
@@ -738,21 +785,22 @@ body {
 
 .lightbox-img {
   max-width: 94vw;
-  max-height: 88vh;
+  max-height: 84dvh;
   border-radius: 10px;
   background: #fff;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+  object-fit: contain;
 }
 
 .lightbox-close {
   position: fixed;
-  top: 16px;
-  right: 20px;
-  width: 40px;
-  height: 40px;
+  top: max(16px, env(safe-area-inset-top));
+  right: max(16px, env(safe-area-inset-right));
+  width: 44px;
+  height: 44px;
   border-radius: 999px;
   border: none;
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.94);
   color: var(--text);
   font-size: 18px;
   font-weight: 700;
@@ -765,8 +813,8 @@ body {
 
 .toast {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
+  bottom: max(20px, env(safe-area-inset-bottom));
+  right: max(20px, env(safe-area-inset-right));
   background: #1e293b;
   color: #fff;
   padding: 10px 16px;
@@ -802,11 +850,14 @@ body {
   border: 1px solid var(--border);
   background: var(--surface-alt);
   color: var(--text);
-  border-radius: 999px;
-  padding: 6px 12px;
+  border-radius: 14px;
+  padding: 7px 12px;
   font: inherit;
   font-size: 13px;
   font-weight: 600;
+  text-align: left;
+  max-width: 100%;
+  overflow-wrap: break-word;
   cursor: pointer;
   transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
@@ -823,7 +874,7 @@ body {
 
 .signs-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(460px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr));
   gap: 12px;
 }
 
@@ -836,6 +887,7 @@ body {
   display: flex;
   gap: 16px;
   align-items: flex-start;
+  min-width: 0;
 }
 
 .sign-thumb-btn {
@@ -863,6 +915,12 @@ body {
   flex: 1;
 }
 
+.sign-body .pill-tag {
+  display: inline-block;
+  border-radius: 8px;
+  line-height: 1.35;
+}
+
 .sign-title {
   margin: 4px 0 6px;
   font-size: 16px;
@@ -877,13 +935,115 @@ body {
   line-height: 1.55;
 }
 
+/* iPad / Tablet (<= 1024px) */
+@media (max-width: 1024px) {
+  .input,
+  .select {
+    font-size: 16px; /* prevents iOS/iPadOS auto-zoom on focus */
+  }
+
+  .group-pills {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .search-controls {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+  }
+
+  .search-controls .input {
+    grid-column: 1 / -1;
+  }
+
+  .q-grid {
+    max-height: 220px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 4px 2px;
+  }
+
+  .q-dot {
+    min-width: 38px;
+    height: 36px;
+  }
+}
+
+/* Mobile & small tablets (<= 760px) */
 @media (max-width: 760px) {
+  .header-inner {
+    padding: 10px max(12px, env(safe-area-inset-right)) 6px max(12px, env(safe-area-inset-left));
+    gap: 8px;
+  }
+
+  .brand-badge {
+    width: 34px;
+    height: 34px;
+    font-size: 12px;
+  }
+
+  .brand-title {
+    font-size: 16px;
+  }
+
+  .brand-subtitle {
+    font-size: 12px;
+  }
+
+  .tab-nav {
+    padding: 0 max(10px, env(safe-area-inset-right)) 0 max(10px, env(safe-area-inset-left));
+    gap: 2px;
+  }
+
+  .tab-btn {
+    padding: 9px 11px;
+    font-size: 13px;
+  }
+
+  .app-main {
+    margin: 12px auto max(36px, env(safe-area-inset-bottom));
+    padding: 0 max(12px, env(safe-area-inset-right)) 0 max(12px, env(safe-area-inset-left));
+  }
+
+  .card {
+    padding: 14px;
+  }
+
+  .group-pills {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  .group-pill {
+    padding: 8px 10px;
+  }
+
+  .group-pill-top {
+    font-size: 13px;
+  }
+
   .search-controls {
     grid-template-columns: 1fr;
   }
 
   .signs-list {
     grid-template-columns: 1fr;
+  }
+
+  .signs-filters {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+  }
+
+  .signs-filters::-webkit-scrollbar {
+    display: none;
+  }
+
+  .sign-cat-pill {
+    flex-shrink: 0;
+    white-space: nowrap;
   }
 
   .sign-card {
@@ -900,7 +1060,39 @@ body {
     font-size: 16px;
   }
 
+  .option-btn {
+    padding: 11px 12px;
+    font-size: 14.5px;
+  }
+
+  .question-footer .toolbar-group {
+    width: 100%;
+  }
+
+  .question-footer .toolbar-group .btn {
+    flex: 1;
+    min-height: 44px;
+  }
+
   .kbd-hint {
     display: none;
+  }
+
+  .toast {
+    left: max(12px, env(safe-area-inset-left));
+    right: max(12px, env(safe-area-inset-right));
+    bottom: max(14px, env(safe-area-inset-bottom));
+    text-align: center;
+  }
+}
+
+/* Very small phones (<= 400px) */
+@media (max-width: 400px) {
+  .header-actions {
+    width: 100%;
+  }
+
+  .header-actions .btn {
+    flex: 1;
   }
 }
