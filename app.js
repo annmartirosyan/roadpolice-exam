@@ -270,15 +270,63 @@
   }
 
   // ---------- Tab 0: Home / Landing Page ----------
+  let homeAnimatedOnce = false;
+
+  function buildAnimatedRoadSvg() {
+    return `
+      <svg class="hero-road-scene" viewBox="0 0 320 112" aria-hidden="true">
+        <circle cx="48" cy="30" r="14" fill="#fde047" opacity="0.85"/>
+        <path d="M0 70 Q50 48 105 70 T225 70 T320 68 L320 70 L0 70 Z" fill="#bfdbfe" opacity="0.65"/>
+        <rect x="0" y="70" width="320" height="42" fill="#334155"/>
+        <line x1="0" y1="91" x2="320" y2="91" stroke="#f8fafc" stroke-width="3" stroke-linecap="round" class="hero-road-dashes"/>
+        <g class="hero-car-group">
+          <rect x="108" y="64" width="96" height="22" rx="8" fill="#1d4ed8"/>
+          <path d="M124 64 L138 48 L178 48 L194 64 Z" fill="#2563eb"/>
+          <path d="M141 51 L156 51 L156 62 L130 62 Z" fill="#dbeafe"/>
+          <path d="M160 51 L175 51 L186 62 L160 62 Z" fill="#dbeafe"/>
+          <circle cx="130" cy="86" r="9" fill="#0f172a"/>
+          <circle cx="130" cy="86" r="4" fill="#e2e8f0"/>
+          <circle cx="184" cy="86" r="9" fill="#0f172a"/>
+          <circle cx="184" cy="86" r="4" fill="#e2e8f0"/>
+          <rect x="199" y="70" width="6" height="5" rx="2" fill="#fef08a"/>
+        </g>
+      </svg>
+    `;
+  }
+
+  function animateHomeCounters() {
+    if (homeAnimatedOnce) return;
+    homeAnimatedOnce = true;
+    const reduceMotion =
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const els = document.querySelectorAll('[data-count-to]');
+    if (reduceMotion) return;
+    els.forEach((el) => {
+      const target = Number(el.dataset.countTo || 0);
+      const suffix = el.dataset.countSuffix || '';
+      const duration = 650;
+      const start = performance.now();
+      function step(now) {
+        const p = Math.min(1, (now - start) / duration);
+        const eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = `${Math.round(target * eased)}${suffix}`;
+        if (p < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    });
+  }
+
   function renderHome() {
     const readiness = Core.computeReadiness(DATA.groups, state);
     const answeredTotal = Object.keys(state.practice).length;
     const mistakeCount = Object.keys(state.mistakes).length;
     const totalSigns = SIGNS_DATA.totalSigns || 282;
+    const totalPlates = COLOR_TESTS_DATA.totalPlates || 53;
 
     const resumeHtml =
       answeredTotal > 0 || mistakeCount > 0
-        ? `<div class="card readiness-card">
+        ? `<div class="card readiness-card home-anim home-delay-1">
              <div class="readiness-main">
                <div class="readiness-top">
                  <span class="readiness-pct">${readiness.overallPct}%</span>
@@ -313,195 +361,133 @@
       })
       .join('');
 
+    const animCls = homeAnimatedOnce ? '' : 'home-anim';
+
     rootEl.innerHTML = `
-      <section class="hero-card">
+      <section class="hero-card ${animCls}">
         <div>
-          <span class="hero-eyebrow">ՀՀ Ճանապարհային ոստիկանություն · ABC կարգեր (2026 թ. խմբագրություն)</span>
-          <h2 class="hero-title">Սովորի՛ր ճանապարհային կանոնները հասկանալով, ոչ թե անգիր անելով</h2>
+          <span class="hero-eyebrow"><span class="live-dot"></span> ՀՀ ՃՈ Տեսական Քննություն · ABC 2026</span>
+          <h2 class="hero-title">Սովորի՛ր կանոնները հասկանալով, ոչ թե անգիր անելով</h2>
           <p class="hero-subtitle">
-            ՀՀ ՃՈ տեսական քննության պաշտոնական բոլոր <strong>${DATA.totalQuestions}</strong> հարցերը,
-            ամեն հարցի հիմնավորված հայերեն բացատրությունը, <strong>${totalSigns}</strong> ճանապարհային նշանները,
-            կարգավորողի ինտերակտիվ մարզիչը և իրական քննության սիմուլյացիան՝ <strong>100% անվճար, առանց գովազդի և գրանցման</strong>։
+            Պաշտոնական բոլոր հարցերը, հայերեն բացատրությունները, ճանապարհային նշաններն ու գունաընկալման թեստը՝ մեկ անվճար հարթակում։
           </p>
           <div class="hero-actions">
             <button type="button" class="btn btn-primary" data-nav-tab="practice">Սկսել ուսուցումը</button>
-            <button type="button" class="btn" data-nav-tab="exam">Հանձնել փորձնական քննություն</button>
-            <button type="button" class="btn btn-ghost" data-nav-tab="signs">Դիտել նշանները (${totalSigns})</button>
+            <button type="button" class="btn" data-nav-tab="exam">Փորձնական քննություն</button>
           </div>
         </div>
 
-        <aside class="hero-preview" aria-label="Քննական ձևաչափի ամփոփում">
-          <div class="hero-preview-header">
-            <span>Քննական արագ ամփոփում</span>
-            <span class="pill-tag success">Անվճար · Օֆլայն</span>
-          </div>
+        <aside class="hero-preview" aria-label="Արագ ծանոթացում">
+          ${buildAnimatedRoadSvg()}
           <div class="hero-signs-row">${previewSignsHtml}</div>
-          <div class="hero-preview-meta">
-            <div class="hero-preview-pill">
-              <strong>18 / 20</strong>
-              <span>Անցողիկ շեմը (30 ր)</span>
-            </div>
-            <div class="hero-preview-pill">
-              <strong>15+2+2+1</strong>
-              <span>Պաշտոնական կշիռ</span>
-            </div>
-          </div>
         </aside>
       </section>
 
       ${resumeHtml}
 
-      <section class="stats-strip" aria-label="Հարթակի տվյալները">
+      <section class="stats-strip ${animCls} home-delay-1" aria-label="Հարթակի տվյալները">
         <div class="stat-tile">
-          <div class="stat-value">${DATA.totalQuestions}</div>
-          <div class="stat-label">Պաշտոնական ABC հարց՝ 10 խմբում, օրիգինալ նկարներով</div>
+          <div class="stat-value" data-count-to="${DATA.totalQuestions}">${DATA.totalQuestions}</div>
+          <div class="stat-label">Պաշտոնական հարց</div>
         </div>
         <div class="stat-tile">
-          <div class="stat-value">${DATA.totalQuestions}</div>
-          <div class="stat-label">Հիմնավորված բացատրություն՝ ՃԵԿ և օրենքի հղումով</div>
+          <div class="stat-value" data-count-to="${totalSigns}">${totalSigns}</div>
+          <div class="stat-label">Ճանապարհային նշան</div>
         </div>
         <div class="stat-tile">
-          <div class="stat-value">${totalSigns}</div>
-          <div class="stat-label">Ճանապարհային նշան՝ 8 խմբում, նկարագրություններով</div>
+          <div class="stat-value" data-count-to="${totalPlates}">${totalPlates}</div>
+          <div class="stat-label">Գունաընկալման աղյուսակ</div>
         </div>
         <div class="stat-tile">
-          <div class="stat-value">100%</div>
-          <div class="stat-label">Անվճար, առանց գովազդի և հասանելի նաև օֆլայն</div>
+          <div class="stat-value" data-count-to="100" data-count-suffix="%">100%</div>
+          <div class="stat-label">Անվճար և օֆլայն</div>
         </div>
       </section>
 
-      <section style="margin-bottom: 18px;">
-        <h2 class="section-heading">Ի՞նչ ենք առաջարկում և ինչպե՞ս ենք օգնում</h2>
-        <p class="section-lead">Ընտրեք Ձեզ հարմար բաժինը՝ կանոնները քայլ առ քայլ յուրացնելու և քննությունը առաջին փորձից հանձնելու համար։</p>
-
+      <section class="${animCls} home-delay-2" style="margin-bottom: 16px;">
+        <h2 class="section-heading">Բաժիններ</h2>
         <div class="features-grid">
-          <article class="feature-card">
-            <div>
-              <div class="feature-icon" aria-hidden="true">📘</div>
-              <h3 class="feature-title">Ուսուցում ըստ 10 խմբերի + Խելացի մարզում</h3>
-              <p class="feature-desc">
-                Պարապեք խմբերով՝ ստանալով ակնթարթային կանաչ/կարմիր արձագանք, տեսեք պատրաստվածության տոկոսը և
-                թողեք համակարգը ընտրի 10 թույլ հարց՝ արագ կրկնության համար։
-              </p>
+          <button type="button" class="feature-tile" data-nav-tab="practice">
+            <div class="feature-icon" aria-hidden="true">📘</div>
+            <div class="feature-tile-body">
+              <h3 class="feature-title">Ուսուցում (10 խումբ)</h3>
+              <p class="feature-desc">Բացատրություններ և խելացի 10 հարցանոց մարզում</p>
             </div>
-            <div>
-              <button type="button" class="btn btn-sm btn-primary" data-nav-tab="practice">Բացել ուսուցումը →</button>
-            </div>
-          </article>
+            <span class="feature-arrow">→</span>
+          </button>
 
-          <article class="feature-card">
-            <div>
-              <div class="feature-icon" aria-hidden="true">⏱️</div>
-              <h3 class="feature-title">Իրական քննության սիմուլյացիա</h3>
-              <p class="feature-desc">
-                Ներառում է 3-աղյուսակ գունաընկալման նախաթեստ (0 սխալ) և 20 հարցանոց թեստ՝ պաշտոնական 15+2+2+1 կշիռներով,
-                30 րոպե ժամանակաչափով և 18/20 անցողիկ շեմով։
-              </p>
+          <button type="button" class="feature-tile" data-nav-tab="exam">
+            <div class="feature-icon" aria-hidden="true">⏱️</div>
+            <div class="feature-tile-body">
+              <h3 class="feature-title">Քննություն (20 հարց)</h3>
+              <p class="feature-desc">30 րոպե, պաշտոնական 15+2+2+1 կշիռներ, 18/20 շեմ</p>
             </div>
-            <div>
-              <button type="button" class="btn btn-sm btn-primary" data-nav-tab="exam">Անցնել քննությունը →</button>
-            </div>
-          </article>
+            <span class="feature-arrow">→</span>
+          </button>
 
-          <article class="feature-card">
-            <div>
-              <div class="feature-icon" aria-hidden="true">💡</div>
-              <h3 class="feature-title">«Ինչու է ճիշտ» բացատրություն ամեն հարցում</h3>
-              <p class="feature-desc">
-                Ամեն հարցի տակ կա փակվող բացատրություն՝ կոնկրետ ՃԵԿ կետերով, կողմնակի տարբերակների բացառմամբ և
-                սեղմվող նշանների հղումներով։
-              </p>
+          <button type="button" class="feature-tile" data-nav-tab="mistakes">
+            <div class="feature-icon" aria-hidden="true">🔁</div>
+            <div class="feature-tile-body">
+              <h3 class="feature-title">Սխալներ (${mistakeCount})</h3>
+              <p class="feature-desc">Սխալված հարցերի ավտոմատ կրկնություն</p>
             </div>
-            <div>
-              <button type="button" class="btn btn-sm" data-nav-tab="search">Որոնել հարցերում →</button>
-            </div>
-          </article>
+            <span class="feature-arrow">→</span>
+          </button>
 
-          <article class="feature-card">
-            <div>
-              <div class="feature-icon" aria-hidden="true">🔁</div>
-              <h3 class="feature-title">Սխալների ավտոմատ ուղղում</h3>
-              <p class="feature-desc">
-                Ուսուցման կամ քննության ընթացքում սխալված և բաց թողնված հարցերը ինքնաշխատ հավաքվում են մեկ բաժնում
-                և մաքրվում են միայն ճիշտ պատասխանելուց հետո։
-              </p>
+          <button type="button" class="feature-tile" data-nav-tab="signs">
+            <div class="feature-icon" aria-hidden="true">🚸</div>
+            <div class="feature-tile-body">
+              <h3 class="feature-title">Նշաններ (${totalSigns})</h3>
+              <p class="feature-desc">Նշանագիրք, հարցերի կապ և նշանների թեստ</p>
             </div>
-            <div>
-              <button type="button" class="btn btn-sm" data-nav-tab="mistakes">Բացել սխալները (${mistakeCount}) →</button>
-            </div>
-          </article>
+            <span class="feature-arrow">→</span>
+          </button>
 
-          <article class="feature-card">
-            <div>
-              <div class="feature-icon" aria-hidden="true">🚸</div>
-              <h3 class="feature-title">Նշանագիրք, հարցերի կապ և նշանների թեստ</h3>
-              <p class="feature-desc">
-                Բոլոր ${totalSigns} ճանապարհային նշանները 8 խմբով, նկարագրություններով, տվյալ նշանին վերաբերող քննական
-                հարցերով և առանձին 10-հարցանոց նշանների վիկտորինայով։
-              </p>
+          <button type="button" class="feature-tile" data-nav-tab="colortest">
+            <div class="feature-icon" aria-hidden="true">🎨</div>
+            <div class="feature-tile-body">
+              <h3 class="feature-title">Գունաընկալում (${totalPlates})</h3>
+              <p class="feature-desc">Աղյուսակներ և 3-հարցանոց ստուգում</p>
             </div>
-            <div>
-              <button type="button" class="btn btn-sm" data-nav-tab="signs">Բացել նշանները →</button>
-            </div>
-          </article>
+            <span class="feature-arrow">→</span>
+          </button>
 
-          <article class="feature-card">
-            <div>
-              <div class="feature-icon" aria-hidden="true">🎨</div>
-              <h3 class="feature-title">Գունաընկալման և հոգեբանական թեստ (${COLOR_TESTS_DATA.totalPlates || 53} աղյուսակ)</h3>
-              <p class="feature-desc">
-                Պարապեք իրական քննության գունային աղյուսակներով (Ռաբկին / Իշիհարա) և ստուգեք Ձեզ
-                պաշտոնական 3-հարցանոց ռեժիմով, որտեղ սխալ չի թույլատրվում։
-              </p>
+          <button type="button" class="feature-tile" data-nav-tab="cheatsheet">
+            <div class="feature-icon" aria-hidden="true">🧭</div>
+            <div class="feature-tile-body">
+              <h3 class="feature-title">Հուշաթերթ և որոնում</h3>
+              <p class="feature-desc">Կարգավորողի մարզիչ և բոլոր թվերը</p>
             </div>
-            <div>
-              <button type="button" class="btn btn-sm btn-primary" data-nav-tab="colortest">Բացել գունաընկալումը →</button>
-            </div>
-          </article>
-
-          <article class="feature-card">
-            <div>
-              <div class="feature-icon" aria-hidden="true">🧭</div>
-              <h3 class="feature-title">Հուշաթերթ և կարգավորողի մարզիչ</h3>
-              <p class="feature-desc">
-                Կարգավորողի 3 դիրքերի ինտերակտիվ սխեմա, գերակայության 5-քայլանոց սանդուղք և արագությունների,
-                հեռավորությունների ու դողերի բոլոր թվերը՝ մեկ էջում։
-              </p>
-            </div>
-            <div>
-              <button type="button" class="btn btn-sm" data-nav-tab="cheatsheet">Բացել հուշաթերթը →</button>
-            </div>
-          </article>
+            <span class="feature-arrow">→</span>
+          </button>
         </div>
       </section>
 
-      <section class="card">
-        <h2 class="section-heading">Ինչպե՞ս է անցնում պաշտոնական տեսական քննությունը</h2>
-        <p class="section-lead">Ծանոթացեք իրական ընթացակարգին՝ վստահ գնալու համար․</p>
-        <div class="how-steps">
-          <div class="how-step">
-            <span class="how-step-num">Քայլ 1</span>
-            <h3 style="margin: 4px 0; font-size: 15px;">Գունաընկալման ստուգում</h3>
-            <p class="feature-desc">3 հարց գունավոր աղյուսակներով՝ սխալ չի թույլատրվում։ Կարող եք փորձել «Քննություն» բաժնում։</p>
-          </div>
-          <div class="how-step">
-            <span class="how-step-num">Քայլ 2</span>
-            <h3 style="margin: 4px 0; font-size: 15px;">20 հարց · 30 րոպե</h3>
-            <p class="feature-desc">Թեստը հանձնած է համարվում առնվազն 18 ճիշտ պատասխանի դեպքում (առավելագույնը 2 սխալ)։</p>
-          </div>
-          <div class="how-step">
-            <span class="how-step-num">Քայլ 3</span>
-            <h3 style="margin: 4px 0; font-size: 15px;">Թեմաների կշիռը</h3>
-            <p class="feature-desc">15 հարց՝ ՃԵԿ և նշաններ, 2՝ Օրենք, 2՝ Անսարքություններ, 1՝ Առաջին օգնություն։</p>
-          </div>
-          <div class="how-step">
-            <span class="how-step-num">Հավելյալ</span>
-            <h3 style="margin: 4px 0; font-size: 15px;">Պահեք հեռախոսի էկրանին</h3>
-            <p class="feature-desc">Ավելացրեք կայքը հեռախոսի կամ iPad-ի գլխավոր էկրանին (Add to Home Screen) և սովորեք նույնիսկ առանց ինտերնետի։</p>
+      <details class="exam-guide-details ${animCls} home-delay-3">
+        <summary class="exam-guide-summary">Ինչպե՞ս է անցնում պաշտոնական տեսական քննությունը</summary>
+        <div class="exam-guide-body">
+          <div class="how-steps">
+            <div class="how-step">
+              <span class="how-step-num">Քայլ 1</span>
+              <div style="font-weight: 700; font-size: 14px; margin-bottom: 4px;">Գունաընկալում (3 հարց)</div>
+              <p class="feature-desc">Առաջին 3 հարցում սխալ չի թույլատրվում։</p>
+            </div>
+            <div class="how-step">
+              <span class="how-step-num">Քայլ 2</span>
+              <div style="font-weight: 700; font-size: 14px; margin-bottom: 4px;">Տեսական թեստ (20 հարց)</div>
+              <p class="feature-desc">30 րոպե՝ առնվազն 18 ճիշտ պատասխան (max 2 սխալ)։</p>
+            </div>
+            <div class="how-step">
+              <span class="how-step-num">Քայլ 3</span>
+              <div style="font-weight: 700; font-size: 14px; margin-bottom: 4px;">Թեմաների կշիռը</div>
+              <p class="feature-desc">15՝ ՃԵԿ, 2՝ Օրենք, 2՝ Անսարքություն, 1՝ Առաջին օգնություն։</p>
+            </div>
           </div>
         </div>
-      </section>
+      </details>
     `;
+
+    animateHomeCounters();
   }
 
   // ---------- Tab 1: Practice ----------
