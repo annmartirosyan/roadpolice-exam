@@ -51,6 +51,7 @@
       query: '',
       categoryId: 'all',
     },
+    openExplanations: {},
   };
 
   const rootEl = document.getElementById('app-root');
@@ -163,6 +164,30 @@
     `;
   }
 
+  function renderExplanationTabHtml(q, scopeKey) {
+    if (!q || !q.explanation) return '';
+    const key = `${scopeKey}:${q.uid}`;
+    const isOpen = Boolean(session.openExplanations[key]);
+    return `
+      <div class="explanation-box">
+        <button
+          type="button"
+          class="explanation-toggle"
+          data-toggle-exp="${escapeHtml(key)}"
+          aria-expanded="${isOpen ? 'true' : 'false'}"
+        >
+          <span>💡 Բացատրություն (Ինչու է ճիշտ)</span>
+          <span>${isOpen ? 'Թաքցնել ▲' : 'Ցույց տալ ▼'}</span>
+        </button>
+        ${
+          isOpen
+            ? `<div class="explanation-content">${escapeHtml(q.explanation)}</div>`
+            : ''
+        }
+      </div>
+    `;
+  }
+
   // ---------- Tab 1: Practice ----------
   function renderPractice() {
     const activeGid = state.ui.activeGroupId || 1;
@@ -270,6 +295,7 @@
         ${renderImagesHtml(q.images)}
         <div class="options-list">${optionsHtml}</div>
         ${feedbackHtml}
+        ${renderExplanationTabHtml(q, 'practice')}
 
         <div class="question-footer">
           <div class="toolbar-group">
@@ -488,6 +514,7 @@
             <div style="font-weight: 600; margin-bottom: 10px;">${escapeHtml(q.text)}</div>
             ${renderImagesHtml(q.images)}
             <ul class="search-options">${opts}</ul>
+            ${renderExplanationTabHtml(q, 'exam-review')}
           </div>
         `;
       })
@@ -627,6 +654,7 @@
         ${renderImagesHtml(q.images)}
         <div class="options-list">${optionsHtml}</div>
         ${feedbackHtml}
+        ${renderExplanationTabHtml(q, 'mistakes')}
 
         <div class="question-footer">
           <div class="toolbar-group">
@@ -763,6 +791,7 @@
                   <div style="font-weight: 600; margin-bottom: 10px;">${escapeHtml(q.text)}</div>
                   ${renderImagesHtml(q.images)}
                   <ul class="search-options">${opts}</ul>
+                  ${renderExplanationTabHtml(q, 'search')}
                 </div>
               `;
             })
@@ -895,6 +924,14 @@
   });
 
   rootEl.addEventListener('click', (e) => {
+    const expBtn = e.target.closest('[data-toggle-exp]');
+    if (expBtn) {
+      const key = expBtn.dataset.toggleExp;
+      session.openExplanations[key] = !session.openExplanations[key];
+      render();
+      return;
+    }
+
     const zoomBtn = e.target.closest('[data-zoom-src]');
     if (zoomBtn) {
       openLightbox(zoomBtn.dataset.zoomSrc);

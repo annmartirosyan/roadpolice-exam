@@ -480,6 +480,44 @@ body {
   color: var(--danger);
 }
 
+.explanation-box {
+  margin-top: 12px;
+  border: 1px solid #bfdbfe;
+  background: #f8fbff;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.explanation-toggle {
+  width: 100%;
+  appearance: none;
+  background: #eff6ff;
+  border: none;
+  padding: 10px 14px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--primary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  text-align: left;
+}
+
+.explanation-toggle:hover {
+  background: #dbeafe;
+}
+
+.explanation-content {
+  padding: 12px 14px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text);
+  border-top: 1px solid #dbeafe;
+}
+
 .question-footer {
   margin-top: 18px;
   padding-top: 14px;

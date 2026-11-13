@@ -292,11 +292,19 @@ def build_dataset(raw_dir: Path, data_dir: Path, refresh: bool = False) -> dict:
             out_path.write_bytes(img_bytes)
         return f"data/images/{filename}"
 
+    explanations_path = data_dir / "explanations.json"
+    explanations_map: dict[str, str] = {}
+    if explanations_path.exists():
+        explanations_map = json.loads(explanations_path.read_text(encoding="utf-8"))
+
     groups: list[dict] = []
     for gid, pdf_path in pdf_files:
         with pymupdf.open(pdf_path) as doc:
             group_data, orphans = parse_pdf_document(doc, gid, image_writer)
             verify_group_data(group_data, orphans)
+            for q in group_data["questions"]:
+                if q["uid"] in explanations_map:
+                    q["explanation"] = explanations_map[q["uid"]]
             groups.append(group_data)
             img_q_count = sum(1 for q in group_data["questions"] if q["images"])
             print(
