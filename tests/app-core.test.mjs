@@ -171,31 +171,20 @@ test('shouldTrackAnalytics skips file:// and localhost and tracks deployed hosts
   assert.equal(Core.shouldTrackAnalytics({ protocol: 'https:', hostname: 'annmartirosyan.github.io' }), true);
 });
 
-test('getAnalyticsOperations deduplicates unique visitors and per-session opens', () => {
-  const makeMem = () => {
-    const map = new Map();
-    return {
-      getItem: (k) => (map.has(k) ? map.get(k) : null),
-      setItem: (k, v) => map.set(k, String(v)),
-    };
+test('getAnalyticsOperations counts unique visitors once and every repeat visit', () => {
+  const map = new Map();
+  const local = {
+    getItem: (k) => (map.has(k) ? map.get(k) : null),
+    setItem: (k, v) => map.set(k, String(v)),
   };
-  const local = makeMem();
-  const session = makeMem();
 
-  const first = Core.getAnalyticsOperations(local, session);
+  const first = Core.getAnalyticsOperations(local);
   assert.equal(first.visitorEndpoint, 'hit');
-  assert.equal(first.sessionEndpoint, 'hit');
+  assert.equal(first.visitEndpoint, 'hit');
   first.markVisitorCounted();
-  first.markSessionCounted();
 
-  // Same session reload: neither should hit again
-  const reload = Core.getAnalyticsOperations(local, session);
-  assert.equal(reload.visitorEndpoint, 'get');
-  assert.equal(reload.sessionEndpoint, 'get');
-
-  // New session, same browser: session hits, visitor does get
-  const newSession = makeMem();
-  const revisit = Core.getAnalyticsOperations(local, newSession);
-  assert.equal(revisit.visitorEndpoint, 'get');
-  assert.equal(revisit.sessionEndpoint, 'hit');
+  // Repeat visits by the same person still increment total opens, but read unique visitors without incrementing
+  const repeat = Core.getAnalyticsOperations(local);
+  assert.equal(repeat.visitorEndpoint, 'get');
+  assert.equal(repeat.visitEndpoint, 'hit');
 });

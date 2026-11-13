@@ -349,7 +349,6 @@
 
   const ANALYTICS_NAMESPACE = 'annmartirosyan-roadpolice-exam';
   const VISITOR_FLAG_KEY = 'roadpolice_visitor_counted_v1';
-  const SESSION_FLAG_KEY = 'roadpolice_session_counted_v1';
 
   function shouldTrackAnalytics(locationObj) {
     if (!locationObj) return false;
@@ -362,32 +361,19 @@
     return true;
   }
 
-  function getAnalyticsOperations(localStore, sessionStore) {
+  function getAnalyticsOperations(localStore) {
     let alreadyCountedVisitor = false;
-    let alreadyCountedSession = false;
     try {
       alreadyCountedVisitor = Boolean(localStore && localStore.getItem(VISITOR_FLAG_KEY));
     } catch {
       alreadyCountedVisitor = false;
     }
-    try {
-      alreadyCountedSession = Boolean(sessionStore && sessionStore.getItem(SESSION_FLAG_KEY));
-    } catch {
-      alreadyCountedSession = false;
-    }
     return {
       visitorEndpoint: alreadyCountedVisitor ? 'get' : 'hit',
-      sessionEndpoint: alreadyCountedSession ? 'get' : 'hit',
+      visitEndpoint: 'hit',
       markVisitorCounted: () => {
         try {
           if (localStore) localStore.setItem(VISITOR_FLAG_KEY, '1');
-        } catch {
-          // ignore
-        }
-      },
-      markSessionCounted: () => {
-        try {
-          if (sessionStore) sessionStore.setItem(SESSION_FLAG_KEY, '1');
         } catch {
           // ignore
         }

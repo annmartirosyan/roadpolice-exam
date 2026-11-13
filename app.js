@@ -1285,10 +1285,10 @@
 
   render();
 
-  // Lightweight privacy-friendly visitor & page-open tracking on deployed hosts
+  // Lightweight privacy-friendly unique-visitor & total-visits tracking on deployed hosts
   (function initVisitorTracking() {
     if (!Core.shouldTrackAnalytics(window.location) || typeof fetch !== 'function') return;
-    const ops = Core.getAnalyticsOperations(window.localStorage, window.sessionStorage);
+    const ops = Core.getAnalyticsOperations(window.localStorage);
     const base = `https://abacus.jasoncameron.dev`;
     const ns = Core.ANALYTICS_NAMESPACE;
 
@@ -1304,12 +1304,7 @@
         }
         return res;
       }),
-      callCounter(ops.sessionEndpoint, 'page-opens').then((res) => {
-        if (res && typeof res.value === 'number' && ops.sessionEndpoint === 'hit') {
-          ops.markSessionCounted();
-        }
-        return res;
-      }),
+      callCounter(ops.visitEndpoint, 'page-opens'),
     ]).then(([visitorsRes, opensRes]) => {
       const wrap = document.getElementById('visit-stats');
       const vEl = document.getElementById('stat-visitors');
