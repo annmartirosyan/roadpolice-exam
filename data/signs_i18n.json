@@ -24,11 +24,11 @@
   "ru": {
     "s-1-1-1.1": {
       "title": "1.1 «Железнодорожный переезд со шлагбаумом»",
-      "description": ""
+      "description": "Знак устанавливается до начала опасного участка: вне населённых пунктов на расстоянии 150–300 м, а в населённых пунктах — на расстоянии 50–100 м. При необходимости он может устанавливаться и на ином расстоянии. В этом случае расстояние указывается на табличке 8.1.1 «Расстояние до объекта». Вне населённых пунктов знак повторяется. Второй (дублирующий) знак устанавливается на расстоянии не менее 50 м до начала опасного участка."
     },
     "s-1-2-1.2": {
       "title": "1.2 «Железнодорожный переезд без шлагбаума»",
-      "description": ""
+      "description": "Знак устанавливается до начала опасного участка: вне населённых пунктов на расстоянии 150–300 м, а в населённых пунктах — на расстоянии 50–100 м. При необходимости он может устанавливаться и на ином расстоянии. В этом случае расстояние указывается на табличке 8.1.1 «Расстояние до объекта». Вне населённых пунктов знак повторяется. Второй (дублирующий) знак устанавливается на расстоянии не менее 50 м до начала опасного участка."
     },
     "s-1-3-1.3.1": {
       "title": "1.3.1 «Однопутная железная дорога»",
@@ -64,15 +64,15 @@
     },
     "s-1-11-1.5": {
       "title": "1.5 «Пересечение с трамвайной линией»",
-      "description": ""
+      "description": "Знак устанавливается до начала опасного участка: вне населённых пунктов на расстоянии 150–300 м, а в населённых пунктах — на расстоянии 50–100 м. При необходимости он может устанавливаться и на ином расстоянии. В этом случае расстояние указывается на табличке 8.1.1 «Расстояние до объекта»."
     },
     "s-1-12-1.6": {
       "title": "1.6 «Пересечение равнозначных дорог»",
-      "description": ""
+      "description": "Знак устанавливается до начала опасного участка: вне населённых пунктов на расстоянии 150–300 м, а в населённых пунктах — на расстоянии 50–100 м. При необходимости он может устанавливаться и на ином расстоянии. В этом случае расстояние указывается на табличке 8.1.1 «Расстояние до объекта»."
     },
     "s-1-13-1.7": {
       "title": "1.7 «Пересечение с круговым движением»",
-      "description": ""
+      "description": "Знак устанавливается до начала опасного участка: вне населённых пунктов на расстоянии 150–300 м, а в населённых пунктах — на расстоянии 50–100 м. При необходимости он может устанавливаться и на ином расстоянии. В этом случае расстояние указывается на табличке 8.1.1 «Расстояние до объекта»."
     },
     "s-1-14-1.8": {
       "title": "1.8 «Светофорное регулирование»",
@@ -100,11 +100,11 @@
     },
     "s-1-20-1.13": {
       "title": "1.13 «Крутой спуск»",
-      "description": ""
+      "description": "Знак устанавливается до начала опасного участка: вне населённых пунктов на расстоянии 150–300 м, а в населённых пунктах — на расстоянии 50–100 м. При необходимости он может устанавливаться и на ином расстоянии. В этом случае расстояние указывается на табличке 8.1.1 «Расстояние до объекта». Знаки 1.13 и 1.14 могут устанавливаться без таблички 8.1.1 «Расстояние до объекта» непосредственно перед спуском или подъёмом, если спуски и подъёмы следуют друг за другом."
     },
     "s-1-21-1.14": {
       "title": "1.14 «Крутой подъём»",
-      "description": ""
+      "description": "Знак устанавливается до начала опасного участка: вне населённых пунктов на расстоянии 150–300 м, а в населённых пунктах — на расстоянии 50–100 м. При необходимости он может устанавливаться и на ином расстоянии. В этом случае расстояние указывается на табличке 8.1.1 «Расстояние до объекта»."
     },
     "s-1-22-1.15": {
       "title": "1.15 «Скользкая дорога»",
@@ -152,19 +152,19 @@
     },
     "s-1-33-1.24": {
       "title": "1.24 «Пересечение с велосипедной дорожкой»",
-      "description": ""
+      "description": "Знак устанавливается до начала опасного участка: вне населённых пунктов на расстоянии 150–300 м, а в населённых пунктах — на расстоянии 50–100 м. При необходимости он может устанавливаться и на ином расстоянии. В этом случае расстояние указывается на табличке 8.1.1 «Расстояние до объекта»."
     },
     "s-1-34-1.25": {
       "title": "1.25 «Дорожные работы»",
-      "description": ""
+      "description": "Знак устанавливается до начала опасного участка: вне населённых пунктов на расстоянии 150–300 м, а в населённых пунктах — на расстоянии 50–100 м. При необходимости он может устанавливаться и на ином расстоянии. В этом случае расстояние указывается на табличке 8.1.1 «Расстояние до объекта». Вне населённых пунктов знак 1.25 повторяется. Второй (дублирующий) знак устанавливается на расстоянии не менее 50 м до начала опасного участка. Знак 1.25 также повторяется в населённых пунктах непосредственно перед опасным участком. При проведении краткосрочных работ на проезжей части знак 1.25 может устанавливаться без таблички 8.1.1 «Расстояние до объекта» на расстоянии 10–15 м до места проведения работ."
     },
     "s-1-35-1.26": {
       "title": "1.26 «Перегон скота»",
-      "description": ""
+      "description": "Знак устанавливается до начала опасного участка: вне населённых пунктов на расстоянии 150–300 м, а в населённых пунктах — на расстоянии 50–100 м. При необходимости он может устанавливаться и на ином расстоянии. В этом случае расстояние указывается на табличке 8.1.1 «Расстояние до объекта»."
     },
     "s-1-36-1.27": {
       "title": "1.27 «Дикие животные»",
-      "description": ""
+      "description": "Знак устанавливается до начала опасного участка: вне населённых пунктов на расстоянии 150–300 м, а в населённых пунктах — на расстоянии 50–100 м. При необходимости он может устанавливаться и на ином расстоянии. В этом случае расстояние указывается на табличке 8.1.1 «Расстояние до объекта»."
     },
     "s-1-37-1.28": {
       "title": "1.28 «Падение камней»",
@@ -172,11 +172,11 @@
     },
     "s-1-38-1.29": {
       "title": "1.29 «Боковой ветер»",
-      "description": ""
+      "description": "Знак устанавливается до начала опасного участка: вне населённых пунктов на расстоянии 150–300 м, а в населённых пунктах — на расстоянии 50–100 м. При необходимости он может устанавливаться и на ином расстоянии. В этом случае расстояние указывается на табличке 8.1.1 «Расстояние до объекта»."
     },
     "s-1-39-1.30": {
       "title": "1.30 «Низколетящие самолёты»",
-      "description": ""
+      "description": "Знак устанавливается до начала опасного участка: вне населённых пунктов на расстоянии 150–300 м, а в населённых пунктах — на расстоянии 50–100 м. При необходимости он может устанавливаться и на ином расстоянии. В этом случае расстояние указывается на табличке 8.1.1 «Расстояние до объекта»."
     },
     "s-1-40-1.31": {
       "title": "1.31 «Тоннель»",
@@ -268,7 +268,7 @@
     },
     "s-3-3-3.3": {
       "title": "3.3 «Движение механических транспортных средств запрещено»",
-      "description": ""
+      "description": "Действие знака не распространяется на транспортные средства общего пользования. Действие знака не распространяется на транспортные средства, управляемые инвалидами I и II групп или перевозящие таких инвалидов. Знак запрещает движение соответствующего вида транспортных средств в обоих направлениях."
     },
     "s-3-4-3.4": {
       "title": "3.4 «Движение грузовых автомобилей запрещено»",
@@ -276,7 +276,7 @@
     },
     "s-3-5-3.5": {
       "title": "3.5 «Движение мотоциклов запрещено»",
-      "description": ""
+      "description": "Знак запрещает движение соответствующего вида транспортных средств в обоих направлениях."
     },
     "s-3-6-3.6": {
       "title": "3.6 «Движение тракторов запрещено»",
@@ -296,7 +296,7 @@
     },
     "s-3-10-3.10": {
       "title": "3.10 «Движение пешеходов запрещено»",
-      "description": ""
+      "description": "Действие знака распространяется только на ту сторону дороги, на которой он установлен."
     },
     "s-3-11-3.11": {
       "title": "3.11 «Ограничение массы»",
@@ -336,15 +336,15 @@
     },
     "s-3-20-3.18.1": {
       "title": "3.18.1 «Поворот направо запрещён»",
-      "description": ""
+      "description": "Действие знака распространяется на пересечение проезжих частей, перед которым установлен знак. Действие знака не распространяется на транспортные средства общего пользования."
     },
     "s-3-21-3.18.2": {
       "title": "3.18.2 «Поворот налево запрещён»",
-      "description": ""
+      "description": "Действие знака распространяется на пересечение проезжих частей, перед которым установлен знак. Действие знака не распространяется на транспортные средства общего пользования."
     },
     "s-3-22-3.19": {
       "title": "3.19 «Разворот запрещён»",
-      "description": ""
+      "description": "Действие знака не распространяется на транспортные средства общего пользования."
     },
     "s-3-23-3.20": {
       "title": "3.20 «Обгон запрещён»",
@@ -384,7 +384,7 @@
     },
     "s-3-32-3.29": {
       "title": "3.29 «Стоянка запрещена по нечётным числам месяца»",
-      "description": ""
+      "description": "Действие знака не распространяется на транспортные средства, управляемые инвалидами I и II групп или перевозящие таких инвалидов, на транспортные средства специальной почтовой связи с цветографическими схемами, а также на автомобили «такси» с включённым таксометром. Действие знака распространяется только на ту сторону дороги, на которой он установлен. Зона действия знака распространяется от места установки знака до ближайшего перекрёстка за ним, а в населённых пунктах при отсутствии перекрёстка — до конца населённого пункта. Действие знака не прерывается в местах разворота и разрыва разделительной полосы, а также в местах выезда с прилегающих к дороге территорий и в местах пересечения (примыкания) с полевыми, лесными и другими второстепенными дорогами, перед которыми не установлены соответствующие знаки. Зона действия знака может быть уменьшена применением таблички 8.2.2 «Зона действия» или установкой в конце зоны действия знака таблички 8.2.3 «Зона действия»."
     },
     "s-3-33-3.30": {
       "title": "3.30 «Стоянка запрещена по чётным числам месяца»",
@@ -1097,16 +1097,68 @@
     "s-8-64-8.28": {
       "title": "8.28 «Стоянка для транспортных средств, осуществляющих выездную торговлю»",
       "description": ""
+    },
+    "s-4-22-4.8": {
+      "title": "4.8.1 «Направление движения транспортных средств с опасными грузами»",
+      "description": "Движение транспортных средств, оборудованных опознавательными знаками «Опасный груз», разрешается только прямо."
+    },
+    "s-4-23-4.8": {
+      "title": "4.8.2 «Направление движения транспортных средств с опасными грузами»",
+      "description": "Движение транспортных средств, оборудованных опознавательными знаками «Опасный груз», разрешается только направо."
+    },
+    "s-4-24-4.8": {
+      "title": "4.8.3 «Направление движения транспортных средств с опасными грузами»",
+      "description": "Движение транспортных средств, оборудованных опознавательными знаками «Опасный груз», разрешается только налево."
+    },
+    "s-5-12-5.11": {
+      "title": "5.11 «Дорога с полосой для транспортных средств общего пользования»",
+      "description": "Дорога, имеющая специально выделенную полосу для движения транспортных средств общего пользования навстречу общему потоку транспорта."
+    },
+    "s-5-13-5.12": {
+      "title": "5.12 «Конец дороги с полосой для транспортных средств общего пользования»",
+      "description": "Обозначает конец дороги с полосой, специально выделенной для движения транспортных средств общего пользования навстречу общему потоку транспорта."
+    },
+    "s-6-28-6.15": {
+      "title": "6.15 «Направление движения для грузовых автомобилей»",
+      "description": "Рекомендует водителям грузовых автомобилей, тракторов и самоходных машин двигаться прямо, если на перекрёстке их движение в каком-либо направлении запрещено."
+    },
+    "s-6-29-6.15": {
+      "title": "6.15 «Направление движения для грузовых автомобилей»",
+      "description": "Рекомендует водителям грузовых автомобилей, тракторов и самоходных машин двигаться направо, если на перекрёстке их движение в каком-либо направлении запрещено."
+    },
+    "s-6-30-6.15": {
+      "title": "6.15 «Направление движения для грузовых автомобилей»",
+      "description": "Рекомендует водителям грузовых автомобилей, тракторов и самоходных машин двигаться налево, если на перекрёстке их движение в каком-либо направлении запрещено."
+    },
+    "s-6-33-6.18": {
+      "title": "6.18 «Направление объезда»",
+      "description": "Указывает продолжать движение прямо для объезда участка дороги, временно закрытого для движения."
+    },
+    "s-6-34-6.18": {
+      "title": "6.18 «Направление объезда»",
+      "description": "Указывает повернуть направо для объезда участка дороги, временно закрытого для движения."
+    },
+    "s-6-35-6.18": {
+      "title": "6.18 «Направление объезда»",
+      "description": "Указывает повернуть налево для объезда участка дороги, временно закрытого для движения."
+    },
+    "s-6-36-6.19": {
+      "title": "6.19 «Предварительный указатель перестроения на другую проезжую часть»",
+      "description": "Указывает направление объезда закрытого для движения участка дороги с разделительной полосой путём перестроения на встречную проезжую часть."
+    },
+    "s-6-37-6.19": {
+      "title": "6.19 «Предварительный указатель перестроения на другую проезжую часть»",
+      "description": "Указывает перестроение на правую проезжую часть в конце объезда закрытого для движения участка дороги с разделительной полосой."
     }
   },
   "en": {
     "s-1-1-1.1": {
       "title": "1.1 \"Railway crossing with barrier\"",
-      "description": ""
+      "description": "The sign is installed before the start of the hazardous section at a distance of 150–300 m outside built-up areas and 50–100 m within built-up areas. If necessary, it may also be installed at a different distance, in which case the distance is indicated on supplementary plate 8.1.1 \"Distance to object\". Outside built-up areas, the sign is repeated; the second (repeat) sign is installed at a distance of at least 50 m before the start of the hazardous section."
     },
     "s-1-2-1.2": {
       "title": "1.2 \"Railway crossing without barrier\"",
-      "description": ""
+      "description": "The sign is installed before the start of the hazardous section at a distance of 150–300 m outside built-up areas and 50–100 m within built-up areas. If necessary, it may also be installed at a different distance, in which case the distance is indicated on supplementary plate 8.1.1 \"Distance to object\". Outside built-up areas, the sign is repeated; the second (repeat) sign is installed at a distance of at least 50 m before the start of the hazardous section."
     },
     "s-1-3-1.3.1": {
       "title": "1.3.1 \"Single-track railway\"",
@@ -1142,15 +1194,15 @@
     },
     "s-1-11-1.5": {
       "title": "1.5 \"Intersection with a tram line\"",
-      "description": ""
+      "description": "The sign is installed before the start of the hazardous section at a distance of 150–300 m outside built-up areas and 50–100 m within built-up areas. If necessary, it may also be installed at a different distance, in which case the distance is indicated on supplementary plate 8.1.1 \"Distance to object\"."
     },
     "s-1-12-1.6": {
       "title": "1.6 \"Intersection of roads of equal importance\"",
-      "description": ""
+      "description": "The sign is installed before the start of the hazardous section at a distance of 150–300 m outside built-up areas and 50–100 m within built-up areas. If necessary, it may also be installed at a different distance, in which case the distance is indicated on supplementary plate 8.1.1 \"Distance to object\"."
     },
     "s-1-13-1.7": {
       "title": "1.7 \"Roundabout intersection\"",
-      "description": ""
+      "description": "The sign is installed before the start of the hazardous section at a distance of 150–300 m outside built-up areas and 50–100 m within built-up areas. If necessary, it may also be installed at a different distance, in which case the distance is indicated on supplementary plate 8.1.1 \"Distance to object\"."
     },
     "s-1-14-1.8": {
       "title": "1.8 \"Traffic signals\"",
@@ -1178,11 +1230,11 @@
     },
     "s-1-20-1.13": {
       "title": "1.13 \"Steep descent\"",
-      "description": ""
+      "description": "The sign is installed before the start of the hazardous section at a distance of 150–300 m outside built-up areas and 50–100 m within built-up areas. If necessary, it may also be installed at a different distance, in which case the distance is indicated on supplementary plate 8.1.1 \"Distance to object\". Signs 1.13 and 1.14 may be installed without supplementary plate 8.1.1 \"Distance to object\" directly before a descent or ascent if descents and ascents follow one another."
     },
     "s-1-21-1.14": {
       "title": "1.14 \"Steep ascent\"",
-      "description": ""
+      "description": "The sign is installed before the start of the hazardous section at a distance of 150–300 m outside built-up areas and 50–100 m within built-up areas. If necessary, it may also be installed at a different distance, in which case the distance is indicated on supplementary plate 8.1.1 \"Distance to object\"."
     },
     "s-1-22-1.15": {
       "title": "1.15 \"Slippery road\"",
@@ -1230,19 +1282,19 @@
     },
     "s-1-33-1.24": {
       "title": "1.24 \"Intersection with a cycle path\"",
-      "description": ""
+      "description": "The sign is installed before the start of the hazardous section at a distance of 150–300 m outside built-up areas and 50–100 m within built-up areas. If necessary, it may also be installed at a different distance, in which case the distance is indicated on supplementary plate 8.1.1 \"Distance to object\"."
     },
     "s-1-34-1.25": {
       "title": "1.25 \"Road works\"",
-      "description": ""
+      "description": "The sign is installed before the start of the hazardous section at a distance of 150–300 m outside built-up areas and 50–100 m within built-up areas. If necessary, it may also be installed at a different distance, in which case the distance is indicated on supplementary plate 8.1.1 \"Distance to object\". Outside built-up areas, sign 1.25 is repeated; the second (repeat) sign is installed at a distance of at least 50 m before the start of the hazardous section. Sign 1.25 is also repeated within built-up areas immediately before the hazardous section. When carrying out short-term works on the carriageway, sign 1.25 may be installed without supplementary plate 8.1.1 \"Distance to object\" at a distance of 10–15 m from the work site."
     },
     "s-1-35-1.26": {
       "title": "1.26 \"Cattle crossing\"",
-      "description": ""
+      "description": "The sign is installed before the start of the hazardous section at a distance of 150–300 m outside built-up areas and 50–100 m within built-up areas. If necessary, it may also be installed at a different distance, in which case the distance is indicated on supplementary plate 8.1.1 \"Distance to object\"."
     },
     "s-1-36-1.27": {
       "title": "1.27 \"Wild animals\"",
-      "description": ""
+      "description": "The sign is installed before the start of the hazardous section at a distance of 150–300 m outside built-up areas and 50–100 m within built-up areas. If necessary, it may also be installed at a different distance, in which case the distance is indicated on supplementary plate 8.1.1 \"Distance to object\"."
     },
     "s-1-37-1.28": {
       "title": "1.28 \"Falling rocks\"",
@@ -1250,11 +1302,11 @@
     },
     "s-1-38-1.29": {
       "title": "1.29 \"Side wind\"",
-      "description": ""
+      "description": "The sign is installed before the start of the hazardous section at a distance of 150–300 m outside built-up areas and 50–100 m within built-up areas. If necessary, it may also be installed at a different distance, in which case the distance is indicated on supplementary plate 8.1.1 \"Distance to object\"."
     },
     "s-1-39-1.30": {
       "title": "1.30 \"Low-flying aircraft\"",
-      "description": ""
+      "description": "The sign is installed before the start of the hazardous section at a distance of 150–300 m outside built-up areas and 50–100 m within built-up areas. If necessary, it may also be installed at a different distance, in which case the distance is indicated on supplementary plate 8.1.1 \"Distance to object\"."
     },
     "s-1-40-1.31": {
       "title": "1.31 \"Tunnel\"",
@@ -1346,7 +1398,7 @@
     },
     "s-3-3-3.3": {
       "title": "3.3 \"No motor vehicles\"",
-      "description": ""
+      "description": "The sign does not apply to public transport vehicles. It also does not apply to vehicles driven by or transporting persons with Group I or II disabilities. The sign prohibits the movement of the corresponding type of vehicles in both directions."
     },
     "s-3-4-3.4": {
       "title": "3.4 \"No goods vehicles\"",
@@ -1354,7 +1406,7 @@
     },
     "s-3-5-3.5": {
       "title": "3.5 \"No motorcycles\"",
-      "description": ""
+      "description": "The sign prohibits the movement of the corresponding type of vehicles in both directions."
     },
     "s-3-6-3.6": {
       "title": "3.6 \"No tractors\"",
@@ -1374,7 +1426,7 @@
     },
     "s-3-10-3.10": {
       "title": "3.10 \"No pedestrians\"",
-      "description": ""
+      "description": "The sign applies only to the side of the road on which it is installed."
     },
     "s-3-11-3.11": {
       "title": "3.11 \"Mass limit\"",
@@ -1414,15 +1466,15 @@
     },
     "s-3-20-3.18.1": {
       "title": "3.18.1 \"No right turn\"",
-      "description": ""
+      "description": "The sign applies to the intersection of carriageways before which it is installed. The sign does not apply to public transport vehicles."
     },
     "s-3-21-3.18.2": {
       "title": "3.18.2 \"No left turn\"",
-      "description": ""
+      "description": "The sign applies to the intersection of carriageways before which it is installed. The sign does not apply to public transport vehicles."
     },
     "s-3-22-3.19": {
       "title": "3.19 \"No U-turn\"",
-      "description": ""
+      "description": "The sign does not apply to public transport vehicles."
     },
     "s-3-23-3.20": {
       "title": "3.20 \"No overtaking\"",
@@ -1462,7 +1514,7 @@
     },
     "s-3-32-3.29": {
       "title": "3.29 \"No parking on odd-numbered days of the month\"",
-      "description": ""
+      "description": "The sign does not apply to vehicles driven by or transporting persons with Group I or II disabilities, special postal service vehicles bearing colour-graphic markings, or taxis with the taximeter switched on. The sign applies only to the side of the road on which it is installed. Its zone of effect extends from the point of installation to the nearest intersection beyond it, and in built-up areas without intersections, to the end of the built-up area. Its effect is not interrupted at U-turn openings and breaks in the median strip, at exits from adjacent areas, or at intersections (junctions) with field, forest, and other secondary roads if appropriate signs are not installed before them. The zone of effect of the sign may be reduced by using supplementary plate 8.2.2 \"Zone of effect\" or by placing supplementary plate 8.2.3 \"Zone of effect\" at the end of its zone of effect."
     },
     "s-3-33-3.30": {
       "title": "3.30 \"No parking on even-numbered days of the month\"",
@@ -2175,6 +2227,58 @@
     "s-8-64-8.28": {
       "title": "8.28 \"Parking for vehicles carrying out mobile trade\"",
       "description": ""
+    },
+    "s-4-22-4.8": {
+      "title": "4.8.1 \"Direction for vehicles carrying dangerous goods\"",
+      "description": "Vehicles equipped with \"Dangerous goods\" identification marks are permitted to proceed only straight ahead."
+    },
+    "s-4-23-4.8": {
+      "title": "4.8.2 \"Direction for vehicles carrying dangerous goods\"",
+      "description": "Vehicles equipped with \"Dangerous goods\" identification marks are permitted to proceed only to the right."
+    },
+    "s-4-24-4.8": {
+      "title": "4.8.3 \"Direction for vehicles carrying dangerous goods\"",
+      "description": "Vehicles equipped with \"Dangerous goods\" identification marks are permitted to proceed only to the left."
+    },
+    "s-5-12-5.11": {
+      "title": "5.11 \"Road with a lane for public transport vehicles\"",
+      "description": "A road with a specially designated lane for public transport vehicles moving against the general flow of traffic."
+    },
+    "s-5-13-5.12": {
+      "title": "5.12 \"End of road with a lane for public transport vehicles\"",
+      "description": "Indicates the end of a road with a specially designated lane for public transport vehicles moving against the general flow of traffic."
+    },
+    "s-6-28-6.15": {
+      "title": "6.15 \"Direction for trucks\"",
+      "description": "Advises drivers of trucks, tractors, and self-propelled machines to proceed straight ahead when their movement at the intersection is prohibited in any direction."
+    },
+    "s-6-29-6.15": {
+      "title": "6.15 \"Direction for trucks\"",
+      "description": "Advises drivers of trucks, tractors, and self-propelled machines to turn right when their movement at the intersection is prohibited in any direction."
+    },
+    "s-6-30-6.15": {
+      "title": "6.15 \"Direction for trucks\"",
+      "description": "Advises drivers of trucks, tractors, and self-propelled machines to turn left when their movement at the intersection is prohibited in any direction."
+    },
+    "s-6-33-6.18": {
+      "title": "6.18 \"Detour direction\"",
+      "description": "Indicates continuing straight ahead to detour around a section of road temporarily closed to traffic."
+    },
+    "s-6-34-6.18": {
+      "title": "6.18 \"Detour direction\"",
+      "description": "Indicates turning right to detour around a section of road temporarily closed to traffic."
+    },
+    "s-6-35-6.18": {
+      "title": "6.18 \"Detour direction\"",
+      "description": "Indicates turning left to detour around a section of road temporarily closed to traffic."
+    },
+    "s-6-36-6.19": {
+      "title": "6.19 \"Advance sign for lane change onto another carriageway\"",
+      "description": "Indicates bypassing a closed section of a road with a median strip by changing onto the opposite carriageway."
+    },
+    "s-6-37-6.19": {
+      "title": "6.19 \"Advance sign for lane change onto another carriageway\"",
+      "description": "Indicates changing back onto the right-hand carriageway at the end of a detour around a closed section of a road with a median strip."
     }
   }
 }

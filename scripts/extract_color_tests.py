@@ -29,6 +29,27 @@ def _clean(text: str) -> str:
     return re.sub(r"\s+", " ", html_lib.unescape(text)).strip()
 
 
+VARORD_COLOR_TRANSLATIONS = {
+    "Ի՞նչ եք տեսնում նկարում։": {
+        "ru": "Что вы видите на картинке?",
+        "en": "What do you see in the picture?",
+    },
+    "Ի՞նչ պատկեր եք տեսնում նկարում։": {
+        "ru": "Какая фигура изображена на картинке?",
+        "en": "What shape is shown in the picture?",
+    },
+    "ոչինչ չեմ տեսնում": {"ru": "Ничего не вижу", "en": "I see nothing"},
+    "ոչինչ": {"ru": "Ничего", "en": "Nothing"},
+    "շրջան": {"ru": "Круг", "en": "Circle"},
+    "եռանկյուն": {"ru": "Треугольник", "en": "Triangle"},
+    "շրջան և եռանկյուն": {"ru": "Круг и треугольник", "en": "Circle and triangle"},
+    "ոչ մի պատկեր չեմ տեսնում": {
+        "ru": "Не вижу никакой фигуры",
+        "en": "I don't see any shape",
+    },
+}
+
+
 def parse_varord_psycho_html(raw_html: str) -> list[dict]:
     blocks = re.split(r'<div\s+id=["\']q_\d+["\']', raw_html)[1:]
     items: list[dict] = []
@@ -46,12 +67,18 @@ def parse_varord_psycho_html(raw_html: str) -> list[dict]:
         correct_indices = [i for i, (_val, rs) in enumerate(opts_raw) if rs.lower() == "ok"]
         if len(correct_indices) != 1:
             continue
+        q_hy = _clean(h3_m.group(1))
+        q_tr = VARORD_COLOR_TRANSLATIONS.get(q_hy, {})
         items.append(
             {
                 "source": "varord.am",
                 "sourceOrder": idx,
-                "question": _clean(h3_m.group(1)),
+                "question": q_hy,
+                "question_ru": q_tr.get("ru", q_hy),
+                "question_en": q_tr.get("en", q_hy),
                 "options": options,
+                "options_ru": [VARORD_COLOR_TRANSLATIONS.get(o, {}).get("ru", o) for o in options],
+                "options_en": [VARORD_COLOR_TRANSLATIONS.get(o, {}).get("en", o) for o in options],
                 "correctIndex": correct_indices[0],
                 "remoteImage": img_m.group(1).strip(),
             }
@@ -130,6 +157,8 @@ def parse_agdrive_js_chunk(js_text: str) -> list[dict]:
     out: list[dict] = []
     for item in raw_items:
         opts = [_clean(str(o)) for o in item.get("options_am", [])]
+        opts_ru = [_clean(str(o)) for o in item.get("options_ru", opts)]
+        opts_en = [_clean(str(o)) for o in item.get("options_en", opts)]
         ans = item.get("answer")
         if not isinstance(ans, int) or not (0 <= ans < len(opts)):
             continue
@@ -138,7 +167,11 @@ def parse_agdrive_js_chunk(js_text: str) -> list[dict]:
                 "source": "agdrive.am",
                 "sourceOrder": int(item.get("id", len(out) + 1)),
                 "question": _clean(str(item.get("question_am", ""))),
+                "question_ru": _clean(str(item.get("question_ru", ""))) or _clean(str(item.get("question_am", ""))),
+                "question_en": _clean(str(item.get("question_en", ""))) or _clean(str(item.get("question_am", ""))),
                 "options": opts,
+                "options_ru": opts_ru,
+                "options_en": opts_en,
                 "correctIndex": ans,
                 "remoteImage": str(item.get("image", "")).strip(),
             }
@@ -205,8 +238,12 @@ def build_color_tests_dataset(raw_dir: Path, data_dir: Path, refresh: bool = Fal
                 "id": f"ct-{num}",
                 "number": num,
                 "question": item["question"],
+                "question_ru": item.get("question_ru", item["question"]),
+                "question_en": item.get("question_en", item["question"]),
                 "image": local_path,
                 "options": item["options"],
+                "options_ru": item.get("options_ru", item["options"]),
+                "options_en": item.get("options_en", item["options"]),
                 "correctIndex": item["correctIndex"],
                 "source": item["source"],
             }
