@@ -1761,3 +1761,257 @@ label {
   }
 }
 
+/* Header Tools: Daily Streak, Language Switcher, Note Trigger */
+.header-tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.streak-pill {
+  appearance: none;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  color: #c2410c;
+  border-radius: 999px;
+  padding: 5px 11px;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 34px;
+}
+
+.streak-pill.done {
+  background: var(--success-bg);
+  border-color: var(--success-border);
+  color: var(--success);
+}
+
+.lang-switch {
+  display: inline-flex;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 2px;
+  gap: 2px;
+}
+
+.lang-btn {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  min-height: 30px;
+}
+
+.lang-btn.active {
+  background: var(--primary);
+  color: #fff;
+}
+
+/* Bookmark & Secondary Bilingual Text */
+.bookmark-btn {
+  appearance: none;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  border-radius: 8px;
+  padding: 4px 10px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.bookmark-btn:hover {
+  border-color: #fbbf24;
+  color: #b45309;
+}
+
+.bookmark-btn.active {
+  background: #fef3c7;
+  border-color: #f59e0b;
+  color: #92400e;
+}
+
+.bilingual-sub {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+/* Sub-tab switcher */
+.subtab-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+/* Searchable Law & Rules Reader */
+.rules-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rule-item-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  box-shadow: var(--shadow);
+}
+
+.rule-item-card.highlight {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px #bfdbfe;
+}
+
+.rule-item-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.rule-item-text {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.6;
+  white-space: pre-line;
+}
+
+/* Floating Draggable Yellow Sticky Note */
+.sticky-note[hidden] {
+  display: none;
+}
+
+.sticky-note {
+  position: fixed;
+  right: max(18px, env(safe-area-inset-right));
+  bottom: max(18px, env(safe-area-inset-bottom));
+  width: 280px;
+  max-width: calc(100vw - 24px);
+  background: #fef08a;
+  border: 1px solid #eab308;
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.22);
+  z-index: 85;
+  color: #422006;
+  overflow: hidden;
+  user-select: none;
+}
+
+.sticky-note.minimized {
+  width: auto;
+  min-width: 170px;
+}
+
+.sticky-note.minimized .sticky-note-body {
+  display: none;
+}
+
+.sticky-note-header {
+  background: #fde047;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  cursor: grab;
+  touch-action: none;
+  border-bottom: 1px solid rgba(161, 98, 7, 0.25);
+}
+
+.sticky-note-header:active {
+  cursor: grabbing;
+}
+
+.sticky-note-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #713f12;
+  white-space: nowrap;
+}
+
+.sticky-note-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.sticky-icon-btn {
+  appearance: none;
+  border: 1px solid rgba(161, 98, 7, 0.25);
+  background: rgba(255, 255, 255, 0.55);
+  color: #713f12;
+  width: 28px;
+  height: 26px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.sticky-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.sticky-note-body {
+  padding: 8px;
+}
+
+.sticky-note-textarea {
+  width: 100%;
+  min-height: 118px;
+  max-height: 45vh;
+  resize: vertical;
+  border: none;
+  outline: none;
+  background: transparent;
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #422006;
+  user-select: text;
+}
+
+.sticky-note-textarea::placeholder {
+  color: rgba(113, 63, 18, 0.65);
+}
+
+@media (max-width: 760px) {
+  .header-tools {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .sticky-note {
+    width: 250px;
+  }
+
+  .sticky-note-textarea {
+    font-size: 16px;
+  }
+}
+

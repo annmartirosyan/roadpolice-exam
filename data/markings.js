@@ -1,0 +1,863 @@
+window.MARKINGS_DATA = {
+  "generatedAt": "2026-11-13T13:13:22.066925+00:00",
+  "totalItems": 55,
+  "categories": [
+    {
+      "id": 101,
+      "key": "horiz",
+      "title": "I. Հորիզոնական գծանշում (1.1–1.26)",
+      "title_ru": "I. Горизонтальная разметка (1.1–1.26)",
+      "title_en": "I. Horizontal Markings (1.1–1.26)",
+      "count": 33,
+      "items": [
+        {
+          "id": "m-101-1",
+          "categoryId": 101,
+          "code": "1.1",
+          "title": "1.1",
+          "title_ru": "1.1",
+          "title_en": "1.1",
+          "description": "հոծ գիծ, որը բաժանում է հանդիպակաց ուղղությունների տրանսպորտային հոսքերը (առանցքային գիծ), նշում ճանապարհի վտանգավոր վայրերում երթևեկության գոտիների սահմանները և ցույց տալիս երթևեկելի մասի սահմանները, ուր մուտքն արգելված է, ցույց է տալիս տրանսպորտային միջոցների կայանման տեղերի սահմանները.",
+          "description_ru": "сплошная линия, которая разделяет транспортные потоки противоположных направлений (осевая линия), обозначает границы полос движения в опасных местах дороги и указывает границы проезжей части, въезд на которую запрещён, указывает границы мест стоянки транспортных средств.",
+          "description_en": "a solid line that separates traffic flows of opposite directions (centre line), marks the boundaries of traffic lanes in dangerous places on the road, indicates the boundaries of the carriageway onto which entry is prohibited, and indicates the boundaries of vehicle parking places.",
+          "image": "data/markings/42b20c4da873eaee.png",
+          "images": [
+            "data/markings/42b20c4da873eaee.png"
+          ]
+        },
+        {
+          "id": "m-101-2",
+          "categoryId": 101,
+          "code": "1.2",
+          "title": "1.2",
+          "title_ru": "1.2",
+          "title_en": "1.2",
+          "description": "հոծ գիծ (եզրային), որը ցույց է տալիս երթևեկելի մասի և բաժանարար գոտու եզրը.",
+          "description_ru": "сплошная линия (краевая), которая указывает край проезжей части и разделительной полосы.",
+          "description_en": "a solid line (edge line) that indicates the edge of the carriageway and the central reservation.",
+          "image": "data/markings/10c51d080cd70536.png",
+          "images": [
+            "data/markings/10c51d080cd70536.png"
+          ]
+        },
+        {
+          "id": "m-101-3",
+          "categoryId": 101,
+          "code": "1.3",
+          "title": "1.3",
+          "title_ru": "1.3",
+          "title_en": "1.3",
+          "description": "չորս և ավելի երթևեկության գոտի ունեցող ճանապարհներին բաժանում է հանդիպակաց ուղղությունների տրանսպորտային հոսքերը (առանցքային գծեր).",
+          "description_ru": "на дорогах с четырьмя и более полосами движения разделяет транспортные потоки противоположных направлений (осевые линии).",
+          "description_en": "on roads with four or more traffic lanes, separates traffic flows of opposite directions (centre lines).",
+          "image": "data/markings/1f64e874c505c4d5.png",
+          "images": [
+            "data/markings/1f64e874c505c4d5.png"
+          ]
+        },
+        {
+          "id": "m-101-4",
+          "categoryId": 101,
+          "code": "1.4",
+          "title": "1.4",
+          "title_ru": "1.4",
+          "title_en": "1.4",
+          "description": "դեղին հոծ գիծ, որը ցույց է տալիս այն տեղերը, որտեղ կանգառը և կայանումն արգելված են: Կիրառվում է ինքնուրույն կամ 3.27 ՝ «Կանգառն արգելված է» նշանի հետ և գծվում է երթևեկելի մասի եզրի մոտ (եզրային գծի առկայության դեպքում` դրա փոխարեն) կամ եզրաքարի վերին մակերեսին.",
+          "description_ru": "жёлтая сплошная линия, которая указывает места, где остановка и стоянка запрещены. Применяется самостоятельно или со знаком 3.27 «Остановка запрещена» и наносится у края проезжей части (при наличии краевой линии — вместо неё) или по верху бордюра.",
+          "description_en": "a yellow solid line that indicates places where stopping and parking are prohibited. Used independently or with sign 3.27 \"No stopping\" and applied at the edge of the carriageway (where an edge line is present — instead of it) or along the top of the kerb.",
+          "image": "data/markings/59d5291b86e5fd0b.png",
+          "images": [
+            "data/markings/59d5291b86e5fd0b.png"
+          ]
+        },
+        {
+          "id": "m-101-5",
+          "categoryId": 101,
+          "code": "1.5",
+          "title": "1.5",
+          "title_ru": "1.5",
+          "title_en": "1.5",
+          "description": "ընդհատվող գիծ, որը բաժանում է երկու կամ երեք երթևեկության գոտի ունեցող ճանապարհների հանդիպակաց ուղղությունների տրանսպորտային հոսքերը (առանցքային գիծ), իսկ մեկ ուղղությամբ երկու և ավելի երթևեկության գոտի ունեցող ճանապարհներին ցույց է տալիս երթևեկության գոտիների սահմանները.",
+          "description_ru": "прерывистая линия, которая разделяет транспортные потоки противоположных направлений на дорогах с двумя или тремя полосами движения (осевая линия), а на дорогах с двумя и более полосами движения в одном направлении указывает границы полос движения.",
+          "description_en": "a broken line that separates traffic flows of opposite directions on roads with two or three traffic lanes (centre line), and on roads with two or more lanes in one direction indicates the boundaries of traffic lanes.",
+          "image": "data/markings/4c1a849178e9b9c0.png",
+          "images": [
+            "data/markings/4c1a849178e9b9c0.png"
+          ]
+        },
+        {
+          "id": "m-101-6",
+          "categoryId": 101,
+          "code": "1.6",
+          "title": "1.6",
+          "title_ru": "1.6",
+          "title_en": "1.6",
+          "description": "«մոտեցման գիծ»` ընդհատվող գիծ, որը նախազգուշացնում է երթևեկության հանդիպակաց կամ համընթաց ուղղությունների տրանսպորտային հոսքերը բաժանող 1.1 կամ 1.11 գծանշմանը մոտենալու մասին (յուրաքանչյուր գծիկի երկարությունը երեք անգամ գերազանցում է այդ գծիկների միջև ընկած տարածությունը).",
+          "description_ru": "«линия приближения» — прерывистая линия, которая предупреждает о приближении к разметке 1.1 или 1.11 , разделяющей транспортные потоки встречных или попутных направлений (длина каждого штриха в три раза превышает расстояние между этими штрихами).",
+          "description_en": "\"approach line\" — a broken line that warns of an approach to marking 1.1 or 1.11 separating traffic flows of opposing or like directions (the length of each stroke is three times the distance between these strokes).",
+          "image": "data/markings/af1edbadcc8b52f0.png",
+          "images": [
+            "data/markings/af1edbadcc8b52f0.png"
+          ]
+        },
+        {
+          "id": "m-101-7",
+          "categoryId": 101,
+          "code": "1.7",
+          "title": "1.7",
+          "title_ru": "1.7",
+          "title_en": "1.7",
+          "description": "ընդհատվող գիծ, որը ցույց է տալիս երթևեկության գոտիները խաչմերուկի սահմաններում (գծիկների երկարությունը և դրանց միջև ընկած տարածությունը հավասար են).",
+          "description_ru": "прерывистая линия, которая обозначает полосы движения в пределах перекрёстка (длина штрихов и расстояние между ними равны).",
+          "description_en": "a broken line that marks traffic lanes within an intersection (the length of the strokes and the distance between them are equal).",
+          "image": "data/markings/49432a6b9c3c6009.png",
+          "images": [
+            "data/markings/49432a6b9c3c6009.png"
+          ]
+        },
+        {
+          "id": "m-101-8",
+          "categoryId": 101,
+          "code": "1.8",
+          "title": "1.8",
+          "title_ru": "1.8",
+          "title_en": "1.8",
+          "description": "ընդհատվող լայն գիծ, որը ցույց է տալիս երթևեկելի մասի հիմնական և թափառքի կամ արգելակման գոտիների միջև առկա սահմանը.",
+          "description_ru": "широкая прерывистая линия, которая обозначает границу между основной полосой проезжей части и полосой разгона или торможения.",
+          "description_en": "a wide broken line that marks the boundary between the main lane of the carriageway and an acceleration or deceleration lane.",
+          "image": "data/markings/9100cf902d35a031.png",
+          "images": [
+            "data/markings/9100cf902d35a031.png"
+          ]
+        },
+        {
+          "id": "m-101-9",
+          "categoryId": 101,
+          "code": "1.9",
+          "title": "1.9",
+          "title_ru": "1.9",
+          "title_en": "1.9",
+          "description": "ընդհատվող (դարձափոխային) գիծ, որը ցույց է տալիս երթևեկության այն գոտիների սահմանները, որտեղ իրականացվում է դարձափոխային կարգավորում, իսկ եթե դարձափոխային լուսացույցներն անջատված են, բաժանում է հանդիպակաց ուղղությունների տրանսպորտային հոսքերը.",
+          "description_ru": "прерывистая (реверсивная) линия, которая обозначает границы полос движения, на которых осуществляется реверсивное регулирование, а если реверсивные светофоры отключены — разделяет транспортные потоки противоположных направлений.",
+          "description_en": "a broken (reversible) line that marks the boundaries of traffic lanes on which reversible regulation is carried out, and, when the reversible traffic lights are switched off, separates traffic flows of opposite directions.",
+          "image": "data/markings/21a0943d92cb09ef.png",
+          "images": [
+            "data/markings/21a0943d92cb09ef.png"
+          ]
+        },
+        {
+          "id": "m-101-10",
+          "categoryId": 101,
+          "code": "1.10",
+          "title": "1.10",
+          "title_ru": "1.10",
+          "title_en": "1.10",
+          "description": "ընդհատվող դեղին գիծ, որը ցույց է տալիս այն տեղերը, որտեղ կայանելն արգելված է: Կիրառվում է ինքնուրույն կամ 3.28 ` «Կայանելն արգելվում է» նշանի հետ և գծվում երթևեկելի մասի եզրի մոտ (եզրային գծի առկայության դեպքում` դրա փոխարեն) կամ եզրաքարի վերին մակերեսին.",
+          "description_ru": "прерывистая жёлтая линия, которая указывает места, где стоянка запрещена. Применяется самостоятельно или со знаком 3.28 «Стоянка запрещена» и наносится у края проезжей части (при наличии краевой линии — вместо неё) или по верху бордюра.",
+          "description_en": "a yellow broken line that indicates places where parking is prohibited. Used independently or with sign 3.28 \"No parking\" and applied at the edge of the carriageway (where an edge line is present — instead of it) or along the top of the kerb.",
+          "image": "data/markings/9d28cdc735eb8e6f.png",
+          "images": [
+            "data/markings/9d28cdc735eb8e6f.png"
+          ]
+        },
+        {
+          "id": "m-101-11",
+          "categoryId": 101,
+          "code": "1.11",
+          "title": "1.11",
+          "title_ru": "1.11",
+          "title_en": "1.11",
+          "description": "հոծ և ընդհատվող գծերի համակցություն, որոնք` 1) բաժանում են հանդիպակաց կամ համընթաց ուղղությունների տրանսպորտային հոսքերը ճանապարհի այն հատվածներում, որտեղ վերադասավորումը թույլատրվում է միայն մեկ գոտուց. 2) ցույց է տալիս հետադարձի, ինչպես նաև մերձակա տարածքներ մուտքի, ելքի և նման տեղերը, որտեղ երթևեկությունը թույլատրվում է միայն մեկ ուղղությամբ.",
+          "description_ru": "сочетание сплошной и прерывистой линий, которые: разделяют транспортные потоки противоположных или попутных направлений на участках дорог, где перестроение разрешается только из одной полосы; указывают места разворота, а также въезда на прилегающие территории, выезда с них и подобные места, где движение разрешено только в одном направлении.",
+          "description_en": "a combination of a solid line and a broken line, which: separate traffic flows of opposite or like directions on sections of road where changing lanes is permitted only from one lane; indicate places for U-turns, as well as entry onto adjoining territories, exit from them, and similar places where movement is permitted only in one direction.",
+          "image": "data/markings/f6bf917d5b8c5ac2.png",
+          "images": [
+            "data/markings/f6bf917d5b8c5ac2.png"
+          ]
+        },
+        {
+          "id": "m-101-12",
+          "categoryId": 101,
+          "code": "1.12",
+          "title": "1.12",
+          "title_ru": "1.12",
+          "title_en": "1.12",
+          "description": "«Կանգ-գիծ»` հոծ գիծ, որը ցույց է տալիս այն տեղը, որտեղ վարորդը պետք է կանգ առնի լուսացույցի (կարգավորողի) արգելող ազդանշանի կամ 2.5 ` «Երթևեկությունն առանց կանգառի արգելված է» նշանի առկայության դեպքում, ինչպես նաև երկաթուղային գծանցի առջև, երբ գծանցով երթևեկությունն արգելված է.",
+          "description_ru": "«стоп-линия» — сплошная линия, которая указывает место, где водитель должен остановиться при наличии запрещающего сигнала светофора (регулировщика) или знака 2.5 «Движение без остановки запрещено», а также перед железнодорожным переездом, когда движение через переезд запрещено.",
+          "description_en": "\"stop line\" — a solid line that indicates the place where the driver must stop when there is a prohibitory signal of the traffic light (traffic controller) or sign 2.5 \"No entry without stopping,\" as well as before a railway crossing when passage through the crossing is prohibited.",
+          "image": "data/markings/2042eeb085d28db2.png",
+          "images": [
+            "data/markings/2042eeb085d28db2.png"
+          ]
+        },
+        {
+          "id": "m-101-13",
+          "categoryId": 101,
+          "code": "1.13",
+          "title": "1.13",
+          "title_ru": "1.13",
+          "title_en": "1.13",
+          "description": "ցույց է տալիս այն տեղը, որտեղ վարորդն անհրաժեշտության դեպքում պետք է կանգ առնի և զիջի ճանապարհը հատող ճանապարհով երթևեկող տրանսպորտային միջոցներին.",
+          "description_ru": "указывает место, где водитель при необходимости должен остановиться и уступить дорогу транспортным средствам, движущимся по пересекаемой дороге.",
+          "description_en": "indicates the place where the driver, if necessary, must stop and give way to vehicles travelling on the road being crossed.",
+          "image": "data/markings/387a371c26cd2046.png",
+          "images": [
+            "data/markings/387a371c26cd2046.png"
+          ]
+        },
+        {
+          "id": "m-101-14",
+          "categoryId": 101,
+          "code": "1.14.1",
+          "title": "1.14.1",
+          "title_ru": "1.14.1",
+          "title_en": "1.14.1",
+          "description": "«Զեբր»` ցույց են տալիս հետիոտնային անցումը: Գծանշման սլաքները ( 1.14.2 ) ցույց են տալիս հետիոտների շարժման ուղղությունը.",
+          "description_ru": "«зебра» — обозначают пешеходный переход. Стрелки разметки ( 1.14.2 ) указывают направление движения пешеходов.",
+          "description_en": "\"zebra\" — denote a pedestrian crossing. The marking arrows ( 1.14.2 ) indicate the direction of pedestrian movement.",
+          "image": "data/markings/720d06fa18a34017.png",
+          "images": [
+            "data/markings/720d06fa18a34017.png"
+          ]
+        },
+        {
+          "id": "m-101-15",
+          "categoryId": 101,
+          "code": "1.14.2",
+          "title": "1.14.2",
+          "title_ru": "1.14.2",
+          "title_en": "1.14.2",
+          "description": "«Զեբր»` ցույց են տալիս հետիոտնային անցումը: Գծանշման սլաքները ( 1.14.2 ) ցույց են տալիս հետիոտների շարժման ուղղությունը.",
+          "description_ru": "«зебра» — обозначают пешеходный переход. Стрелки разметки ( 1.14.2 ) указывают направление движения пешеходов.",
+          "description_en": "\"zebra\" — denote a pedestrian crossing. The marking arrows ( 1.14.2 ) indicate the direction of pedestrian movement.",
+          "image": "data/markings/52e14fb33fd6ba1f.png",
+          "images": [
+            "data/markings/52e14fb33fd6ba1f.png"
+          ]
+        },
+        {
+          "id": "m-101-16",
+          "categoryId": 101,
+          "code": "1.15",
+          "title": "1.15",
+          "title_ru": "1.15",
+          "title_en": "1.15",
+          "description": "ընդհատվող գծեր, որոնք ցույց են տալիս այն տեղը, որտեղ հեծանվային արահետը հատում է ճանապարհի երթևեկելի մասը.",
+          "description_ru": "прерывистые линии, которые указывают место, где велосипедная дорожка пересекает проезжую часть дороги.",
+          "description_en": "broken lines that indicate the place where a cycle path crosses the carriageway.",
+          "image": "data/markings/8eb31039ed50032a.png",
+          "images": [
+            "data/markings/8eb31039ed50032a.png"
+          ]
+        },
+        {
+          "id": "m-101-17",
+          "categoryId": 101,
+          "code": "1.16.1",
+          "title": "1.16.1",
+          "title_ru": "1.16.1",
+          "title_en": "1.16.1",
+          "description": "ցույց են տալիս ուղղորդ կղզյակները` 1.16.1 - հանդիպակաց ուղղությունների տրանսպորտային հոսքերի բաժանման տեղերում, 1.16.2 - համընթաց տրանսպորտային հոսքերի բաժանման տեղերը կամ համընթաց ուղղության տրանսպորտային հոսքերի բաժանման տեղերում, 1.16.3 - տարբեր ուղղությունների տրանսպորտային հոսքերի միացման տեղերում.",
+          "description_ru": "обозначают направляющие островки: в местах разделения транспортных потоков противоположных направлений",
+          "description_en": "denote guiding islands: in places where traffic flows of opposite directions are separated",
+          "image": "data/markings/78de243a16658a31.png",
+          "images": [
+            "data/markings/78de243a16658a31.png"
+          ]
+        },
+        {
+          "id": "m-101-18",
+          "categoryId": 101,
+          "code": "1.16.2",
+          "title": "1.16.2",
+          "title_ru": "1.16.2",
+          "title_en": "1.16.2",
+          "description": "ցույց են տալիս ուղղորդ կղզյակները` 1.16.1 - հանդիպակաց ուղղությունների տրանսպորտային հոսքերի բաժանման տեղերում, 1.16.2 - համընթաց տրանսպորտային հոսքերի բաժանման տեղերը կամ համընթաց ուղղության տրանսպորտային հոսքերի բաժանման տեղերում, 1.16.3 - տարբեր ուղղությունների տրանսպորտային հոսքերի միացման տեղերում.",
+          "description_ru": "обозначают направляющие островки: в местах разделения попутных транспортных потоков или транспортных потоков попутного направления",
+          "description_en": "denote guiding islands: in places where like traffic flows or traffic flows of a like direction are separated",
+          "image": "data/markings/5fd2d627032e71ea.png",
+          "images": [
+            "data/markings/5fd2d627032e71ea.png"
+          ]
+        },
+        {
+          "id": "m-101-19",
+          "categoryId": 101,
+          "code": "1.16.3",
+          "title": "1.16.3",
+          "title_ru": "1.16.3",
+          "title_en": "1.16.3",
+          "description": "ցույց են տալիս ուղղորդ կղզյակները` 1.16.1 - հանդիպակաց ուղղությունների տրանսպորտային հոսքերի բաժանման տեղերում, 1.16.2 - համընթաց տրանսպորտային հոսքերի բաժանման տեղերը կամ համընթաց ուղղության տրանսպորտային հոսքերի բաժանման տեղերում, 1.16.3 - տարբեր ուղղությունների տրանսպորտային հոսքերի միացման տեղերում.",
+          "description_ru": "обозначают направляющие островки: в местах слияния транспортных потоков разных направлений.",
+          "description_en": "denote guiding islands: in places where traffic flows of different directions merge.",
+          "image": "data/markings/cef046f131a8572e.png",
+          "images": [
+            "data/markings/cef046f131a8572e.png"
+          ]
+        },
+        {
+          "id": "m-101-20",
+          "categoryId": 101,
+          "code": "1.17",
+          "title": "1.17",
+          "title_ru": "1.17",
+          "title_en": "1.17",
+          "description": "դեղին բեկյալ հոծ գիծ, որը ցույց է տալիս ընդհանուր օգտագործման տրանսպորտային միջոցների կանգառի կետերը, իսկ 5.18 ՝ «Թեթև մարդատար տաքսիների կայանման տեղ» նշանի առկայության դեպքում՝ տաքսիների կայանման վայրերը.",
+          "description_ru": "жёлтая ломаная сплошная линия, которая обозначает остановочные пункты транспортных средств общего пользования, а при наличии знака 5.18 «Место стоянки легковых такси» — места стоянки такси.",
+          "description_en": "a yellow zigzag solid line that denotes the stopping points of public transport vehicles, and, where sign 5.18 \"Taxi stand\" is present — taxi stands.",
+          "image": "data/markings/58b6fa4af9d93f1a.png",
+          "images": [
+            "data/markings/58b6fa4af9d93f1a.png"
+          ]
+        },
+        {
+          "id": "m-101-21",
+          "categoryId": 101,
+          "code": "1.18",
+          "title": "1.18",
+          "title_ru": "1.18",
+          "title_en": "1.18",
+          "description": "ցույց է տալիս խաչմերուկում երթևեկության թույլատրելի ուղղությունները` ըստ գոտիների: Կիրառվում է ինքնուրույն կամ 5.15.1 ` «Երթևեկության ուղղությունները գոտիներով» և 5.15.2 ` «Երթևեկության ուղղությունները գոտիով» նշանների հետ: Փակուղու պատկերով գծանշումը ցույց է տալիս, որ դեպի մոտակա երթևեկելի մաս շրջադարձն արգելվում է: Ձախ եզրային գոտուց ձախ շրջադարձ թույլատրող գծանշումը թույլատրում է նաև հետադարձը.",
+          "description_ru": "указывает разрешённые направления движения на перекрёстке по полосам. Применяется самостоятельно или со знаками 5.15.1 «Направления движения по полосам» и 5.15.2 «Направления движения по полосе». Разметка с изображением тупика указывает, что поворот на ближайшую проезжую часть запрещён. Разметка, разрешающая поворот налево из крайней левой полосы, разрешает также разворот.",
+          "description_en": "indicates the permitted directions of travel at an intersection by lane. Used independently or with signs 5.15.1 \"Directions of travel by lane\" and 5.15.2 \"Direction of travel for a lane.\" Marking with a dead-end image indicates that turning onto the nearest carriageway is prohibited. Marking permitting a left turn from the leftmost lane also permits a U-turn.",
+          "image": "data/markings/1fa2565ca9406345.png",
+          "images": [
+            "data/markings/1fa2565ca9406345.png"
+          ]
+        },
+        {
+          "id": "m-101-22",
+          "categoryId": 101,
+          "code": "1.19",
+          "title": "1.19",
+          "title_ru": "1.19",
+          "title_en": "1.19",
+          "description": "նախազգուշացնում է մոտենալու մասին` 1) երթևեկության գոտու վերջին (այն հատվածին, որտեղ տվյալ ուղղությամբ երթևեկության գոտիների թիվը նվազում է): Կարելի է կիրառել « 1.20.1 - 1.20.3 . «Ճանապարհի նեղացում» ճանապարհային նշանների հետ. 2) « 1.1 » կամ « 1.11 » գծանշմանը, երբ դրանք բաժանում են հանդիպակաց (ուղղությունների) տրանսպորտային հոսքերը: Կիրառվում է 1.6 . «Մոտեցման գիծ» գծանշման հետ միասին.",
+          "description_ru": "предупреждает о приближении: к концу полосы движения (к участку, где число полос движения в данном направлении уменьшается). Может применяться со знаками 1.20.1 – 1.20.3 «Сужение дороги»; к разметке « 1.1 » или « 1.11 », когда они разделяют транспортные потоки противоположных (направлений). Применяется вместе с разметкой 1.6 «Линия приближения».",
+          "description_en": "warns of an approach: to the end of a traffic lane (to a section where the number of traffic lanes in the given direction decreases). May be used with signs 1.20.1 – 1.20.3 \"Road narrows\"; to marking 1.1 or 1.11 when they separate traffic flows of opposite directions. Used together with marking 1.6 \"Approach line.\"",
+          "image": "data/markings/ff71f84d9fd773ff.png",
+          "images": [
+            "data/markings/ff71f84d9fd773ff.png"
+          ]
+        },
+        {
+          "id": "m-101-23",
+          "categoryId": 101,
+          "code": "1.20",
+          "title": "1.20",
+          "title_ru": "1.20",
+          "title_en": "1.20",
+          "description": "նախազգուշացնում է 1.13 գծանշմանը մոտենալու մասին.",
+          "description_ru": "предупреждает о приближении к разметке 1.13 .",
+          "description_en": "warns of an approach to marking 1.13 .",
+          "image": "data/markings/e89ec5fab04f7a3a.png",
+          "images": [
+            "data/markings/e89ec5fab04f7a3a.png"
+          ]
+        },
+        {
+          "id": "m-101-24",
+          "categoryId": 101,
+          "code": "1.21",
+          "title": "1.21",
+          "title_ru": "1.21",
+          "title_en": "1.21",
+          "description": "«STOP» գրառում` նախազգուշացնում է 1.12 գծանշմանը մոտենալու մասին, երբ այն կիրառվում է 2.5 ` «Երթևեկությունն առանց կանգառի արգելվում է» նշանի հետ.",
+          "description_ru": "надпись «STOP» — предупреждает о приближении к разметке 1.12 , когда она применяется со знаком 2.5 «Движение без остановки запрещено».",
+          "description_en": "the inscription \"STOP\" — warns of an approach to marking 1.12 when it is used with sign 2.5 \"No entry without stopping.\"",
+          "image": "data/markings/21486a651b12fd35.png",
+          "images": [
+            "data/markings/21486a651b12fd35.png"
+          ]
+        },
+        {
+          "id": "m-101-25",
+          "categoryId": 101,
+          "code": "1.22",
+          "title": "1.22",
+          "title_ru": "1.22",
+          "title_en": "1.22",
+          "description": "ցույց է տալիս ճանապարհի (երթուղու) համարը.",
+          "description_ru": "указывает номер дороги (маршрута).",
+          "description_en": "indicates the road (route) number.",
+          "image": "data/markings/a7cac9b271ec0a0e.png",
+          "images": [
+            "data/markings/a7cac9b271ec0a0e.png"
+          ]
+        },
+        {
+          "id": "m-101-26",
+          "categoryId": 101,
+          "code": "1.23",
+          "title": "1.23",
+          "title_ru": "1.23",
+          "title_en": "1.23",
+          "description": "ցույց է տալիս ընդհանուր օգտագործման տրանսպորտային միջոցների երթևեկության համար նախատեսված հատուկ գոտին.",
+          "description_ru": "указывает специальную полосу, предназначенную для движения транспортных средств общего пользования.",
+          "description_en": "indicates a special lane intended for the movement of public transport vehicles.",
+          "image": "data/markings/4c66304449f3b371.png",
+          "images": [
+            "data/markings/4c66304449f3b371.png",
+            "data/markings/a43d4399913c6f73.png",
+            "data/markings/511177e257b55999.png"
+          ]
+        },
+        {
+          "id": "m-101-27",
+          "categoryId": 101,
+          "code": "1.24.1",
+          "title": "1.24.1",
+          "title_ru": "1.24.1",
+          "title_en": "1.24.1",
+          "description": "կրկնօրինակում են համապատասխանաբար 1.20.2 ՝ «Ճանապարհի նեղացում» , 3.24 ՝ «Առավելագույն արագության սահմանափակում» և 8.17 «Հաշմանդամություն ունեցող անձինք» ճանապարհային նշանները և կիրառվում դրանց հետ միասին.",
+          "description_ru": "дублируют соответственно дорожные знаки 1.20.2 «Сужение дороги», 3.24 «Ограничение максимальной скорости» и 8.17 «Лица с инвалидностью» и применяются вместе с ними.",
+          "description_en": "respectively duplicate road signs 1.20.2 \"Road narrows,\" 3.24 \"Maximum speed limit,\" and 8.17 \"Persons with disabilities,\" and are used together with them.",
+          "image": "data/markings/d5f8f93700d66b88.png",
+          "images": [
+            "data/markings/d5f8f93700d66b88.png"
+          ]
+        },
+        {
+          "id": "m-101-28",
+          "categoryId": 101,
+          "code": "1.24.2",
+          "title": "1.24.2",
+          "title_ru": "1.24.2",
+          "title_en": "1.24.2",
+          "description": "կրկնօրինակում են համապատասխանաբար 1.20.2 ՝ «Ճանապարհի նեղացում» , 3.24 ՝ «Առավելագույն արագության սահմանափակում» և 8.17 «Հաշմանդամություն ունեցող անձինք» ճանապարհային նշանները և կիրառվում դրանց հետ միասին.",
+          "description_ru": "дублируют соответственно дорожные знаки 1.20.2 «Сужение дороги», 3.24 «Ограничение максимальной скорости» и 8.17 «Лица с инвалидностью» и применяются вместе с ними.",
+          "description_en": "respectively duplicate road signs 1.20.2 \"Road narrows,\" 3.24 \"Maximum speed limit,\" and 8.17 \"Persons with disabilities,\" and are used together with them.",
+          "image": "data/markings/9c2523d5f1da9b2b.png",
+          "images": [
+            "data/markings/9c2523d5f1da9b2b.png"
+          ]
+        },
+        {
+          "id": "m-101-29",
+          "categoryId": 101,
+          "code": "1.24.3",
+          "title": "1.24.3",
+          "title_ru": "1.24.3",
+          "title_en": "1.24.3",
+          "description": "կրկնօրինակում են համապատասխանաբար 1.20.2 ՝ «Ճանապարհի նեղացում» , 3.24 ՝ «Առավելագույն արագության սահմանափակում» և 8.17 «Հաշմանդամություն ունեցող անձինք» ճանապարհային նշանները և կիրառվում դրանց հետ միասին.",
+          "description_ru": "дублируют соответственно дорожные знаки 1.20.2 «Сужение дороги», 3.24 «Ограничение максимальной скорости» и 8.17 «Лица с инвалидностью» и применяются вместе с ними.",
+          "description_en": "respectively duplicate road signs 1.20.2 \"Road narrows,\" 3.24 \"Maximum speed limit,\" and 8.17 \"Persons with disabilities,\" and are used together with them.",
+          "image": "data/markings/ab4d97007189ba74.png",
+          "images": [
+            "data/markings/ab4d97007189ba74.png"
+          ]
+        },
+        {
+          "id": "m-101-30",
+          "categoryId": 101,
+          "code": "1.24.4",
+          "title": "1.24.4",
+          "title_ru": "1.24.4",
+          "title_en": "1.24.4",
+          "description": "կրկնօրինակում է 8.4.3.1 ցուցանակը. կիրառվում է ինքնուրույն կամ 8.4.3.1 ցուցանակի հետ.",
+          "description_ru": "дублирует табличку 8.4.3.1 ; применяется самостоятельно или с табличкой 8.4.3.1 .",
+          "description_en": "duplicates plate 8.4.3.1 ; used independently or with plate 8.4.3.1 .",
+          "image": "",
+          "images": []
+        },
+        {
+          "id": "m-101-31",
+          "categoryId": 101,
+          "code": "1.25",
+          "title": "1.25",
+          "title_ru": "1.25",
+          "title_en": "1.25",
+          "description": "ցույց է տալիս երթևեկելի մասի արհեստական անհարթությունները, կիրառվում է 5.20 ՝ «Արհեստական անհարթություն» նշանի հետ.",
+          "description_ru": "указывает искусственные неровности проезжей части, применяется со знаком 5.20 «Искусственная неровность».",
+          "description_en": "indicates artificial bumps on the carriageway, used with sign 5.20 \"Artificial bump.\"",
+          "image": "data/markings/c2242bfdc4ea848d.png",
+          "images": [
+            "data/markings/c2242bfdc4ea848d.png"
+          ]
+        },
+        {
+          "id": "m-101-32",
+          "categoryId": 101,
+          "code": "1.26",
+          "title": "1.26",
+          "title_ru": "1.26",
+          "title_en": "1.26",
+          "description": "(գույնը՝ դեղին)՝ նշում է խաչմերուկի հատվածը, որտեղ արգելվում է մուտք գործել, եթե առջևում՝ երթևեկության ուղղությամբ առաջացել է խցանում, որը վարորդին կհարկադրի կանգ առնել` խոչընդոտ ստեղծելով հատող ճանապարհով լայնական ուղղությամբ տրանսպորտային միջոցների երթևեկության համար, բացառությամբ սույն Կանոններով սահմանված՝ աջ կամ ձախ շրջադարձ կատարելու դեպքերի: Կիրառվում է ինքնուրույն կամ 1.35 ` «Խաչմերուկի տարածք» նշանի հետ: Նշում. 1.1 , 1.2 և 1.3 գծերը հատելն արգելվում է. Նշում. 1.1 . Գիծը թույլատրվում է հատել, երբ այն ցույց է տալիս տրանսպորտային միջոցների կայանման տեղերի սահմանները` կայանման տեղ մուտք գործելու կամ կայանման տեղից դուրս գալու նպատակով մանևրելիս, իսկ 1.2 գիծը թույլատրվում է հատել կողնակի վրա կանգառ կատարելու և կանգառ կատարելու վայրից դուրս գալու դեպքում, այն տեղերում, որտեղ թույլատրվում է տրանսպորտային միջոցների կանգառ կամ կայանում. Նշում. 1.5 - 1.8 գծերը թույլատրվում է հատել ցանկացած կողմից: Նշում. Դարձափոխային լուսացույցների բացակայության կամ անջատված լինելու դեպքերում 1.9 գծանշումը թույլատրվում է հատել, եթե այն գտնվում է վարորդից աջ, իսկ միացված դարձափոխային լուսացույցի դեպքում` ցանկացած կողմից, եթե այդ գծերը բաժանում են երթևեկության համընթաց ուղղությամբ գոտիները: Դարձափոխային լուսացույցի անջատման դեպքում վարորդը պետք է անհապաղ վերադասավորվի 1.9 գծանշումից դեպի աջ: Նշում. Անջատված դարձափոխային լուսացույցների դեպքում երթևեկության հանդիպակաց ուղղությունների տրանսպորտային հոսքերը բաժանող 1.9 գծանշումը հատելն արգելվում է. Նշում. 1.11 գիծը թույլատրվում է հատել ընդհատվող գծի, իսկ վազանցը կամ շրջանցումն ավարտելիս` նաև հոծ գծի կողմից:",
+          "description_ru": "(цвет — жёлтый) — обозначает участок перекрёстка, въезд на который запрещён, если впереди по ходу движения образовался затор, который вынудит водителя остановиться, создав препятствие для движения транспортных средств в поперечном направлении по пересекаемой дороге, за исключением случаев поворота направо или налево, установленных настоящими Правилами. Применяется самостоятельно или со знаком 1.35 «Участок перекрёстка». Примечание. Линии 1.1 , 1.2 и 1.3 пересекать запрещается. Примечание. Линию 1.1 разрешается пересекать, когда она обозначает границы мест стоянки транспортных средств — при манёвре для въезда на стоянку или выезда с неё, а линию 1.2 разрешается пересекать для остановки на обочине и для выезда с места остановки в местах, где разрешена остановка или стоянка транспортных средств. Примечание. Линии 1.5 – 1.8 разрешается пересекать с любой стороны. Примечание. При отсутствии или отключении реверсивных светофоров разметку 1.9 разрешается пересекать, если она находится справа от водителя, а при включённом реверсивном светофоре — с любой стороны, если эти линии разделяют полосы попутного направления движения. При отключении реверсивного светофора водитель должен немедленно перестроиться от разметки 1.9 вправо. Примечание. При отключённых реверсивных светофорах пересекать разметку 1.9 , разделяющую транспортные потоки противоположных направлений движения, запрещается. Примечание. Линию 1.11 разрешается пересекать со стороны прерывистой линии, а при завершении обгона или объезда — также со стороны сплошной линии.",
+          "description_en": "(colour — yellow) — denotes an intersection section, entry onto which is prohibited if a traffic jam has formed ahead in the direction of travel that would force the driver to stop, creating an obstacle to the movement of vehicles in the transverse direction along the road being crossed, except in the cases of turning right or left established by these Rules. Used independently or with sign 1.35 \"Intersection section.\" Note. Lines 1.1 , 1.2 , and 1.3 must not be crossed. Note. Line 1.1 may be crossed when it marks the boundaries of vehicle parking places — when manoeuvring to enter or exit the parking area, and line 1.2 may be crossed to stop on the shoulder and to move off from a stopping place at places where stopping or parking of vehicles is permitted. Note. Lines 1.5 – 1.8 may be crossed from either side. Note. In the absence or when switched off of reversible traffic lights, marking 1.9 may be crossed if it is to the right of the driver, and when the reversible traffic light is on — from either side, if these lines separate lanes of like-direction traffic. When the reversible traffic light is switched off, the driver must immediately move to the right of marking 1.9 . Note. When the reversible traffic lights are switched off, crossing marking 1.9 , which separates traffic flows of opposite directions, is prohibited. Note. Line 1.11 may be crossed from the side of the broken line, and, when completing an overtaking or passing manoeuvre — also from the side of the solid line.",
+          "image": "data/markings/016097d3e20fbf5a.png",
+          "images": [
+            "data/markings/016097d3e20fbf5a.png"
+          ]
+        },
+        {
+          "id": "m-101-33",
+          "categoryId": 101,
+          "code": "id-33",
+          "title": "ՀՈՐԻԶՈՆԱԿԱՆ ԳԾԱՆՇՄԱՆ ՕԳՏԱԳՈՐԾՄԱՆ ՕՐԻՆԱԿՆԵՐ",
+          "title_ru": "Примеры применения горизонтальной разметки",
+          "title_en": "Examples of the Use of Horizontal Markings",
+          "description": "",
+          "description_ru": "",
+          "description_en": "",
+          "image": "data/markings/a66fb3637a289fd0.png",
+          "images": [
+            "data/markings/a66fb3637a289fd0.png",
+            "data/markings/1eed05c4eea28344.png",
+            "data/markings/5969b6e7626083b1.png"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 102,
+      "key": "vert",
+      "title": "II. Ուղղաձիգ գծանշում (2.1–2.7)",
+      "title_ru": "II. Вертикальная разметка (2.1–2.7)",
+      "title_en": "II. Vertical Markings (2.1–2.7)",
+      "count": 9,
+      "items": [
+        {
+          "id": "m-102-1",
+          "categoryId": 102,
+          "code": "2.1.1",
+          "title": "2.1.1",
+          "title_ru": "2.1.1",
+          "title_en": "2.1.1",
+          "description": "ճանապարհային կառույցների (կամուրջների և ուղեկամուրջների հենարանների, եզրապատերի ճակատային մասերի և այլն) տարրերը, երբ դրանք վտանգ են ներկայացնում երթևեկող տրանսպորտային միջոցների համար.",
+          "description_ru": "элементы дорожных сооружений (опор мостов и путепроводов, торцевых частей парапетов и т. п.), когда они представляют опасность для движущихся транспортных средств.",
+          "description_en": "elements of road structures (bridge and overpass supports, end parts of parapets, etc.) when they present a danger to moving vehicles.",
+          "image": "data/markings/1d3707e934407201.png",
+          "images": [
+            "data/markings/1d3707e934407201.png"
+          ]
+        },
+        {
+          "id": "m-102-2",
+          "categoryId": 102,
+          "code": "2.1.2",
+          "title": "2.1.2",
+          "title_ru": "2.1.2",
+          "title_en": "2.1.2",
+          "description": "ճանապարհային կառույցների (կամուրջների և ուղեկամուրջների հենարանների, եզրապատերի ճակատային մասերի և այլն) տարրերը, երբ դրանք վտանգ են ներկայացնում երթևեկող տրանսպորտային միջոցների համար.",
+          "description_ru": "элементы дорожных сооружений (опор мостов и путепроводов, торцевых частей парапетов и т. п.), когда они представляют опасность для движущихся транспортных средств.",
+          "description_en": "elements of road structures (bridge and overpass supports, end parts of parapets, etc.) when they present a danger to moving vehicles.",
+          "image": "data/markings/4d4959488503d8c8.png",
+          "images": [
+            "data/markings/4d4959488503d8c8.png"
+          ]
+        },
+        {
+          "id": "m-102-3",
+          "categoryId": 102,
+          "code": "2.1.3",
+          "title": "2.1.3",
+          "title_ru": "2.1.3",
+          "title_en": "2.1.3",
+          "description": "ճանապարհային կառույցների (կամուրջների և ուղեկամուրջների հենարանների, եզրապատերի ճակատային մասերի և այլն) տարրերը, երբ դրանք վտանգ են ներկայացնում երթևեկող տրանսպորտային միջոցների համար.",
+          "description_ru": "элементы дорожных сооружений (опор мостов и путепроводов, торцевых частей парапетов и т. п.), когда они представляют опасность для движущихся транспортных средств.",
+          "description_en": "elements of road structures (bridge and overpass supports, end parts of parapets, etc.) when they present a danger to moving vehicles.",
+          "image": "data/markings/155f09fab3125e52.png",
+          "images": [
+            "data/markings/155f09fab3125e52.png"
+          ]
+        },
+        {
+          "id": "m-102-4",
+          "categoryId": 102,
+          "code": "2.2",
+          "title": "2.2",
+          "title_ru": "2.2",
+          "title_en": "2.2",
+          "description": "թունելների, կամուրջների և ուղեկամուրջների հենամեջային կառույցների ստորին եզրը.",
+          "description_ru": "нижний край пролётных строений тоннелей, мостов и путепроводов.",
+          "description_en": "the lower edge of the span structures of tunnels, bridges, and overpasses.",
+          "image": "data/markings/5b2a48e17184a5f6.png",
+          "images": [
+            "data/markings/5b2a48e17184a5f6.png"
+          ]
+        },
+        {
+          "id": "m-102-5",
+          "categoryId": 102,
+          "code": "2.3",
+          "title": "2.3",
+          "title_ru": "2.3",
+          "title_en": "2.3",
+          "description": "բաժանարար գոտիների և անվտանգության կղզյակների վրա տեղադրված կլոր կարճասյուները.",
+          "description_ru": "круглые тумбы, установленные на разделительных полосах и островках безопасности.",
+          "description_en": "round bollards installed on central reservations and traffic islands.",
+          "image": "data/markings/286ac566650ff0a4.png",
+          "images": [
+            "data/markings/286ac566650ff0a4.png"
+          ]
+        },
+        {
+          "id": "m-102-6",
+          "categoryId": 102,
+          "code": "2.4",
+          "title": "2.4",
+          "title_ru": "2.4",
+          "title_en": "2.4",
+          "description": "ուղղորդ սյունիկները, ուղեցցերը, ցանկապատերի հենակները և այլն.",
+          "description_ru": "направляющие столбики, надолбы, опоры ограждений и т. п.",
+          "description_en": "guide posts, anti-ram blocks, barrier supports, etc.",
+          "image": "data/markings/1c075c90ee38ca9b.png",
+          "images": [
+            "data/markings/1c075c90ee38ca9b.png"
+          ]
+        },
+        {
+          "id": "m-102-7",
+          "categoryId": 102,
+          "code": "2.5",
+          "title": "2.5",
+          "title_ru": "2.5",
+          "title_en": "2.5",
+          "description": "ցանկապատերի կողային մակերևույթները` ճանապարհների փոքր շառավղով կորացումների, կտրուկ վայրէջքների և այլ վտանգավոր հատվածների վրա.",
+          "description_ru": "боковые поверхности ограждений на закруглениях дорог малого радиуса, крутых спусках и иных опасных участках.",
+          "description_en": "the side surfaces of barriers on curves of small radius, steep descents, and other dangerous sections.",
+          "image": "data/markings/44ee53bc40d80556.png",
+          "images": [
+            "data/markings/44ee53bc40d80556.png"
+          ]
+        },
+        {
+          "id": "m-102-8",
+          "categoryId": 102,
+          "code": "2.6",
+          "title": "2.6",
+          "title_ru": "2.6",
+          "title_en": "2.6",
+          "description": "ճանապարհների ցանկապատերի կողային մակերևույթներն այլ տեղամասերում.",
+          "description_ru": "боковые поверхности ограждений дорог на других участках.",
+          "description_en": "the side surfaces of road barriers on other sections.",
+          "image": "data/markings/6545002b44da66b3.png",
+          "images": [
+            "data/markings/6545002b44da66b3.png"
+          ]
+        },
+        {
+          "id": "m-102-9",
+          "categoryId": 102,
+          "code": "2.7",
+          "title": "2.7",
+          "title_ru": "2.7",
+          "title_en": "2.7",
+          "description": "վտանգավոր հատվածներում եզրաքարերը և բարձրացված անվտանգության կղզյակները:",
+          "description_ru": "бордюры на опасных участках и приподнятые островки безопасности.",
+          "description_en": "kerbs on dangerous sections and raised traffic islands.",
+          "image": "data/markings/01f65ddfa4fbc881.png",
+          "images": [
+            "data/markings/01f65ddfa4fbc881.png"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 103,
+      "key": "vehicle_id",
+      "title": "Տրանսպորտային միջոցի ճանաչման նշաններ (Ձև N 3)",
+      "title_ru": "Опознавательные знаки ТС (форма N 3)",
+      "title_en": "Vehicle Identification Signs (Form No. 3)",
+      "count": 13,
+      "items": [
+        {
+          "id": "m-103-1",
+          "categoryId": 103,
+          "code": "id-1",
+          "title": "«Ավտոգնացք»",
+          "title_ru": "«Автопоезд»",
+          "title_en": "\"Road train\"",
+          "description": "կցորդներով բեռնատար ավտոմոբիլների և անվավոր տրակտորների (1.4 տ և բարձր դասի) խցիկների կտուրներին, ինչպես նաև համակցված ավտոբուսների և տրոլեյբուսների թափքի կտուրների առջևի մասում տեղադրված, իրարից 150 - 300 մմ հեռավորությամբ հորիզոնական դասավորված նարնջագույն երեք լապտերիկների տեսքով.",
+          "description_ru": "в виде трёх оранжевых фонарей, расположенных горизонтально на расстоянии 150–300 мм друг от друга, установленных на крышах кабин грузовых автомобилей с прицепами и колёсных тракторов (класса 1,4 т и выше), а также в передней части крыш кузовов сочленённых автобусов и троллейбусов.",
+          "description_en": "in the form of three orange lamps positioned horizontally at a distance of 150–300 mm from one another, installed on the cab roofs of goods vehicles with trailers and wheeled tractors (of class 1.4 t and above), as well as at the front part of the body roofs of articulated buses and trolleybuses.",
+          "image": "data/markings/e385304dd904dbd7.png",
+          "images": [
+            "data/markings/e385304dd904dbd7.png"
+          ]
+        },
+        {
+          "id": "m-103-2",
+          "categoryId": 103,
+          "code": "id-2",
+          "title": "«Արագության սահմանափակում»",
+          "title_ru": "«Ограничение скорости»",
+          "title_en": "\"Speed limit\"",
+          "description": "երեխաների խմբերի կազմակերպված փոխադրում իրականացնող, ինչպես նաև վտանգավոր, ծանրաքաշ և մեծ եզրաչափեր ունեցող բեռներ փոխադրող կամ կանոնների 69-րդ և 71-րդ կետերում սահմանված արագություններից տեխնիկական բնութագրով նախատեսված ցածր արագություն ունեցող տրանսպորտային միջոցների թափքի հետևի ձախ կողմում, թույլատրելի արագության նշումով, 3.24 ` «Առավելագույն արագության սահմանափակում» նշանի տեսքով (տրամագիծը` առնվազն 160 մմ, եզրաշերտի լայնությունը` տրամագծի 1/10-ի չափով).",
+          "description_ru": "в виде знака 3.24 «Ограничение максимальной скорости» с указанием разрешённой скорости (диаметр — не менее 160 мм, ширина каймы — 1/10 диаметра), размещаемого с задней левой стороны кузова транспортных средств, осуществляющих организованную перевозку групп детей, а также перевозящих опасные, тяжеловесные и крупногабаритные грузы или имеющих по технической характеристике скорость ниже скоростей, установленных пунктами 69 и 71 Правил.",
+          "description_en": "in the form of sign 3.24 \"Maximum speed limit\" indicating the permitted speed (diameter — at least 160 mm, border width — 1/10 of the diameter), placed on the rear left side of the body of vehicles carrying out the organised transport of groups of children, as well as those carrying dangerous, heavy, and oversized loads, or having, according to their technical specifications, a speed lower than the speeds established by paragraphs 69 and 71 of the Rules.",
+          "image": "data/markings/eb3a3f4d541f5942.png",
+          "images": [
+            "data/markings/eb3a3f4d541f5942.png"
+          ]
+        },
+        {
+          "id": "m-103-3",
+          "categoryId": 103,
+          "code": "id-3",
+          "title": "«Դանդաղընթաց տրանսպորտային միջոց»",
+          "title_ru": "«Тихоходное транспортное средство»",
+          "title_en": "\"Slow-moving vehicle\"",
+          "description": "արտադրող գործարանի կողմից սահմանված 30 կմ/ժ առավելագույն արագություն ունեցող մեխանիկական տրանսպորտային միջոցների հետևի մասում` ֆլուորեսցենտային ծածկույթ ունեցող կարմիր գույնի և լուսանդրադարձնող դեղին կամ կարմիր եզրաշերտով հավասարակողմ եռանկյան տեսքով (կողմի երկարությունը` 350 - 365 մմ, եզրաշերտի լայնությունը` 45 - 48 մմ).",
+          "description_ru": "в виде равностороннего треугольника красного цвета с флуоресцентным покрытием и светоотражающей жёлтой или красной каймой (длина стороны — 350–365 мм, ширина каймы — 45–48 мм), размещаемого сзади механических транспортных средств, у которых установленная заводом-изготовителем максимальная скорость составляет 30 км/ч.",
+          "description_en": "in the form of an equilateral triangle of red colour with a fluorescent coating and a reflective yellow or red border (side length — 350–365 mm, border width — 45–48 mm), placed at the rear of motor vehicles whose maximum speed set by the manufacturer is 30 km/h.",
+          "image": "data/markings/095b0098e7ee87d6.png",
+          "images": [
+            "data/markings/095b0098e7ee87d6.png"
+          ]
+        },
+        {
+          "id": "m-103-4",
+          "categoryId": 103,
+          "code": "id-4",
+          "title": "«Երեխաների փոխադրում»",
+          "title_ru": "«Перевозка детей»",
+          "title_en": "\"Transport of children\"",
+          "description": "երեխաների խմբերի կազմակերպված փոխադրում իրականացնող տրանսպորտային միջոցների առջևի և հետևի մասերում` 1.23 ` «Երեխաներ» նշանի վրայի պատկերով, կարմիր գույնի եզրաշերտով դեղին քառակուսու տեսքով (կողմը` առնվազն 250 մմ, եզրաշերտի լայնությունը` կողմի 1/10-ի չափով).",
+          "description_ru": "в виде жёлтого квадрата с каймой красного цвета и изображением знака 1.23 «Дети» (сторона — не менее 250 мм, ширина каймы — 1/10 стороны), размещаемого в передней и задней частях транспортных средств, осуществляющих организованную перевозку групп детей.",
+          "description_en": "in the form of a yellow square with a red border and an image of sign 1.23 \"Children\" (side — at least 250 mm, border width — 1/10 of the side), placed at the front and rear parts of vehicles carrying out the organised transport of groups of children.",
+          "image": "data/markings/1d85e3334d524c0c.png",
+          "images": [
+            "data/markings/1d85e3334d524c0c.png"
+          ]
+        },
+        {
+          "id": "m-103-5",
+          "categoryId": 103,
+          "code": "id-5",
+          "title": "«Բութակներ»",
+          "title_ru": "«Шипы»",
+          "title_en": "\"Studs\"",
+          "description": "բութակավորված դողերով մեխանիկական տրանսպորտային միջոցների հետևի մասում՝ գագաթը վեր, կարմիր եզրաշերտով, սպիտակ գույնի, հավասարակողմ, « ш » պատկերանշանով եռանկյան տեսքով (կողմի երկարությունը՝ առնվազն 200 մմ, եզրաշերտի լայնությունը՝ կողմի 1/10-ի չափով).",
+          "description_ru": "в виде равностороннего треугольника белого цвета вершиной вверх с красной каймой и пиктограммой «ш» (длина стороны — не менее 200 мм, ширина каймы — 1/10 стороны), размещаемого сзади механических транспортных средств с ошипованными шинами.",
+          "description_en": "in the form of an equilateral triangle of white colour with the apex upwards, with a red border and the pictogram \"ш\" (side length — at least 200 mm, border width — 1/10 of the side), placed at the rear of motor vehicles with studded tyres.",
+          "image": "data/markings/0e677b532eff480e.png",
+          "images": [
+            "data/markings/0e677b532eff480e.png"
+          ]
+        },
+        {
+          "id": "m-103-6",
+          "categoryId": 103,
+          "code": "id-6",
+          "title": "«Երկարաչափ տրանսպորտային միջոց»",
+          "title_ru": "«Длинномерное транспортное средство»",
+          "title_en": "\"Long vehicle\"",
+          "description": "բեռով կամ առանց բեռի 20 մ-ից ավելի երկարություն ունեցող տրանսպորտային միջոցների, երկու և ավելի կցորդներով ավտոգնացքների (անկախ երկարությունից) հետևի մասում` լուսանդրադարձիչ մակերևույթ ունեցող դեղին գույնի, կարմիր եզրաշերտով ուղղանկյան տեսքով (չափերը` ոչ պակաս, քան 1200 x 200 մմ, եզրաշերտի լայնությունը` 40 մմ): Եթե այդպիսի չափեր ունեցող նշանի տեղադրումը հնարավոր չէ, ապա թույլատրվում է տրանսպորտային միջոցի առանցքին սիմետրիկ տեղադրել 600 x 200 մմ-ից ոչ պակաս չափեր ունեցող երկու միանման նշաններ.",
+          "description_ru": "в виде прямоугольника жёлтого цвета со светоотражающей поверхностью и красной каймой (размеры — не менее 1200 × 200 мм, ширина каймы — 40 мм), размещаемого сзади транспортных средств с грузом или без груза длиной более 20 м, автопоездов с двумя и более прицепами (независимо от длины). Если установка знака таких размеров невозможна, допускается устанавливать симметрично оси транспортного средства два одинаковых знака размером не менее 600 × 200 мм.",
+          "description_en": "in the form of a rectangle of yellow colour with a reflective surface and a red border (dimensions — at least 1200 × 200 mm, border width — 40 mm), placed at the rear of vehicles with or without a load of more than 20 m in length, and of road trains with two or more trailers (regardless of length). If installation of a sign of such dimensions is not possible, two identical signs of at least 600 × 200 mm may be installed symmetrically about the axis of the vehicle.",
+          "image": "data/markings/e901dfce58cfb529.png",
+          "images": [
+            "data/markings/e901dfce58cfb529.png"
+          ]
+        },
+        {
+          "id": "m-103-7",
+          "categoryId": 103,
+          "code": "id-7",
+          "title": "«Խուլ վարորդ»",
+          "title_ru": "«Глухой водитель»",
+          "title_en": "\"Deaf driver\"",
+          "description": "խուլ կամ խուլ ու համր վարորդների կողմից վարվող մեխանիկական տրանսպորտային միջոցների առջևի և հետևի մասում` գագաթը ներքև ուղղված երևակայական հավասարակողմ եռանկյան անկյուններում երեք սև փոքր շրջանների պատկերով դեղին շրջանի տեսքով (նշանի տրամագիծը` 160 մմ, փոքր շրջաններինը` 40 մմ).",
+          "description_ru": "в виде жёлтого круга с изображением трёх чёрных малых кружков в углах воображаемого равностороннего треугольника, обращённого вершиной вниз (диаметр знака — 160 мм, малых кружков — 40 мм), размещаемого в передней и задней частях механических транспортных средств, управляемых глухими или глухонемыми водителями.",
+          "description_en": "in the form of a yellow circle with an image of three small black circles at the corners of an imaginary equilateral triangle pointing downwards (sign diameter — 160 mm, small circles — 40 mm), placed at the front and rear parts of motor vehicles driven by deaf or deaf-mute drivers.",
+          "image": "data/markings/de293b70e7963694.png",
+          "images": [
+            "data/markings/de293b70e7963694.png"
+          ]
+        },
+        {
+          "id": "m-103-8",
+          "categoryId": 103,
+          "code": "id-8",
+          "title": "«Մեծ եզրաչափերով բեռ»",
+          "title_ru": "«Крупногабаритный груз»",
+          "title_en": "\"Oversized load\"",
+          "description": "անկյունագծով իրար հաջորդող կարմիր և սպիտակ գույնի զոլերով, լուսանդրադարձիչ մակերևույթ ունեցող վահանակի տեսքով (չափերը` 400 x 400 մմ, զոլերի լայնությունը` 50 մմ).",
+          "description_ru": "в виде щитка со светоотражающей поверхностью с чередующимися по диагонали полосами красного и белого цвета (размеры — 400 × 400 мм, ширина полос — 50 мм).",
+          "description_en": "in the form of a shield with a reflective surface with diagonally alternating red and white stripes (dimensions — 400 × 400 mm, stripe width — 50 mm).",
+          "image": "data/markings/54f440711f66efe9.png",
+          "images": [
+            "data/markings/54f440711f66efe9.png"
+          ]
+        },
+        {
+          "id": "m-103-9",
+          "categoryId": 103,
+          "code": "id-9",
+          "title": "«Վթարային կանգառ»",
+          "title_ru": "«Аварийная остановка»",
+          "title_en": "\"Emergency stop\"",
+          "description": "լուսանդրադարձիչ մակերևույթ ունեցող, գագաթը վերև ուղղված, սպիտակ գույնի, կարմիր եզրաշերտով հավասարակողմ եռանկյան տեսքով (կողմը` 450 - 550 մմ, եզրաշերտի լայնությունը` 40 - 50 մմ): Կանոնների 23-րդ կետում նախատեսված դեպքերում այս նշանը կարող է կիրառվել նաև տրանսպորտային միջոցից դուրս.",
+          "description_ru": "в виде равностороннего треугольника белого цвета со светоотражающей поверхностью, обращённого вершиной вверх, с красной каймой (сторона — 450–550 мм, ширина каймы — 40–50 мм). В случаях, предусмотренных пунктом 23 Правил, этот знак может применяться также вне транспортного средства.",
+          "description_en": "in the form of an equilateral triangle of white colour with a reflective surface, pointing upwards, with a red border (side — 450–550 mm, border width — 40–50 mm). In the cases provided for in paragraph 23 of the Rules, this sign may also be used outside the vehicle.",
+          "image": "data/markings/186e729b70dcce6a.png",
+          "images": [
+            "data/markings/186e729b70dcce6a.png"
+          ]
+        },
+        {
+          "id": "m-103-10",
+          "categoryId": 103,
+          "code": "id-10",
+          "title": "«Վտանգավոր բեռ»",
+          "title_ru": "«Опасный груз»",
+          "title_en": "\"Dangerous goods\"",
+          "description": "վտանգավոր բեռներ փոխադրող տրանսպորտային միջոցների առջևի և հետևի մասերում ուղղանկյան տեսքով` չափերը` 690 x 300 մմ, որի աջ մասը 400 x 300 մմ նարնջագույն է և երկարությամբ բաժանված է երկու հավասար մասերի, իսկ ձախ մասը` սպիտակ, սև եզրաշերտով (լայնությունը` 15 մմ): Նշանի վրա կատարվում են բեռի վտանգավոր հատկությունները բնութագրող նշումներ.",
+          "description_ru": "в виде прямоугольника размером 690 × 300 мм, размещаемого в передней и задней частях транспортных средств, перевозящих опасные грузы; правая часть размером 400 × 300 мм оранжевая и разделена по длине на две равные части, а левая часть белая, с чёрной каймой (ширина — 15 мм). На знаке делаются надписи, характеризующие опасные свойства груза.",
+          "description_en": "in the form of a rectangle measuring 690 × 300 mm, placed at the front and rear parts of vehicles transporting dangerous goods; the right part, measuring 400 × 300 mm, is orange and divided lengthwise into two equal parts, and the left part is white, with a black border (width — 15 mm). Inscriptions characterising the hazardous properties of the load are made on the sign.",
+          "image": "data/markings/e3d92b6de57b38e4.png",
+          "images": [
+            "data/markings/e3d92b6de57b38e4.png"
+          ]
+        },
+        {
+          "id": "m-103-11",
+          "categoryId": 103,
+          "code": "id-11",
+          "title": "«Ուսումնական տրանսպորտային միջոց»",
+          "title_ru": "«Учебное транспортное средство»",
+          "title_en": "\"Learner vehicle\"",
+          "description": "վարման ուսուցման նպատակով օգտագործվող մեխանիկական տրանսպորտային միջոցների առջևի և հետևի մասերում սև գույնի «ՈՒ» տառի պատկերով, կարմիր եզրաշերտով, սպիտակ գույնի հավասարակողմ եռանկյան տեսքով (կողմը` առնվազն 200 մմ, եզրաշերտի լայնությունը` կողմի 1/10-ի չափով): Թույլատրվում է երկկողմ նշանի տեղադրում թեթև մարդատար ավտոմոբիլների կտուրներին: Վարորդի ցանկությամբ կարող են տեղադրվել նաև հետևյալ ճանաչման նշանները`",
+          "description_ru": "в виде равностороннего треугольника белого цвета с красной каймой и изображением буквы «У» чёрного цвета (сторона — не менее 200 мм, ширина каймы — 1/10 стороны), размещаемого в передней и задней частях механических транспортных средств, используемых для обучения вождению. Допускается установка двустороннего знака на крышах легковых автомобилей. По желанию водителя могут также устанавливаться следующие опознавательные знаки",
+          "description_en": "in the form of an equilateral triangle of white colour with a red border and an image of the letter \"У\" (U) in black (side — at least 200 mm, border width — 1/10 of the side), placed at the front and rear parts of motor vehicles used for driving instruction. A double-sided sign may be installed on the roofs of passenger cars. At the driver's discretion, the following identification signs may also be installed",
+          "image": "data/markings/16c69802c994de27.png",
+          "images": [
+            "data/markings/16c69802c994de27.png"
+          ]
+        },
+        {
+          "id": "m-103-12",
+          "categoryId": 103,
+          "code": "id-12",
+          "title": "«Բժիշկ»",
+          "title_ru": "«Врач»",
+          "title_en": "\"Doctor\"",
+          "description": "բժիշկ-վարորդների կողմից վարվող ավտոմոբիլների առջևի և հետևի մասում, կարմիր խաչի պատկերով, սպիտակ շրջանով ներգծված, կապույտ գույնի քառակուսու տեսքով (կողմը` 140 մմ, շրջանի տրամագիծը` 125 մմ, խաչի գծիկի լայնությունը` 25 մմ, բարձրությունը` 90 մմ).",
+          "description_ru": "в виде квадрата синего цвета с вписанным белым кругом и изображением красного креста (сторона — 140 мм, диаметр круга — 125 мм, ширина линии креста — 25 мм, высота — 90 мм), размещаемого в передней и задней частях автомобилей, управляемых водителями-врачами.",
+          "description_en": "in the form of a square of blue colour with an inscribed white circle and an image of a red cross (side — 140 mm, circle diameter — 125 mm, cross line width — 25 mm, height — 90 mm), placed at the front and rear parts of cars driven by driver-doctors.",
+          "image": "data/markings/21d4d5705e3329d5.png",
+          "images": [
+            "data/markings/21d4d5705e3329d5.png"
+          ]
+        },
+        {
+          "id": "m-103-13",
+          "categoryId": 103,
+          "code": "id-13",
+          "title": "«Հաշմանդամություն ունեցող անձ»",
+          "title_ru": "«Лицо с инвалидностью»",
+          "title_en": "\"Person with a disability\"",
+          "description": "1-ին և 2-րդ խմբերի հաշմանդամների, կամ խորը և ծանր աստիճանի ֆունկցիոնալության սահմանափակում ունեցող անձանց կողմից վարվող կամ այդպիսի հաշմանդամություն ունեցող անձի կամ հաշմանդամություն ունեցող երեխայի կարգավիճակ ունեցող երեխա փոխադրող մեխանիկական տրանսպորտային միջոցների առջևի և հետևի մասերում` 8.17 ` «Հաշմանդամություն ունեցող անձինք» նշանի պատկերով, դեղին քառակուսու տեսքով (կողմը` 150 մմ)։",
+          "description_ru": "в виде жёлтого квадрата (сторона — 150 мм) с изображением знака 8.17 «Лица с инвалидностью», размещаемого в передней и задней частях механических транспортных средств, управляемых лицами с инвалидностью I и II групп либо с глубоким и тяжёлым ограничением функциональности, или перевозящих такое лицо с инвалидностью либо ребёнка со статусом ребёнка с инвалидностью.",
+          "description_en": "in the form of a yellow square (side — 150 mm) with an image of sign 8.17 \"Persons with disabilities,\" placed at the front and rear parts of motor vehicles driven by persons with disabilities of groups I and II, or with profound and severe functional limitation, or carrying such a person with a disability or a child with the status of a child with a disability.",
+          "image": "data/markings/0f108d7aa56d325e.png",
+          "images": [
+            "data/markings/0f108d7aa56d325e.png"
+          ]
+        }
+      ]
+    }
+  ]
+};

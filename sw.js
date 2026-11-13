@@ -1,16 +1,20 @@
-const CACHE_NAME = 'varordakan-v9';
+const CACHE_NAME = 'varordakan-v10';
 const CORE_ASSETS = [
   './',
   './index.html',
-  './styles.css?v=20261113d',
-  './app-core.js?v=20261113b',
-  './app.js?v=20261113d',
+  './styles.css?v=20261113e',
+  './app-core.js?v=20261113e',
+  './app.js?v=20261113e',
   './manifest.webmanifest',
   './logo-192.png',
   './logo-512.png',
-  './data/questions.js?v=20261113b',
-  './data/signs.js?v=20261113b',
-  './data/color_tests.js?v=20261113b',
+  './data/questions.js?v=20261113e',
+  './data/questions_i18n.js?v=20261113e',
+  './data/signs.js?v=20261113e',
+  './data/signs_i18n.js?v=20261113e',
+  './data/markings.js?v=20261113e',
+  './data/color_tests.js?v=20261113e',
+  './data/rules.js?v=20261113e',
 ];
 
 self.addEventListener('install', (event) => {
@@ -51,6 +55,7 @@ self.addEventListener('fetch', (event) => {
   const isAssetImage =
     url.pathname.includes('/data/images/') ||
     url.pathname.includes('/data/signs/') ||
+    url.pathname.includes('/data/markings/') ||
     url.pathname.includes('/data/color_tests/');
 
   if (isAssetImage) {

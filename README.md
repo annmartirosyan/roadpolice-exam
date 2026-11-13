@@ -6,13 +6,15 @@ Interactive, offline-ready web application for preparing for the Armenian Road P
 
 ## Features
 
-- **Գլխավոր (Landing Page):** Overview of the platform, live Readiness %, key stats, feature directory with direct navigation, and a step-by-step guide to the official exam format.
-- **Ուսուցում (Practice Mode):** Study all **1,050 official questions** across **10 groups** (`1.pdf`–`10.pdf`) with instant green/red feedback, **Exam Readiness %** weighted by official topic rules, **⚡ Խելացի մարզում** (10-question Smart Drill prioritizing mistakes and weak areas), per-group accuracy/progress bars, shuffle mode, keyboard shortcuts (`1`–`5`, `←`/`→`, `Enter`), question-number jump grid, click-to-zoom images, and an expandable **Բացատրություն (Ինչու է ճիշտ)** reasoning tab with clickable road-sign popups.
-- **Քննություն (Timed Mock Exam):** Official-style **20-question** mock exam weighted by official rules (**15** Rules/Signs, **2** Law, **2** Malfunctions, **1** First Aid), optional **Color-Perception Pre-Test (`Գունաընկալման թեստ`)**, **30-minute** countdown timer, auto-submit on expiry, `18/20` passing threshold, full answer breakdown with reasoning, and saved exam history.
-- **Սխալներ (Mistakes Retry):** Automatically collects wrong or missed questions from Practice and Mock Exams so you can focus on weak spots; answering a saved mistake correctly resolves and removes it from the queue.
-- **Նշաններ (Road Signs & Quiz):** Complete catalog of **282 Armenian road signs** across **8 categories** with images and descriptions, searchable by sign code/title/description, direct **"Հարցեր (N)"** practice links per sign, and a **🎯 Նշանների թեստ** flashcard quiz.
-- **Գունաընկալում (Color-Blindness / Psychological Tests):** **53 real color-perception & figure plates** (Ishihara / Rabkin style) with instant feedback plus an official 3-question (0-mistakes) check mode.
-- **Հուշաթերթ (Cheat Sheet & Regulator Simulator):** Interactive 3-pose traffic regulator simulator, 5-step right-of-way priority ladder, and a quick-reference sheet for all exam speeds, distances, tire/steering limits, license ages, first-aid thresholds, and common traps.
+- **Գլխավոր (Landing Page):** Streamlined overview with animated road scene, live Readiness %, daily study goal & streak, and section shortcuts.
+- **Ուսուցում (Practice Mode):** Study all **1,050 official questions** in **Armenian (`ՀԱՅ`), Russian (`РУС`), or English (`ENG`)** with optional bilingual Armenian hint, **Bookmarks (`★ Պահված հարցեր`)**, **Exam Readiness %**, **⚡ Խելացի մարզում**, instant green/red feedback, and expandable **Բացատրություն** with clickable sign codes & rule links.
+- **Քննություն (Timed Mock Exam):** Official-style **20-question** mock exam weighted by official rules (`15+2+2+1`), optional **Color-Perception Pre-Test**, **30-minute** countdown timer, `18/20` pass threshold, and saved exam history.
+- **Սխալներ (Mistakes Retry):** Automatically collects wrong/missed questions and requires **2 consecutive correct answers** (`0/2 → 1/2 → 2/2`) before clearing a question.
+- **Նշաններ և գծանշում (Signs, Markings & Vehicle IDs):** **282 Road Signs**, **42 Road Markings (`1.1–1.26`, `2.1–2.7`)**, and **13 Vehicle Identification Signs** in `HY/RU/EN` with linked exam questions and a **🎯 Նշանների թեստ**.
+- **Գունաընկալում (Color-Blindness / Psychological Tests):** **53 real color-perception & figure plates** with practice and 3-question (0-mistakes) check modes.
+- **Օրենք և հուշաթերթ (Law Reader & Cheat Sheet):** Full searchable **ՃԵԿ (204 points)**, **Road Traffic Safety Law (151 items)**, and **Malfunctions List (46 items)**, plus an interactive 3-pose regulator simulator and exam numbers guide.
+- **Floating Yellow Sticky Note (`📌 Իմ նշումները`):** Movable/draggable yellow note across every tab with auto-save, minimize/restore, and delete controls.
+- **Daily Goal & Streak (`🔥`):** Tracks daily answered questions (`10/20/30/50`) and consecutive goal days.
 - **Որոնում (Search & Browse):** Full-text search across all questions and options (normalizing Armenian `և` / `եւ`), group and image-only filters, and an answer-reveal toggle.
 - **Offline PWA Support:** Installable to Home Screen on iPhone, iPad, Android, and desktop (`manifest.webmanifest` + `sw.js`) for ad-free offline study.
 - **Progress Persistence:** Saved automatically in browser `localStorage` (`roadpolice_abc_v1`).

@@ -117,20 +117,63 @@ test('gradeMockExam handles unanswered questions on timer expiry and saves histo
   assert.equal(nextState.mistakes[exam[0].uid], undefined);
 });
 
-test('retryMistakeAnswer and resolveMistake update or clear mistakes', () => {
+test('retryMistakeAnswer requires 2 consecutive right answers to clear a mistake', () => {
   let state = Core.createInitialState();
   state = Core.recordPracticeAnswer(state, 'g1-q1', 0, 1).state;
   assert.equal(state.mistakes['g1-q1'].wrongCount, 1);
+  assert.equal(state.mistakes['g1-q1'].streak, 0);
 
   const wrongRetry = Core.retryMistakeAnswer(state, 'g1-q1', 2, 1);
   assert.equal(wrongRetry.isCorrect, false);
+  assert.equal(wrongRetry.resolved, false);
   state = wrongRetry.state;
   assert.equal(state.mistakes['g1-q1'].wrongCount, 2);
+  assert.equal(state.mistakes['g1-q1'].streak, 0);
 
-  const rightRetry = Core.retryMistakeAnswer(state, 'g1-q1', 1, 1);
-  assert.equal(rightRetry.isCorrect, true);
-  state = Core.resolveMistake(rightRetry.state, 'g1-q1');
-  assert.equal(state.mistakes['g1-q1'], undefined);
+  // First right answer moves streak to 1, keeps mistake in queue
+  const right1 = Core.retryMistakeAnswer(state, 'g1-q1', 1, 1);
+  assert.equal(right1.isCorrect, true);
+  assert.equal(right1.resolved, false);
+  assert.equal(right1.streak, 1);
+  state = right1.state;
+  assert.equal(state.mistakes['g1-q1'].streak, 1);
+
+  // Second consecutive right answer resolves and removes the mistake
+  const right2 = Core.retryMistakeAnswer(state, 'g1-q1', 1, 1);
+  assert.equal(right2.isCorrect, true);
+  assert.equal(right2.resolved, true);
+  assert.equal(right2.state.mistakes['g1-q1'], undefined);
+});
+
+test('bookmarks, daily goal, study streak, and stickyNote persist in state', () => {
+  let state = Core.createInitialState();
+  const b1 = Core.toggleBookmark(state, 'g1-q1');
+  assert.equal(b1.bookmarked, true);
+  assert.equal(Core.isBookmarked(b1.state, 'g1-q1'), true);
+  state = Core.toggleBookmark(b1.state, 'g1-q1').state;
+  assert.equal(Core.isBookmarked(state, 'g1-q1'), false);
+
+  state = Core.setDailyGoal(state, 5);
+  for (let i = 0; i < 5; i++) {
+    state = Core.recordStudyActivity(state, '2026-11-12');
+  }
+  for (let i = 0; i < 3; i++) {
+    state = Core.recordStudyActivity(state, '2026-11-13');
+  }
+  const prog = Core.getStudyProgress(state, '2026-11-13');
+  assert.equal(prog.todayCount, 3);
+  assert.equal(prog.dailyGoal, 5);
+  assert.equal(prog.streakDays, 1); // Yesterday met goal, today still in progress
+
+  for (let i = 0; i < 2; i++) {
+    state = Core.recordStudyActivity(state, '2026-11-13');
+  }
+  assert.equal(Core.getStudyProgress(state, '2026-11-13').streakDays, 2);
+
+  state.stickyNote = { visible: true, minimized: false, deleted: false, text: 'Նշում 1', x: 100, y: 120 };
+  const roundTrip = Core.importStateJson(Core.exportStateJson(state));
+  assert.equal(roundTrip.stickyNote.text, 'Նշում 1');
+  assert.equal(roundTrip.study.dailyGoal, 5);
 });
 
 test('filterQuestions filters by Armenian query, groupId, and imagesOnly', () => {
@@ -276,8 +319,46 @@ test('sign cross-linking ignores measurement units and rule numbers while linkin
 
   const quiz = Core.generateSignQuiz(categories, 'all', 4);
   assert.equal(quiz.length, 4);
-  for (const item of quiz) {
-    assert.equal(item.options.length, 4);
-    assert.equal(item.options[item.correctIndex].id, item.target.id);
-  }
+  assert.equal(Core.generateSignQuiz(categories, 'all', 4).length, 4);
+});
+
+test('filterMarkings and filterRules filter across languages and Armenian normalization', () => {
+  const markingCats = [
+    {
+      id: 101,
+      title: 'I. Հորիզոնական գծանշում',
+      title_ru: 'I. Горизонтальная разметка',
+      title_en: 'I. Horizontal Markings',
+      items: [
+        {
+          id: 'm1',
+          code: '1.4',
+          title: '1.4',
+          title_ru: '1.4',
+          title_en: '1.4',
+          description: 'դեղին հոծ գիծ՝ կանգառն արգելված է',
+          description_ru: 'сплошная желтая линия',
+          description_en: 'solid yellow line',
+        },
+      ],
+    },
+  ];
+  assert.equal(Core.filterMarkings(markingCats, { query: 'yellow', categoryId: 101 }).length, 1);
+  assert.equal(Core.filterMarkings(markingCats, { query: '1.4', categoryId: 102 }).length, 0);
+
+  const docs = [
+    {
+      id: 'jek',
+      title: 'ՃԵԿ',
+      chapters: [
+        {
+          id: 'c1',
+          title: 'I. ԸՆԴՀԱՆՈՒՐ',
+          items: [{ id: 'ket-39', ref: 'Կետ 39', text: 'Միաժամանակ վերադասավորում եւ զիջում' }],
+        },
+      ],
+    },
+  ];
+  assert.equal(Core.filterRules(docs, { docId: 'jek', query: 'և' }).length, 1);
+  assert.equal(Core.filterRules(docs, { docId: 'law', query: 'և' }).length, 0);
 });

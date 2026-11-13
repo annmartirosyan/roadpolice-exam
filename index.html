@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#1d4ed8" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <title>ՃՈ Քննական Հարցաշար · ABC Կարգեր</title>
+  <title>Varordakan · ՃՈ Քննական Հարցաշար (ABC)</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="logo-192.png" type="image/png" />
   <link rel="apple-touch-icon" href="logo-512.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Armenian:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=20261113d" />
+  <link rel="stylesheet" href="styles.css?v=20261113e" />
 </head>
 <body>
   <header class="app-header">
@@ -20,38 +20,39 @@
       <button type="button" class="brand brand-btn" id="btn-brand-home" title="Վերադառնալ գլխավոր էջ">
         <img class="brand-logo" src="logo-192.png" alt="Varordakan լոգո" width="42" height="42" />
         <div>
-          <h1 class="brand-title">Varordakan · ՃՈ Քննական Հարցաշար</h1>
+          <h1 class="brand-title" id="brand-title-text">Varordakan · ՃՈ Քննական Հարցաշար</h1>
           <p class="brand-subtitle" id="overall-progress-text">1050 հարց · 282 նշան</p>
         </div>
       </button>
+
+      <div class="header-tools">
+        <button type="button" class="streak-pill" id="btn-daily-goal" title="Օրական նպատակ և սերիա">
+          🔥 <span id="streak-pill-text">0/20</span>
+        </button>
+
+        <div class="lang-switch" role="group" aria-label="Լեզու / Language">
+          <button type="button" class="lang-btn" data-lang="hy">ՀԱՅ</button>
+          <button type="button" class="lang-btn" data-lang="ru">РУС</button>
+          <button type="button" class="lang-btn" data-lang="en">ENG</button>
+        </div>
+
+        <button type="button" class="btn btn-ghost btn-sm" id="btn-open-note" title="Դեղին նշումներ (Sticky Note)">
+          📝
+        </button>
+      </div>
     </div>
 
     <nav class="tab-nav" aria-label="Հիմնական բաժիններ">
-      <button type="button" class="tab-btn" data-tab="home">
-        Գլխավոր
-      </button>
-      <button type="button" class="tab-btn" data-tab="practice">
-        Ուսուցում
-      </button>
-      <button type="button" class="tab-btn" data-tab="exam">
-        Քննություն (20 հարց)
-      </button>
+      <button type="button" class="tab-btn" data-tab="home">Գլխավոր</button>
+      <button type="button" class="tab-btn" data-tab="practice">Ուսուցում</button>
+      <button type="button" class="tab-btn" data-tab="exam">Քննություն (20)</button>
       <button type="button" class="tab-btn" data-tab="mistakes">
-        Սխալներ
-        <span class="badge" id="mistakes-badge">0</span>
+        Սխալներ <span class="badge" id="mistakes-badge">0</span>
       </button>
-      <button type="button" class="tab-btn" data-tab="signs">
-        Նշաններ
-      </button>
-      <button type="button" class="tab-btn" data-tab="colortest">
-        Գունաընկալում
-      </button>
-      <button type="button" class="tab-btn" data-tab="cheatsheet">
-        Հուշաթերթ
-      </button>
-      <button type="button" class="tab-btn" data-tab="search">
-        Որոնում
-      </button>
+      <button type="button" class="tab-btn" data-tab="signs">Նշաններ և գծանշում</button>
+      <button type="button" class="tab-btn" data-tab="colortest">Գունաընկալում</button>
+      <button type="button" class="tab-btn" data-tab="cheatsheet">Օրենք և հուշաթերթ</button>
+      <button type="button" class="tab-btn" data-tab="search">Որոնում</button>
     </nav>
   </header>
 
@@ -63,12 +64,31 @@
 
   <footer class="app-footer">
     <div class="footer-inner">
-      <span>ՀՀ ՃՈ Տեսական Քննություն · ABC Կարգեր</span>
+      <span id="footer-brand-text">ՀՀ ՃՈ Տեսական Քննություն · ABC Կարգեր</span>
       <span class="visit-stats" id="visit-stats" hidden>
         Այցելուներ՝ <strong id="stat-visitors">—</strong> · Բացումներ՝ <strong id="stat-opens">—</strong>
       </span>
     </div>
   </footer>
+
+  <!-- Floating Draggable Yellow Sticky Note -->
+  <aside class="sticky-note" id="sticky-note" hidden aria-label="Իմ նշումները">
+    <div class="sticky-note-header" id="sticky-note-drag" title="Քաշեք տեղափոխելու համար">
+      <span class="sticky-note-title">📌 Իմ նշումները</span>
+      <div class="sticky-note-actions">
+        <button type="button" class="sticky-icon-btn" id="sticky-btn-min" title="Փոքրացնել / Մեծացնել" aria-label="Փոքրացնել">―</button>
+        <button type="button" class="sticky-icon-btn" id="sticky-btn-del" title="Ջնջել նշումը" aria-label="Ջնջել">🗑️</button>
+      </div>
+    </div>
+    <div class="sticky-note-body" id="sticky-note-body">
+      <textarea
+        class="sticky-note-textarea"
+        id="sticky-note-text"
+        placeholder="Գրեք Ձեր նշումները այստեղ (ավտոմատ պահպանվում են բոլոր էջերում)..."
+        rows="5"
+      ></textarea>
+    </div>
+  </aside>
 
   <div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-label="Մեծացված նկար">
     <button type="button" class="lightbox-close" id="lightbox-close" aria-label="Փակել">✕</button>
@@ -87,10 +107,14 @@
 
   <div class="toast" id="toast" hidden role="status" aria-live="polite"></div>
 
-  <script src="data/questions.js?v=20261113b"></script>
-  <script src="data/signs.js?v=20261113b"></script>
-  <script src="data/color_tests.js?v=20261113b"></script>
-  <script src="app-core.js?v=20261113b"></script>
-  <script src="app.js?v=20261113d"></script>
+  <script src="data/questions.js?v=20261113e"></script>
+  <script src="data/questions_i18n.js?v=20261113e"></script>
+  <script src="data/signs.js?v=20261113e"></script>
+  <script src="data/signs_i18n.js?v=20261113e"></script>
+  <script src="data/markings.js?v=20261113e"></script>
+  <script src="data/color_tests.js?v=20261113e"></script>
+  <script src="data/rules.js?v=20261113e"></script>
+  <script src="app-core.js?v=20261113e"></script>
+  <script src="app.js?v=20261113e"></script>
 </body>
 </html>

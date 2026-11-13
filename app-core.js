@@ -9,6 +9,8 @@
   const EXAM_DURATION_SEC = 1800;
   const EXAM_PASS_SCORE = 18;
   const MAX_HISTORY_ITEMS = 50;
+  const MISTAKE_CLEAR_STREAK = 2;
+  const DEFAULT_DAILY_GOAL = 20;
 
   function normalizeArmenian(text) {
     if (typeof text !== 'string') return '';
@@ -26,9 +28,24 @@
       version: 1,
       practice: {},
       mistakes: {},
+      bookmarks: {},
       examHistory: [],
+      study: {
+        dailyGoal: DEFAULT_DAILY_GOAL,
+        dailyCounts: {},
+      },
+      stickyNote: {
+        visible: true,
+        minimized: false,
+        deleted: false,
+        text: '',
+        x: null,
+        y: null,
+      },
       ui: {
         activeTab: 'home',
+        lang: 'hy',
+        bilingual: false,
         activeGroupId: 1,
         activeQuestionIndexByGroup: {},
         shuffleByGroup: {},
@@ -68,10 +85,50 @@
         if (_isPlainObject(entry) && typeof entry.wrongCount === 'number') {
           base.mistakes[uid] = {
             wrongCount: Math.max(1, entry.wrongCount),
+            streak:
+              typeof entry.streak === 'number'
+                ? Math.max(0, Math.min(MISTAKE_CLEAR_STREAK - 1, entry.streak))
+                : 0,
             lastWrongAt: typeof entry.lastWrongAt === 'number' ? entry.lastWrongAt : Date.now(),
           };
         }
       }
+    }
+
+    if (_isPlainObject(raw.bookmarks)) {
+      for (const [uid, ts] of Object.entries(raw.bookmarks)) {
+        if (typeof ts === 'number' || ts === true) {
+          base.bookmarks[uid] = typeof ts === 'number' ? ts : Date.now();
+        }
+      }
+    }
+
+    if (_isPlainObject(raw.study)) {
+      if (
+        typeof raw.study.dailyGoal === 'number' &&
+        raw.study.dailyGoal >= 5 &&
+        raw.study.dailyGoal <= 200
+      ) {
+        base.study.dailyGoal = Math.round(raw.study.dailyGoal);
+      }
+      if (_isPlainObject(raw.study.dailyCounts)) {
+        for (const [day, cnt] of Object.entries(raw.study.dailyCounts)) {
+          if (/^\d{4}-\d{2}-\d{2}$/.test(day) && typeof cnt === 'number' && cnt >= 0) {
+            base.study.dailyCounts[day] = Math.round(cnt);
+          }
+        }
+      }
+    }
+
+    if (_isPlainObject(raw.stickyNote)) {
+      base.stickyNote = {
+        visible: raw.stickyNote.visible !== false,
+        minimized: Boolean(raw.stickyNote.minimized),
+        deleted: Boolean(raw.stickyNote.deleted),
+        text: typeof raw.stickyNote.text === 'string' ? raw.stickyNote.text : '',
+        x: typeof raw.stickyNote.x === 'number' ? raw.stickyNote.x : null,
+        y: typeof raw.stickyNote.y === 'number' ? raw.stickyNote.y : null,
+      };
     }
 
     if (Array.isArray(raw.examHistory)) {
@@ -89,6 +146,12 @@
       const validTabs = new Set(['home', 'practice', 'exam', 'mistakes', 'signs', 'colortest', 'cheatsheet', 'search']);
       if (validTabs.has(raw.ui.activeTab)) {
         base.ui.activeTab = raw.ui.activeTab;
+      }
+      if (['hy', 'ru', 'en'].includes(raw.ui.lang)) {
+        base.ui.lang = raw.ui.lang;
+      }
+      if (typeof raw.ui.bilingual === 'boolean') {
+        base.ui.bilingual = raw.ui.bilingual;
       }
       if (typeof raw.ui.activeGroupId === 'number' && raw.ui.activeGroupId >= 1 && raw.ui.activeGroupId <= 10) {
         base.ui.activeGroupId = raw.ui.activeGroupId;
@@ -157,9 +220,95 @@
       ...mistakes,
       [uid]: {
         wrongCount: prev ? prev.wrongCount + 1 : 1,
+        streak: 0,
         lastWrongAt: now,
       },
     };
+  }
+
+  function getLocalDateKey(date = new Date()) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+
+  function _prevDateKey(dateKey) {
+    const [y, m, d] = dateKey.split('-').map(Number);
+    const dt = new Date(y, m - 1, d);
+    dt.setDate(dt.getDate() - 1);
+    return getLocalDateKey(dt);
+  }
+
+  function recordStudyActivity(state, dateKey = getLocalDateKey()) {
+    const study = state.study || { dailyGoal: DEFAULT_DAILY_GOAL, dailyCounts: {} };
+    const nextCounts = {
+      ...study.dailyCounts,
+      [dateKey]: (study.dailyCounts[dateKey] || 0) + 1,
+    };
+    return {
+      ...state,
+      study: {
+        ...study,
+        dailyCounts: nextCounts,
+      },
+    };
+  }
+
+  function setDailyGoal(state, goal) {
+    const num = Math.max(5, Math.min(200, Math.round(Number(goal) || DEFAULT_DAILY_GOAL)));
+    const study = state.study || { dailyGoal: DEFAULT_DAILY_GOAL, dailyCounts: {} };
+    return {
+      ...state,
+      study: {
+        ...study,
+        dailyGoal: num,
+      },
+    };
+  }
+
+  function getStudyProgress(state, todayKey = getLocalDateKey()) {
+    const study = (state && state.study) || { dailyGoal: DEFAULT_DAILY_GOAL, dailyCounts: {} };
+    const dailyGoal = study.dailyGoal || DEFAULT_DAILY_GOAL;
+    const counts = study.dailyCounts || {};
+    const todayCount = counts[todayKey] || 0;
+    const dailyPct = Math.min(100, Math.round((todayCount / dailyGoal) * 100));
+
+    let streakDays = 0;
+    let cursor = todayCount >= dailyGoal ? todayKey : _prevDateKey(todayKey);
+    while ((counts[cursor] || 0) >= dailyGoal) {
+      streakDays += 1;
+      cursor = _prevDateKey(cursor);
+    }
+
+    return {
+      todayCount,
+      dailyGoal,
+      dailyPct,
+      goalMetToday: todayCount >= dailyGoal,
+      streakDays,
+    };
+  }
+
+  function toggleBookmark(state, uid, now = Date.now()) {
+    const next = { ...(state.bookmarks || {}) };
+    const added = !next[uid];
+    if (added) {
+      next[uid] = now;
+    } else {
+      delete next[uid];
+    }
+    return {
+      state: {
+        ...state,
+        bookmarks: next,
+      },
+      bookmarked: added,
+    };
+  }
+
+  function isBookmarked(state, uid) {
+    return Boolean(state && state.bookmarks && state.bookmarks[uid]);
   }
 
   function recordPracticeAnswer(state, uid, selectedIndex, correctIndex, now = Date.now()) {
@@ -418,15 +567,43 @@
 
   function retryMistakeAnswer(state, uid, selectedIndex, correctIndex, now = Date.now()) {
     const isCorrect = selectedIndex === correctIndex;
-    if (isCorrect) {
-      return { state, isCorrect: true };
+    if (!isCorrect) {
+      return {
+        state: {
+          ...state,
+          mistakes: _addMistake(state.mistakes, uid, now),
+        },
+        isCorrect: false,
+        resolved: false,
+        streak: 0,
+      };
     }
+
+    const prev = state.mistakes[uid];
+    const nextStreak = prev ? (prev.streak || 0) + 1 : MISTAKE_CLEAR_STREAK;
+    if (nextStreak >= MISTAKE_CLEAR_STREAK) {
+      return {
+        state: resolveMistake(state, uid),
+        isCorrect: true,
+        resolved: true,
+        streak: nextStreak,
+      };
+    }
+
     return {
       state: {
         ...state,
-        mistakes: _addMistake(state.mistakes, uid, now),
+        mistakes: {
+          ...state.mistakes,
+          [uid]: {
+            ...prev,
+            streak: nextStreak,
+          },
+        },
       },
-      isCorrect: false,
+      isCorrect: true,
+      resolved: false,
+      streak: nextStreak,
     };
   }
 
@@ -447,7 +624,10 @@
     };
   }
 
-  function filterQuestions(groups, { query = '', groupId = 'all', imagesOnly = false } = {}) {
+  function filterQuestions(
+    groups,
+    { query = '', groupId = 'all', imagesOnly = false, bookmarkedOnly = false, bookmarks = null, i18nData = null } = {}
+  ) {
     const normQuery = normalizeArmenian(query);
     const out = [];
     for (const group of groups) {
@@ -458,15 +638,69 @@
         if (imagesOnly && (!q.images || q.images.length === 0)) {
           continue;
         }
+        if (bookmarkedOnly && (!bookmarks || !bookmarks[q.uid])) {
+          continue;
+        }
         if (normQuery) {
-          const haystack = normalizeArmenian(
-            `${q.text} ${(q.options || []).join(' ')}`
-          );
+          const parts = [q.text, ...(q.options || [])];
+          if (i18nData) {
+            const ru = i18nData.ru && i18nData.ru[q.uid];
+            const en = i18nData.en && i18nData.en[q.uid];
+            if (ru) parts.push(ru.text, ...(ru.options || []));
+            if (en) parts.push(en.text, ...(en.options || []));
+          }
+          const haystack = normalizeArmenian(parts.join(' '));
           if (!haystack.includes(normQuery)) {
             continue;
           }
         }
         out.push(q);
+      }
+    }
+    return out;
+  }
+
+  function filterMarkings(categories, { query = '', categoryId = 'all' } = {}) {
+    const normQuery = normalizeArmenian(query);
+    const out = [];
+    for (const cat of categories || []) {
+      if (categoryId !== 'all' && Number(categoryId) !== cat.id) {
+        continue;
+      }
+      for (const item of cat.items || []) {
+        if (normQuery) {
+          const haystack = normalizeArmenian(
+            `${item.code || ''} ${item.title || ''} ${item.title_ru || ''} ${item.title_en || ''} ${item.description || ''} ${item.description_ru || ''} ${item.description_en || ''}`
+          );
+          if (!haystack.includes(normQuery)) {
+            continue;
+          }
+        }
+        out.push({ ...item, categoryTitle: cat.title, categoryTitle_ru: cat.title_ru, categoryTitle_en: cat.title_en });
+      }
+    }
+    return out;
+  }
+
+  function filterRules(documents, { docId = 'all', query = '' } = {}) {
+    const normQuery = normalizeArmenian(query);
+    const out = [];
+    for (const doc of documents || []) {
+      if (docId !== 'all' && doc.id !== docId) continue;
+      for (const ch of doc.chapters || []) {
+        for (const item of ch.items || []) {
+          if (normQuery) {
+            const haystack = normalizeArmenian(`${ch.title} ${item.ref || ''} ${item.text || ''}`);
+            if (!haystack.includes(normQuery)) continue;
+          }
+          out.push({
+            ...item,
+            docId: doc.id,
+            docTitle: doc.title,
+            chapterId: ch.id,
+            chapterTitle: ch.title,
+          });
+        }
       }
     }
     return out;
@@ -661,6 +895,8 @@
     STORAGE_KEY,
     EXAM_DURATION_SEC,
     EXAM_PASS_SCORE,
+    MISTAKE_CLEAR_STREAK,
+    DEFAULT_DAILY_GOAL,
     ANALYTICS_NAMESPACE,
     normalizeArmenian,
     createInitialState,
@@ -670,6 +906,12 @@
     importStateJson,
     recordPracticeAnswer,
     resetGroupPractice,
+    getLocalDateKey,
+    recordStudyActivity,
+    setDailyGoal,
+    getStudyProgress,
+    toggleBookmark,
+    isBookmarked,
     shuffleArray,
     generateMockExam,
     computeReadiness,
@@ -680,6 +922,8 @@
     clearAllMistakes,
     filterQuestions,
     filterSigns,
+    filterMarkings,
+    filterRules,
     getCanonicalSignCode,
     buildSignIndex,
     extractSignCodesFromText,

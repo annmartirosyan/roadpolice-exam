@@ -1,8 +1,177 @@
 (function () {
   const Core = window.RoadPoliceCore;
   const DATA = window.EXAM_DATA;
+  const EXAM_I18N = window.EXAM_I18N || { ru: {}, en: {} };
   const SIGNS_DATA = window.SIGNS_DATA || { totalSigns: 0, categories: [] };
+  const SIGNS_I18N = window.SIGNS_I18N || { categories: { ru: {}, en: {} }, ru: {}, en: {} };
+  const MARKINGS_DATA = window.MARKINGS_DATA || { totalItems: 0, categories: [] };
   const COLOR_TESTS_DATA = window.COLOR_TESTS_DATA || { totalPlates: 0, plates: [] };
+  const RULES_DATA = window.RULES_DATA || { documents: [] };
+
+  const STRINGS = {
+    hy: {
+      brandTitle: 'Varordakan · ՃՈ Քննական Հարցաշար',
+      tabs: {
+        home: 'Գլխավոր',
+        practice: 'Ուսուցում',
+        exam: 'Քննություն (20)',
+        mistakes: 'Սխալներ',
+        signs: 'Նշաններ և գծանշում',
+        colortest: 'Գունաընկալում',
+        cheatsheet: 'Օրենք և հուշաթերթ',
+        search: 'Որոնում',
+      },
+      groupWord: 'Խումբ',
+      questionWord: 'Հարց',
+      prev: '← Նախորդը',
+      next: 'Հաջորդը →',
+      correctBanner: '✓ Ճիշտ պատասխան է',
+      wrongBannerPrefix: '✕ Սխալ է · Ճիշտ պատասխանն է՝',
+      explanationTitle: '💡 Բացատրություն (Ինչու է ճիշտ)',
+      show: 'Ցույց տալ ▼',
+      hide: 'Թաքցնել ▲',
+      bookmarkSave: '☆ Պահել',
+      bookmarkSaved: '★ Պահված է',
+      noteTitle: '📌 Իմ նշումները',
+      notePlaceholder: 'Գրեք Ձեր նշումները այստեղ (ավտոմատ պահպանվում են բոլոր էջերում)...',
+      streakUnit: 'օր',
+      footer: 'ՀՀ ՃՈ Տեսական Քննություն · ABC Կարգեր',
+    },
+    ru: {
+      brandTitle: 'Varordakan · ПДД Экзамен Армении',
+      tabs: {
+        home: 'Главная',
+        practice: 'Обучение',
+        exam: 'Экзамен (20)',
+        mistakes: 'Ошибки',
+        signs: 'Знаки и разметка',
+        colortest: 'Цветовосприятие',
+        cheatsheet: 'Законы и шпаргалка',
+        search: 'Поиск',
+      },
+      groupWord: 'Группа',
+      questionWord: 'Вопрос',
+      prev: '← Назад',
+      next: 'Далее →',
+      correctBanner: '✓ Правильный ответ',
+      wrongBannerPrefix: '✕ Неверно · Правильный ответ:',
+      explanationTitle: '💡 Объяснение (Почему это верно)',
+      show: 'Показать ▼',
+      hide: 'Скрыть ▲',
+      bookmarkSave: '☆ Сохранить',
+      bookmarkSaved: '★ В избранном',
+      noteTitle: '📌 Мои заметки',
+      notePlaceholder: 'Записывайте заметки здесь (сохраняются на всех вкладках)...',
+      streakUnit: 'дн.',
+      footer: 'Теоретический экзамен Полиции РА · Категории ABC',
+    },
+    en: {
+      brandTitle: 'Varordakan · Armenia Driving Exam',
+      tabs: {
+        home: 'Home',
+        practice: 'Practice',
+        exam: 'Mock Exam (20)',
+        mistakes: 'Mistakes',
+        signs: 'Signs & Markings',
+        colortest: 'Color Test',
+        cheatsheet: 'Rules & Guide',
+        search: 'Search',
+      },
+      groupWord: 'Group',
+      questionWord: 'Question',
+      prev: '← Previous',
+      next: 'Next →',
+      correctBanner: '✓ Correct answer',
+      wrongBannerPrefix: '✕ Incorrect · Correct answer:',
+      explanationTitle: '💡 Explanation (Why it is right)',
+      show: 'Show ▼',
+      hide: 'Hide ▲',
+      bookmarkSave: '☆ Bookmark',
+      bookmarkSaved: '★ Saved',
+      noteTitle: '📌 My Notes',
+      notePlaceholder: 'Write your study notes here (saved across all tabs)...',
+      streakUnit: 'd',
+      footer: 'Armenia Road Police Theory Exam · ABC Categories',
+    },
+  };
+
+  function getLang() {
+    return state && state.ui && STRINGS[state.ui.lang] ? state.ui.lang : 'hy';
+  }
+
+  function t(key) {
+    const lang = getLang();
+    return (STRINGS[lang] && STRINGS[lang][key]) || STRINGS.hy[key] || '';
+  }
+
+  function getQText(q) {
+    const lang = getLang();
+    if (lang !== 'hy' && EXAM_I18N[lang] && EXAM_I18N[lang][q.uid]) {
+      return EXAM_I18N[lang][q.uid].text || q.text;
+    }
+    return q.text;
+  }
+
+  function getQOptions(q) {
+    const lang = getLang();
+    if (lang !== 'hy' && EXAM_I18N[lang] && EXAM_I18N[lang][q.uid]) {
+      return EXAM_I18N[lang][q.uid].options || q.options;
+    }
+    return q.options;
+  }
+
+  function getSignText(sign) {
+    const lang = getLang();
+    if (lang !== 'hy' && SIGNS_I18N[lang] && SIGNS_I18N[lang][sign.id]) {
+      const tr = SIGNS_I18N[lang][sign.id];
+      return {
+        title: tr.title || sign.title,
+        description: tr.description || sign.description,
+      };
+    }
+    return { title: sign.title, description: sign.description };
+  }
+
+  function getSignCategoryTitle(cat) {
+    const lang = getLang();
+    if (lang !== 'hy' && SIGNS_I18N.categories && SIGNS_I18N.categories[lang] && SIGNS_I18N.categories[lang][cat.id]) {
+      return SIGNS_I18N.categories[lang][cat.id];
+    }
+    return cat.title;
+  }
+
+  function getMarkingText(item) {
+    const lang = getLang();
+    if (lang === 'ru') {
+      return {
+        title: item.title_ru || item.title,
+        description: item.description_ru || item.description,
+        categoryTitle: item.categoryTitle_ru || item.categoryTitle,
+      };
+    }
+    if (lang === 'en') {
+      return {
+        title: item.title_en || item.title,
+        description: item.description_en || item.description,
+        categoryTitle: item.categoryTitle_en || item.categoryTitle,
+      };
+    }
+    return {
+      title: item.title,
+      description: item.description,
+      categoryTitle: item.categoryTitle,
+    };
+  }
+
+  // Index rules & articles for quick jump from explanations
+  const RULE_ID_LOOKUP = {};
+  for (const doc of RULES_DATA.documents || []) {
+    for (const ch of doc.chapters || []) {
+      for (const item of ch.items || []) {
+        if (item.id) RULE_ID_LOOKUP[item.id] = { docId: doc.id, itemId: item.id };
+      }
+    }
+  }
 
   if (!Core || !DATA || !Array.isArray(DATA.groups)) {
     document.getElementById('app-root').innerHTML =
@@ -49,17 +218,11 @@
       // { [uid]: { selectedIndex, isCorrect } } for current retry view
       attemptByUid: {},
     },
-    search: {
-      query: '',
-      groupId: 'all',
-      imagesOnly: false,
-      showAnswers: false,
-      page: 1,
-      pageSize: 40,
-    },
     signs: {
+      section: 'signs', // 'signs' | 'markings' | 'vehicle_id' | 'quiz'
       query: '',
       categoryId: 'all',
+      markingCatId: 'all',
       mode: 'browse', // 'browse' | 'quiz'
       quiz: {
         items: [],
@@ -77,8 +240,21 @@
       examPassed: false,
     },
     cheatsheet: {
+      subtab: 'rules', // 'rules' | 'guide'
+      docId: 'all',
+      query: '',
+      highlightRuleId: '',
       pose: 'side', // 'up' | 'side' | 'forward'
       approach: 'left', // 'left' | 'right' | 'front' | 'back'
+    },
+    search: {
+      query: '',
+      groupId: 'all',
+      imagesOnly: false,
+      bookmarkedOnly: false,
+      showAnswers: false,
+      page: 1,
+      pageSize: 40,
     },
     practiceFocus: null, // null | { mode: 'smart' | 'sign', label: string, questions: [], index: 0 }
     openExplanations: {},
@@ -124,16 +300,17 @@
     if (!sign || !signModalEl) return;
     const canonical = sign.canonicalCode || sign.code;
     const linkedQs = QUESTIONS_BY_SIGN_CODE[canonical] || [];
-    signModalTitleEl.textContent = sign.title;
+    const loc = getSignText(sign);
+    signModalTitleEl.textContent = loc.title;
     signModalBodyEl.innerHTML = `
       ${
         sign.image
-          ? `<div class="modal-sign-preview"><img src="${escapeHtml(sign.image)}" alt="${escapeHtml(sign.title)}" /></div>`
+          ? `<div class="modal-sign-preview"><img src="${escapeHtml(sign.image)}" alt="${escapeHtml(loc.title)}" /></div>`
           : ''
       }
       <span class="pill-tag">${escapeHtml(sign.categoryTitle)}</span>
       <p style="margin: 10px 0 14px; font-size: 14.5px; color: var(--text-muted); line-height: 1.6;">
-        ${sign.description ? escapeHtml(sign.description) : 'Լրացուցիչ նկարագրություն չկա։'}
+        ${loc.description ? escapeHtml(loc.description) : 'Լրացուցիչ նկարագրություն չկա։'}
       </p>
       <div class="toolbar-group">
         ${
@@ -170,6 +347,16 @@
   }
 
   function updateHeaderStats() {
+    const lang = getLang();
+    const strings = STRINGS[lang];
+    document.documentElement.lang = lang;
+
+    const brandTitleEl = document.getElementById('brand-title-text');
+    if (brandTitleEl) brandTitleEl.textContent = strings.brandTitle;
+
+    const footerEl = document.getElementById('footer-brand-text');
+    if (footerEl) footerEl.textContent = strings.footer;
+
     const total = DATA.totalQuestions;
     let answeredCount = 0;
     let correctCount = 0;
@@ -178,15 +365,46 @@
       if (entry.correct) correctCount += 1;
     }
     const pct = answeredCount > 0 ? Math.round((correctCount / answeredCount) * 100) : 0;
-    progressTextEl.textContent = `Ընդամենը՝ ${total} հարց · Անցած՝ ${answeredCount} (${pct}% ճիշտ)`;
+    progressTextEl.textContent =
+      lang === 'ru'
+        ? `Всего: ${total} · Пройдено: ${answeredCount} (${pct}% верно)`
+        : lang === 'en'
+        ? `Total: ${total} · Done: ${answeredCount} (${pct}% right)`
+        : `Ընդամենը՝ ${total} հարց · Անցած՝ ${answeredCount} (${pct}% ճիշտ)`;
 
     const mistakeCount = Object.keys(state.mistakes).length;
     mistakesBadgeEl.textContent = String(mistakeCount);
     mistakesBadgeEl.classList.toggle('zero', mistakeCount === 0);
 
     document.querySelectorAll('.tab-btn').forEach((btn) => {
-      btn.classList.toggle('active', btn.dataset.tab === state.ui.activeTab);
+      const tabKey = btn.dataset.tab;
+      btn.classList.toggle('active', tabKey === state.ui.activeTab);
+      if (tabKey === 'mistakes') {
+        btn.innerHTML = `${escapeHtml(strings.tabs.mistakes)} <span class="badge ${mistakeCount === 0 ? 'zero' : ''}" id="mistakes-badge">${mistakeCount}</span>`;
+      } else if (strings.tabs[tabKey]) {
+        btn.textContent = strings.tabs[tabKey];
+      }
     });
+
+    document.querySelectorAll('.lang-btn').forEach((btn) => {
+      btn.classList.toggle('active', btn.dataset.lang === lang);
+    });
+
+    const study = Core.getStudyProgress(state);
+    const streakBtn = document.getElementById('btn-daily-goal');
+    const streakTextEl = document.getElementById('streak-pill-text');
+    if (streakBtn && streakTextEl) {
+      streakBtn.classList.toggle('done', study.goalMetToday);
+      streakTextEl.textContent =
+        study.streakDays > 0
+          ? `${study.streakDays} ${strings.streakUnit} · ${study.todayCount}/${study.dailyGoal}`
+          : `${study.todayCount}/${study.dailyGoal}`;
+    }
+
+    const noteTitleEl = document.querySelector('.sticky-note-title');
+    const noteTextEl = document.getElementById('sticky-note-text');
+    if (noteTitleEl) noteTitleEl.textContent = strings.noteTitle;
+    if (noteTextEl) noteTextEl.placeholder = strings.notePlaceholder;
   }
 
   // ---------- Practice Helpers ----------
@@ -233,14 +451,45 @@
     `;
   }
 
+  function renderBookmarkBtnHtml(uid) {
+    const saved = Core.isBookmarked(state, uid);
+    return `
+      <button type="button" class="bookmark-btn ${saved ? 'active' : ''}" data-toggle-bookmark="${escapeHtml(uid)}">
+        ${saved ? t('bookmarkSaved') : t('bookmarkSave')}
+      </button>
+    `;
+  }
+
+  function renderBilingualHintHtml(q) {
+    if (getLang() === 'hy' || !state.ui.bilingual) return '';
+    return `<p class="bilingual-sub">🇦🇲 ${escapeHtml(q.text)}</p>`;
+  }
+
   function renderLinkedExplanationHtml(text) {
     const tokens = Core.tokenizeExplanationWithSigns(text, SIGN_INDEX.byCode);
+    const ruleRe = /(կետ|հոդված)\s+(\d+(?:\.\d+)?)/gi;
     return tokens
       .map((tok) => {
         if (tok.type === 'sign') {
           return `<button type="button" class="sign-ref-link" data-open-sign="${escapeHtml(tok.code)}" title="${escapeHtml(tok.sign.title)}">${escapeHtml(tok.code)}</button>`;
         }
-        return escapeHtml(tok.value);
+        const chunk = tok.value;
+        let out = '';
+        let last = 0;
+        let m;
+        ruleRe.lastIndex = 0;
+        while ((m = ruleRe.exec(chunk)) !== null) {
+          const kind = m[1].toLowerCase();
+          const num = m[2];
+          const ruleId = kind === 'հոդված' ? `hodvac-${num}` : `ket-${num}`;
+          if (RULE_ID_LOOKUP[ruleId]) {
+            if (m.index > last) out += escapeHtml(chunk.slice(last, m.index));
+            out += `<button type="button" class="sign-ref-link" data-open-rule="${escapeHtml(ruleId)}">${escapeHtml(m[0])}</button>`;
+            last = m.index + m[0].length;
+          }
+        }
+        if (last < chunk.length) out += escapeHtml(chunk.slice(last));
+        return out;
       })
       .join('');
   }
@@ -257,8 +506,8 @@
           data-toggle-exp="${escapeHtml(key)}"
           aria-expanded="${isOpen ? 'true' : 'false'}"
         >
-          <span>💡 Բացատրություն (Ինչու է ճիշտ)</span>
-          <span>${isOpen ? 'Թաքցնել ▲' : 'Ցույց տալ ▼'}</span>
+          <span>${t('explanationTitle')}</span>
+          <span>${isOpen ? t('hide') : t('show')}</span>
         </button>
         ${
           isOpen
@@ -494,13 +743,17 @@
   function renderReadinessBannerHtml() {
     const r = Core.computeReadiness(DATA.groups, state);
     const b = r.buckets;
+    const bookmarkCount = Object.keys(state.bookmarks || {}).length;
+    const study = Core.getStudyProgress(state);
     return `
       <div class="card readiness-card">
         <div class="readiness-main">
           <div class="readiness-top">
             <span class="readiness-pct">${r.overallPct}%</span>
             <strong>Քննության պատրաստվածություն</strong>
-            <span style="font-size: 13px; color: var(--text-muted);">(ըստ պաշտոնական 15+2+2+1 կշիռների)</span>
+            <span style="font-size: 13px; color: var(--text-muted);">
+              · 🔥 ${study.streakDays} ${t('streakUnit')} · Այսօր՝ ${study.todayCount}/${study.dailyGoal}
+            </span>
           </div>
           <div class="progress-bar-wrap" style="margin-bottom: 8px;">
             <div class="progress-bar-fill" style="width: ${r.overallPct}%"></div>
@@ -519,7 +772,10 @@
         </div>
         <div class="toolbar-group">
           <button type="button" class="btn btn-primary" id="btn-smart-drill">
-            ⚡ Խելացի մարզում (10 հարց)
+            ⚡ Խելացի մարզում (10)
+          </button>
+          <button type="button" class="btn" id="btn-bookmarks-drill" ${bookmarkCount === 0 ? 'disabled' : ''}>
+            ★ Պահված (${bookmarkCount})
           </button>
         </div>
       </div>
@@ -538,9 +794,11 @@
     const qIdx = Math.min(Math.max(0, focus.index), total - 1);
     focus.index = qIdx;
     const q = questions[qIdx];
+    const qText = getQText(q);
+    const qOpts = getQOptions(q);
     const attempt = focus.attemptByUid[q.uid];
 
-    const optionsHtml = q.options
+    const optionsHtml = qOpts
       .map((opt, idx) => {
         const cls = ['option-btn'];
         if (attempt) {
@@ -565,8 +823,8 @@
       ? `<div class="feedback-banner ${attempt.isCorrect ? 'correct' : 'wrong'}">
            <span>${
              attempt.isCorrect
-               ? '✓ Ճիշտ պատասխան է'
-               : `✕ Սխալ է · Ճիշտ պատասխանն է՝ ${q.correctIndex + 1}. ${escapeHtml(q.options[q.correctIndex])}`
+               ? t('correctBanner')
+               : `${t('wrongBannerPrefix')} ${q.correctIndex + 1}. ${escapeHtml(qOpts[q.correctIndex])}`
            }</span>
          </div>`
       : '';
@@ -589,15 +847,21 @@
             <span class="pill-tag">${qIdx + 1} / ${total}</span>
           </div>
           <div class="toolbar-group">
+            ${
+              getLang() !== 'hy'
+                ? `<button type="button" class="btn btn-sm ${state.ui.bilingual ? 'btn-primary' : ''}" id="btn-toggle-bilingual">🇦🇲 Հայերեն</button>`
+                : ''
+            }
             <button type="button" class="btn btn-sm" id="btn-exit-focus">← Վերադառնալ խմբերին</button>
           </div>
         </div>
 
         <div class="question-meta">
-          <span>Խումբ ${q.groupId} · Հարց №${q.number}</span>
+          <span>${t('groupWord')} ${q.groupId} · ${t('questionWord')} №${q.number}</span>
+          ${renderBookmarkBtnHtml(q.uid)}
         </div>
 
-        <h2 class="question-text">${escapeHtml(q.text)}</h2>
+        <h2 class="question-text">${escapeHtml(qText)}${renderBilingualHintHtml(q)}</h2>
         ${renderImagesHtml(q.images)}
         <div class="options-list">${optionsHtml}</div>
         ${feedbackHtml}
@@ -605,8 +869,8 @@
 
         <div class="question-footer">
           <div class="toolbar-group">
-            <button type="button" class="btn" id="btn-focus-prev" ${qIdx === 0 ? 'disabled' : ''}>← Նախորդը</button>
-            <button type="button" class="btn btn-primary" id="btn-focus-next" ${qIdx >= total - 1 ? 'disabled' : ''}>Հաջորդը →</button>
+            <button type="button" class="btn" id="btn-focus-prev" ${qIdx === 0 ? 'disabled' : ''}>${t('prev')}</button>
+            <button type="button" class="btn btn-primary" id="btn-focus-next" ${qIdx >= total - 1 ? 'disabled' : ''}>${t('next')}</button>
           </div>
         </div>
 
@@ -631,6 +895,8 @@
     state.ui.activeQuestionIndexByGroup[group.id] = qIdx;
 
     const q = questions[qIdx];
+    const qText = getQText(q);
+    const qOpts = getQOptions(q);
     const record = state.practice[q.uid];
     const stats = getGroupStats(group);
     const isShuffled = Boolean(state.ui.shuffleByGroup[group.id]);
@@ -643,18 +909,18 @@
         return `
           <button type="button" class="group-pill ${g.id === group.id ? 'active' : ''}" data-select-group="${g.id}">
             <div class="group-pill-top">
-              <span>Խումբ ${g.id}</span>
+              <span>${t('groupWord')} ${g.id}</span>
               <span>${gs.answered}/${gs.total}</span>
             </div>
             <div class="group-pill-sub">
-              <span>Ճիշտ՝ ${acc}</span>
+              <span>${getLang() === 'ru' ? 'Верно' : getLang() === 'en' ? 'Correct' : 'Ճիշտ'}՝ ${acc}</span>
             </div>
           </button>
         `;
       })
       .join('');
 
-    const optionsHtml = q.options
+    const optionsHtml = qOpts
       .map((opt, idx) => {
         const cls = ['option-btn'];
         if (record) {
@@ -679,8 +945,8 @@
       ? `<div class="feedback-banner ${record.correct ? 'correct' : 'wrong'}">
            <span>${
              record.correct
-               ? '✓ Ճիշտ պատասխան է'
-               : `✕ Սխալ է · Ճիշտ պատասխանն է՝ ${q.correctIndex + 1}. ${escapeHtml(q.options[q.correctIndex])}`
+               ? t('correctBanner')
+               : `${t('wrongBannerPrefix')} ${q.correctIndex + 1}. ${escapeHtml(qOpts[q.correctIndex])}`
            }</span>
          </div>`
       : '';
@@ -702,10 +968,15 @@
       <div class="card">
         <div class="toolbar">
           <div class="toolbar-group">
-            <strong>Խումբ ${group.id}</strong>
-            <span class="pill-tag">${stats.answered} / ${total} պատասխանված · ${stats.correct} ճիշտ</span>
+            <strong>${t('groupWord')} ${group.id}</strong>
+            <span class="pill-tag">${stats.answered} / ${total} · ${stats.correct} ✓</span>
           </div>
           <div class="toolbar-group">
+            ${
+              getLang() !== 'hy'
+                ? `<button type="button" class="btn btn-sm ${state.ui.bilingual ? 'btn-primary' : ''}" id="btn-toggle-bilingual">🇦🇲 Հայերեն</button>`
+                : ''
+            }
             <button type="button" class="btn btn-sm ${isShuffled ? 'btn-primary' : ''}" id="btn-toggle-shuffle">
               ${isShuffled ? 'Խառնված է' : 'Խառնել'}
             </button>
@@ -719,11 +990,14 @@
         </div>
 
         <div class="question-meta">
-          <span>Հարց №${q.number} (${qIdx + 1} / ${total})</span>
-          <span class="pill-tag">Խումբ ${group.id}</span>
+          <span>${t('questionWord')} №${q.number} (${qIdx + 1} / ${total})</span>
+          <div class="toolbar-group">
+            ${renderBookmarkBtnHtml(q.uid)}
+            <span class="pill-tag">${t('groupWord')} ${group.id}</span>
+          </div>
         </div>
 
-        <h2 class="question-text">${escapeHtml(q.text)}</h2>
+        <h2 class="question-text">${escapeHtml(qText)}${renderBilingualHintHtml(q)}</h2>
         ${renderImagesHtml(q.images)}
         <div class="options-list">${optionsHtml}</div>
         ${feedbackHtml}
@@ -731,10 +1005,10 @@
 
         <div class="question-footer">
           <div class="toolbar-group">
-            <button type="button" class="btn" id="btn-prev-q" ${qIdx === 0 ? 'disabled' : ''}>← Նախորդը</button>
-            <button type="button" class="btn btn-primary" id="btn-next-q" ${qIdx >= total - 1 ? 'disabled' : ''}>Հաջորդը →</button>
+            <button type="button" class="btn" id="btn-prev-q" ${qIdx === 0 ? 'disabled' : ''}>${t('prev')}</button>
+            <button type="button" class="btn btn-primary" id="btn-next-q" ${qIdx >= total - 1 ? 'disabled' : ''}>${t('next')}</button>
           </div>
-          <span class="kbd-hint">Ստեղներ՝ 1-5 պատասխանել · ← / → անցնել</span>
+          <span class="kbd-hint">1-5 · ← / →</span>
         </div>
 
         <div class="q-grid" aria-label="Հարցերի ցանկ">${gridHtml}</div>
@@ -866,6 +1140,10 @@
       elapsedSec
     );
     state = nextState;
+    const answeredInExam = Object.keys(session.exam.answersByUid).length;
+    for (let i = 0; i < answeredInExam; i++) {
+      state = Core.recordStudyActivity(state);
+    }
     session.exam.status = 'finished';
     session.exam.result = result;
     persist();
@@ -1005,6 +1283,8 @@
     if (session.exam.status === 'running') {
       const { questions, answersByUid, currentIndex, remainingSec } = session.exam;
       const q = questions[currentIndex];
+      const qText = getQText(q);
+      const qOpts = getQOptions(q);
       const selected = answersByUid[q.uid];
       const answeredTotal = Object.keys(answersByUid).length;
 
@@ -1021,7 +1301,7 @@
         })
         .join('');
 
-      const optionsHtml = q.options
+      const optionsHtml = qOpts
         .map(
           (opt, idx) => `
           <button
@@ -1039,8 +1319,8 @@
         <div class="card">
           <div class="exam-topbar">
             <div class="toolbar-group">
-              <strong>Հարց ${currentIndex + 1} / ${questions.length}</strong>
-              <span class="pill-tag">Պատասխանված՝ ${answeredTotal} / ${questions.length}</span>
+              <strong>${t('questionWord')} ${currentIndex + 1} / ${questions.length}</strong>
+              <span class="pill-tag">${answeredTotal} / ${questions.length}</span>
             </div>
             <div class="toolbar-group">
               <div class="${timerCls.join(' ')}" id="exam-timer-pill">${formatDuration(remainingSec)}</div>
@@ -1051,17 +1331,18 @@
           <div class="q-grid" style="margin-top: 0; margin-bottom: 16px;">${navGrid}</div>
 
           <div class="question-meta">
-            <span>Խումբ ${q.groupId} · №${q.number}</span>
+            <span>${t('groupWord')} ${q.groupId} · №${q.number}</span>
+            ${renderBookmarkBtnHtml(q.uid)}
           </div>
 
-          <h2 class="question-text">${escapeHtml(q.text)}</h2>
+          <h2 class="question-text">${escapeHtml(qText)}${renderBilingualHintHtml(q)}</h2>
           ${renderImagesHtml(q.images)}
           <div class="options-list">${optionsHtml}</div>
 
           <div class="question-footer">
             <div class="toolbar-group">
-              <button type="button" class="btn" id="btn-exam-prev" ${currentIndex === 0 ? 'disabled' : ''}>← Նախորդը</button>
-              <button type="button" class="btn btn-primary" id="btn-exam-next" ${currentIndex >= questions.length - 1 ? 'disabled' : ''}>Հաջորդը →</button>
+              <button type="button" class="btn" id="btn-exam-prev" ${currentIndex === 0 ? 'disabled' : ''}>${t('prev')}</button>
+              <button type="button" class="btn btn-primary" id="btn-exam-next" ${currentIndex >= questions.length - 1 ? 'disabled' : ''}>${t('next')}</button>
             </div>
             <span class="kbd-hint">Պատասխանները կարող եք փոխել մինչև ավարտելը</span>
           </div>
@@ -1075,13 +1356,15 @@
     const breakdownHtml = res.breakdown
       .map((item, idx) => {
         const q = item.question;
+        const qText = getQText(q);
+        const qOpts = getQOptions(q);
         const statusTag = item.isCorrect
           ? '<span class="pill-tag success">✓ Ճիշտ</span>'
           : item.selectedIndex === null
           ? '<span class="pill-tag danger">✕ Բաց թողնված</span>'
           : '<span class="pill-tag danger">✕ Սխալ</span>';
 
-        const opts = q.options
+        const opts = qOpts
           .map((opt, oi) => {
             const cls = [];
             if (oi === q.correctIndex) cls.push('is-correct');
@@ -1097,10 +1380,13 @@
         return `
           <div class="search-result-card">
             <div class="question-meta">
-              <span><strong>${idx + 1}.</strong> Խումբ ${q.groupId} · Հարց №${q.number}</span>
-              ${statusTag}
+              <span><strong>${idx + 1}.</strong> ${t('groupWord')} ${q.groupId} · №${q.number}</span>
+              <div class="toolbar-group">
+                ${renderBookmarkBtnHtml(q.uid)}
+                ${statusTag}
+              </div>
             </div>
-            <div style="font-weight: 600; margin-bottom: 10px;">${escapeHtml(q.text)}</div>
+            <div style="font-weight: 600; margin-bottom: 10px;">${escapeHtml(qText)}${renderBilingualHintHtml(q)}</div>
             ${renderImagesHtml(q.images)}
             <ul class="search-options">${opts}</ul>
             ${renderExplanationTabHtml(q, 'exam-review')}
@@ -1173,10 +1459,12 @@
     session.mistakes.currentIndex = idx;
     const uid = queue[idx];
     const q = QUESTIONS_BY_UID[uid];
+    const qText = getQText(q);
+    const qOpts = getQOptions(q);
     const mistakeMeta = state.mistakes[uid];
     const attempt = session.mistakes.attemptByUid[uid];
 
-    const optionsHtml = q.options
+    const optionsHtml = qOpts
       .map((opt, oi) => {
         const cls = ['option-btn'];
         if (attempt) {
@@ -1201,8 +1489,10 @@
       ? `<div class="feedback-banner ${attempt.isCorrect ? 'correct' : 'wrong'}">
            <span>${
              attempt.isCorrect
-               ? '✓ Ճիշտ է։ Հարցը հեռացվեց սխալների ցանկից։'
-               : `✕ Կրկին սխալ է · Ճիշտ պատասխանն է՝ ${q.correctIndex + 1}. ${escapeHtml(q.options[q.correctIndex])}`
+               ? attempt.resolved
+                 ? '✓ 2/2 ճիշտ է։ Հարցը լիովին յուրացված է և հեռացվեց սխալներից։'
+                 : `✓ 1/2 ճիշտ է։ Եվս 1 անգամ ճիշտ պատասխանեք («Թարմացնել ցանկը»), որպեսզի հեռացվի սխալներից։`
+               : `${t('wrongBannerPrefix')} ${q.correctIndex + 1}. ${escapeHtml(qOpts[q.correctIndex])}`
            }</span>
          </div>`
       : '';
@@ -1217,11 +1507,13 @@
       })
       .join('');
 
+    const streakVal = mistakeMeta ? mistakeMeta.streak || 0 : Core.MISTAKE_CLEAR_STREAK;
+
     rootEl.innerHTML = `
       <div class="card">
         <div class="toolbar">
           <div class="toolbar-group">
-            <strong>Սխալների ուղղում</strong>
+            <strong>Սխալների ուղղում (2 անգամ անընդմեջ ճիշտ)</strong>
             <span class="pill-tag danger">Մնացել է՝ ${totalRemaining}</span>
           </div>
           <div class="toolbar-group">
@@ -1231,15 +1523,18 @@
         </div>
 
         <div class="question-meta">
-          <span>Քարտ ${idx + 1} / ${queue.length} · Խումբ ${q.groupId} · Հարց №${q.number}</span>
-          ${
-            mistakeMeta
-              ? `<span class="pill-tag danger">Սխալվել եք ${mistakeMeta.wrongCount} անգամ</span>`
-              : `<span class="pill-tag success">Ուղղված է</span>`
-          }
+          <span>Քարտ ${idx + 1} / ${queue.length} · ${t('groupWord')} ${q.groupId} · №${q.number}</span>
+          <div class="toolbar-group">
+            ${renderBookmarkBtnHtml(q.uid)}
+            ${
+              mistakeMeta
+                ? `<span class="pill-tag ${streakVal > 0 ? 'success' : 'danger'}">Սերիա՝ ${streakVal}/2 · Սխալ՝ ${mistakeMeta.wrongCount}×</span>`
+                : `<span class="pill-tag success">Ուղղված է (2/2)</span>`
+            }
+          </div>
         </div>
 
-        <h2 class="question-text">${escapeHtml(q.text)}</h2>
+        <h2 class="question-text">${escapeHtml(qText)}${renderBilingualHintHtml(q)}</h2>
         ${renderImagesHtml(q.images)}
         <div class="options-list">${optionsHtml}</div>
         ${feedbackHtml}
@@ -1247,10 +1542,10 @@
 
         <div class="question-footer">
           <div class="toolbar-group">
-            <button type="button" class="btn" id="btn-mistake-prev" ${idx === 0 ? 'disabled' : ''}>← Նախորդը</button>
-            <button type="button" class="btn btn-primary" id="btn-mistake-next" ${idx >= queue.length - 1 ? 'disabled' : ''}>Հաջորդը →</button>
+            <button type="button" class="btn" id="btn-mistake-prev" ${idx === 0 ? 'disabled' : ''}>${t('prev')}</button>
+            <button type="button" class="btn btn-primary" id="btn-mistake-next" ${idx >= queue.length - 1 ? 'disabled' : ''}>${t('next')}</button>
           </div>
-          <span class="kbd-hint">Ճիշտ պատասխանելուց հետո հարցը դուրս է գալիս սխալներից</span>
+          <span class="kbd-hint">Հարցը դուրս է գալիս սխալներից 2 անընդմեջ ճիշտ պատասխանից հետո</span>
         </div>
 
         <div class="q-grid">${gridHtml}</div>
@@ -1258,7 +1553,7 @@
     `;
   }
 
-  // ---------- Tab 4: Road Signs & Sign Quiz ----------
+  // ---------- Tab 4: Road Signs, Road Markings, Vehicle ID Signs & Quiz ----------
   function startSignQuiz() {
     const categories = SIGNS_DATA.categories || [];
     const items = Core.generateSignQuiz(categories, session.signs.categoryId, 10);
@@ -1286,6 +1581,7 @@
     const correctCount = Object.entries(answers).filter(
       ([qi, optIdx]) => items[Number(qi)] && items[Number(qi)].correctIndex === optIdx
     ).length;
+    const targetLoc = getSignText(current.target);
 
     const optionsHtml = current.options
       .map((opt, oi) => {
@@ -1302,7 +1598,7 @@
             ${typeof selected === 'number' ? 'disabled' : ''}
           >
             <span class="option-num">${oi + 1}</span>
-            <span>${escapeHtml(opt.title)}</span>
+            <span>${escapeHtml(getSignText(opt).title)}</span>
           </button>
         `;
       })
@@ -1313,13 +1609,13 @@
         ? `<div class="feedback-banner ${selected === current.correctIndex ? 'correct' : 'wrong'}">
              <span>${
                selected === current.correctIndex
-                 ? '✓ Ճիշտ է'
-                 : `✕ Սխալ է · Ճիշտ նշանն է՝ ${escapeHtml(current.target.title)}`
+                 ? t('correctBanner')
+                 : `${t('wrongBannerPrefix')} ${escapeHtml(targetLoc.title)}`
              }</span>
            </div>
            ${
-             current.target.description
-               ? `<p style="margin: 10px 0 0; font-size: 14px; color: var(--text-muted);">${escapeHtml(current.target.description)}</p>`
+             targetLoc.description
+               ? `<p style="margin: 10px 0 0; font-size: 14px; color: var(--text-muted);">${escapeHtml(targetLoc.description)}</p>`
                : ''
            }`
         : '';
@@ -1329,7 +1625,7 @@
         <div class="toolbar">
           <div class="toolbar-group">
             <strong>🎯 Նշանների թեստ</strong>
-            <span class="pill-tag">${idx + 1} / ${items.length} · Ճիշտ՝ ${correctCount}/${answeredCount}</span>
+            <span class="pill-tag">${idx + 1} / ${items.length} · ${correctCount}/${answeredCount} ✓</span>
           </div>
           <div class="toolbar-group">
             <button type="button" class="btn btn-sm" id="btn-sign-quiz-restart">Նոր 10 նշան</button>
@@ -1347,8 +1643,8 @@
 
         <div class="question-footer">
           <div class="toolbar-group">
-            <button type="button" class="btn" id="btn-sign-quiz-prev" ${idx === 0 ? 'disabled' : ''}>← Նախորդը</button>
-            <button type="button" class="btn btn-primary" id="btn-sign-quiz-next" ${idx >= items.length - 1 ? 'disabled' : ''}>Հաջորդը →</button>
+            <button type="button" class="btn" id="btn-sign-quiz-prev" ${idx === 0 ? 'disabled' : ''}>${t('prev')}</button>
+            <button type="button" class="btn btn-primary" id="btn-sign-quiz-next" ${idx >= items.length - 1 ? 'disabled' : ''}>${t('next')}</button>
           </div>
         </div>
       </div>
@@ -1356,12 +1652,73 @@
   }
 
   function renderSignsResults(categories) {
-    const { query, categoryId } = session.signs;
-    const filtered = Core.filterSigns(categories, { query, categoryId });
-
+    const { section, query, categoryId, markingCatId } = session.signs;
     const countEl = document.getElementById('signs-count-pill');
+
+    if (section === 'markings' || section === 'vehicle_id') {
+      const mCats = (MARKINGS_DATA.categories || []).filter((c) =>
+        section === 'vehicle_id' ? c.key === 'vehicle_id' : c.key === 'horiz' || c.key === 'vert'
+      );
+      const filtered = Core.filterMarkings(mCats, {
+        query,
+        categoryId: section === 'vehicle_id' ? 'all' : markingCatId,
+      });
+      const totalInSec = mCats.reduce((acc, c) => acc + c.count, 0);
+      if (countEl) countEl.textContent = `${filtered.length} / ${totalInSec}`;
+
+      const cardsHtml =
+        filtered.length === 0
+          ? '<div class="card empty-state"><h2>Տվյալներ չեն գտնվել</h2><p>Փորձեք փոխել որոնման բառը։</p></div>'
+          : `<div class="signs-list">
+              ${filtered
+                .map((item) => {
+                  const loc = getMarkingText(item);
+                  const imgs = item.images && item.images.length ? item.images : item.image ? [item.image] : [];
+                  return `
+                <article class="sign-card">
+                  ${
+                    imgs.length
+                      ? `<button type="button" class="sign-thumb-btn" data-zoom-src="${escapeHtml(imgs[0])}" title="Սեղմեք մեծացնելու համար">
+                           <img src="${escapeHtml(imgs[0])}" alt="${escapeHtml(loc.title)}" loading="lazy" />
+                         </button>`
+                      : ''
+                  }
+                  <div class="sign-body">
+                    <span class="pill-tag">${escapeHtml(loc.categoryTitle || '')}</span>
+                    <h3 class="sign-title">${escapeHtml(loc.title)}</h3>
+                    <p class="sign-desc">${escapeHtml(loc.description || '')}</p>
+                  </div>
+                </article>`;
+                })
+                .join('')}
+            </div>`;
+
+      const container = document.getElementById('signs-results-container');
+      if (container) container.innerHTML = cardsHtml;
+      return;
+    }
+
+    // Default: Road Signs (Form 1)
+    const lang = getLang();
+    const filtered = [];
+    const normQ = Core.normalizeArmenian(query);
+    for (const cat of categories) {
+      if (categoryId !== 'all' && Number(categoryId) !== cat.id) continue;
+      const catTitle = getSignCategoryTitle(cat);
+      for (const sign of cat.signs || []) {
+        const loc = getSignText(sign);
+        if (normQ) {
+          const hay = Core.normalizeArmenian(
+            `${sign.code || ''} ${sign.title} ${sign.description} ${loc.title} ${loc.description}`
+          );
+          if (!hay.includes(normQ)) continue;
+        }
+        filtered.push({ ...sign, locTitle: loc.title, locDesc: loc.description, catTitle });
+      }
+    }
+
     if (countEl) {
-      countEl.textContent = `Ցուցադրված է՝ ${filtered.length} / ${SIGNS_DATA.totalSigns}`;
+      countEl.textContent = `${filtered.length} / ${SIGNS_DATA.totalSigns}`;
     }
 
     document.querySelectorAll('[data-sign-cat]').forEach((btn) => {
@@ -1383,26 +1740,26 @@
                 ${
                   sign.image
                     ? `<button type="button" class="sign-thumb-btn" data-zoom-src="${escapeHtml(sign.image)}" title="Սեղմեք մեծացնելու համար">
-                         <img src="${escapeHtml(sign.image)}" alt="${escapeHtml(sign.title)}" loading="lazy" />
+                         <img src="${escapeHtml(sign.image)}" alt="${escapeHtml(sign.locTitle)}" loading="lazy" />
                        </button>`
                     : ''
                 }
                 <div class="sign-body">
                   <div style="display: flex; justify-content: space-between; align-items: center; gap: 6px; flex-wrap: wrap;">
-                    <span class="pill-tag">${escapeHtml(sign.categoryTitle)}</span>
+                    <span class="pill-tag">${escapeHtml(sign.catTitle)}</span>
                     ${
                       linkedQs.length > 0
                         ? `<button type="button" class="btn btn-sm btn-ghost" data-practice-sign="${escapeHtml(canonical)}">
-                             Հարցեր (${linkedQs.length})
+                             ${lang === 'ru' ? 'Вопросы' : lang === 'en' ? 'Questions' : 'Հարցեր'} (${linkedQs.length})
                            </button>`
                         : ''
                     }
                   </div>
-                  <h3 class="sign-title">${escapeHtml(sign.title)}</h3>
+                  <h3 class="sign-title">${escapeHtml(sign.locTitle)}</h3>
                   ${
-                    sign.description
-                      ? `<p class="sign-desc">${escapeHtml(sign.description)}</p>`
-                      : '<p class="sign-desc">Լրացուցիչ նկարագրություն չկա։</p>'
+                    sign.locDesc
+                      ? `<p class="sign-desc">${escapeHtml(sign.locDesc)}</p>`
+                      : '<p class="sign-desc">—</p>'
                   }
                 </div>
               </article>`;
@@ -1429,41 +1786,86 @@
       return;
     }
 
-    // If the signs shell is already mounted, only update results so mobile keyboard stays open
-    if (document.getElementById('signs-search-input') && document.getElementById('signs-results-container')) {
-      renderSignsResults(categories);
-      return;
-    }
+    const { section, query, categoryId, markingCatId } = session.signs;
+    const mCats = MARKINGS_DATA.categories || [];
+    const markingsCount = mCats
+      .filter((c) => c.key === 'horiz' || c.key === 'vert')
+      .reduce((acc, c) => acc + c.count, 0);
+    const vehicleIdCount = mCats
+      .filter((c) => c.key === 'vehicle_id')
+      .reduce((acc, c) => acc + c.count, 0);
 
-    const { query, categoryId } = session.signs;
-    const catPillsHtml = [
-      `<button type="button" class="sign-cat-pill ${categoryId === 'all' ? 'active' : ''}" data-sign-cat="all">Բոլորը (${SIGNS_DATA.totalSigns})</button>`,
-      ...categories.map(
-        (cat) => `
-          <button type="button" class="sign-cat-pill ${Number(categoryId) === cat.id ? 'active' : ''}" data-sign-cat="${cat.id}">
-            ${escapeHtml(cat.title)} (${cat.signCount})
-          </button>`
-      ),
-    ].join('');
+    const subBar = `
+      <div class="subtab-bar">
+        <button type="button" class="sign-cat-pill ${section === 'signs' ? 'active' : ''}" data-signs-section="signs">
+          🚸 Նշաններ (${SIGNS_DATA.totalSigns})
+        </button>
+        <button type="button" class="sign-cat-pill ${section === 'markings' ? 'active' : ''}" data-signs-section="markings">
+          🛣️ Գծանշումներ 1.1–2.7 (${markingsCount})
+        </button>
+        <button type="button" class="sign-cat-pill ${section === 'vehicle_id' ? 'active' : ''}" data-signs-section="vehicle_id">
+          🚗 Ճանաչման նշաններ (${vehicleIdCount})
+        </button>
+        <button type="button" class="btn btn-sm btn-primary" id="btn-sign-mode-quiz">🎯 Նշանների թեստ (10)</button>
+      </div>
+    `;
+
+    let filtersHtml = '';
+    if (section === 'signs') {
+      filtersHtml = `
+        <div class="signs-filters">
+          <button type="button" class="sign-cat-pill ${categoryId === 'all' ? 'active' : ''}" data-sign-cat="all">Բոլորը (${SIGNS_DATA.totalSigns})</button>
+          ${categories
+            .map(
+              (cat) => `
+                <button type="button" class="sign-cat-pill ${Number(categoryId) === cat.id ? 'active' : ''}" data-sign-cat="${cat.id}">
+                  ${escapeHtml(getSignCategoryTitle(cat))} (${cat.signCount})
+                </button>`
+            )
+            .join('')}
+        </div>
+      `;
+    } else if (section === 'markings') {
+      const mSubCats = mCats.filter((c) => c.key === 'horiz' || c.key === 'vert');
+      filtersHtml = `
+        <div class="signs-filters">
+          <button type="button" class="sign-cat-pill ${markingCatId === 'all' ? 'active' : ''}" data-marking-cat="all">Բոլորը (${markingsCount})</button>
+          ${mSubCats
+            .map(
+              (c) => `
+                <button type="button" class="sign-cat-pill ${Number(markingCatId) === c.id ? 'active' : ''}" data-marking-cat="${c.id}">
+                  ${escapeHtml(getLang() === 'ru' ? c.title_ru : getLang() === 'en' ? c.title_en : c.title)} (${c.count})
+                </button>`
+            )
+            .join('')}
+        </div>
+      `;
+    }
 
     rootEl.innerHTML = `
       <div class="card" style="margin-bottom: 16px;">
+        ${subBar}
         <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 10px;">
-          <h2 style="margin: 0; font-size: 19px;">Ճանապարհային նշաններ և նկարագրություններ</h2>
-          <div class="toolbar-group">
-            <span class="pill-tag" id="signs-count-pill"></span>
-            <button type="button" class="btn btn-sm btn-primary" id="btn-sign-mode-quiz">🎯 Նշանների թեստ (10)</button>
-          </div>
+          <h2 style="margin: 0; font-size: 19px;">
+            ${
+              section === 'markings'
+                ? 'Ճանապարհային գծանշումներ (Ձև N 2)'
+                : section === 'vehicle_id'
+                ? 'Տրանսպորտային միջոցի ճանաչման նշաններ (Ձև N 3)'
+                : 'Ճանապարհային նշաններ (Ձև N 1)'
+            }
+          </h2>
+          <span class="pill-tag" id="signs-count-pill"></span>
         </div>
         <input
           type="search"
           class="input"
           style="width: 100%;"
           id="signs-search-input"
-          placeholder="Որոնել նշանի համարով (օր.՝ 1.1, 3.24), անվանումով կամ նկարագրությամբ..."
+          placeholder="Որոնել համարով, անվանումով կամ նկարագրությամբ..."
           value="${escapeHtml(query)}"
         />
-        <div class="signs-filters">${catPillsHtml}</div>
+        ${filtersHtml}
       </div>
 
       <div id="signs-results-container"></div>
@@ -1727,8 +2129,101 @@
     `;
   }
 
+  function renderRulesResults() {
+    const { docId, query, highlightRuleId } = session.cheatsheet;
+    const docs = RULES_DATA.documents || [];
+    const items = Core.filterRules(docs, { docId, query });
+    const shown = items.slice(0, 120);
+
+    const countEl = document.getElementById('rules-count-pill');
+    if (countEl) {
+      countEl.textContent =
+        items.length > shown.length
+          ? `${shown.length} / ${items.length} արդյունք (ճշգրտեք որոնումը)`
+          : `${items.length} կետ`;
+    }
+
+    const container = document.getElementById('rules-results-container');
+    if (!container) return;
+    if (shown.length === 0) {
+      container.innerHTML =
+        '<div class="card empty-state"><h2>Օրենքի կետեր չեն գտնվել</h2><p>Փորձեք փոխել որոնման բառը կամ փաստաթուղթը։</p></div>';
+      return;
+    }
+
+    container.innerHTML = `
+      <div class="rules-list">
+        ${shown
+          .map(
+            (it) => `
+          <article class="rule-item-card ${highlightRuleId && it.id === highlightRuleId ? 'highlight' : ''}" id="rule-${escapeHtml(it.id)}">
+            <div class="rule-item-head">
+              <span class="pill-tag">${escapeHtml(it.chapterTitle)}</span>
+              ${it.ref ? `<span class="pill-tag success">${escapeHtml(it.ref)}</span>` : ''}
+            </div>
+            <p class="rule-item-text">${escapeHtml(it.text)}</p>
+          </article>`
+          )
+          .join('')}
+      </div>
+    `;
+  }
+
   function renderCheatSheet() {
-    const { pose, approach } = session.cheatsheet;
+    const { subtab, docId, query, pose, approach } = session.cheatsheet;
+    const subBar = `
+      <div class="subtab-bar">
+        <button type="button" class="sign-cat-pill ${subtab === 'rules' ? 'active' : ''}" data-cs-subtab="rules">
+          📖 Օրենք և ՃԵԿ (որոնելի)
+        </button>
+        <button type="button" class="sign-cat-pill ${subtab === 'guide' ? 'active' : ''}" data-cs-subtab="guide">
+          🧭 Կարգավորող և հիմնական թվեր
+        </button>
+      </div>
+    `;
+
+    if (subtab === 'rules') {
+      const docs = RULES_DATA.documents || [];
+      rootEl.innerHTML = `
+        <div class="card" style="margin-bottom: 16px;">
+          ${subBar}
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 10px;">
+            <h2 style="margin: 0; font-size: 19px;">ՀՀ Ճանապարհային երթևեկության կանոններ և օրենք</h2>
+            <span class="pill-tag" id="rules-count-pill"></span>
+          </div>
+          <input
+            type="search"
+            class="input"
+            style="width: 100%; margin-bottom: 10px;"
+            id="rules-search-input"
+            placeholder="Որոնել կետի համարով կամ բառով (օր.՝ վազանց, հետադարձ, կետ 39, հոդված 24, 15 օր)..."
+            value="${escapeHtml(query)}"
+          />
+          <div class="signs-filters">
+            <button type="button" class="sign-cat-pill ${docId === 'all' ? 'active' : ''}" data-rule-doc="all">Բոլորը</button>
+            ${docs
+              .map(
+                (d) => `
+              <button type="button" class="sign-cat-pill ${docId === d.id ? 'active' : ''}" data-rule-doc="${escapeHtml(d.id)}">
+                ${escapeHtml(d.title)}
+              </button>`
+              )
+              .join('')}
+          </div>
+        </div>
+        <div id="rules-results-container"></div>
+      `;
+
+      renderRulesResults();
+
+      document.getElementById('rules-search-input').addEventListener('input', (e) => {
+        session.cheatsheet.query = e.target.value;
+        session.cheatsheet.highlightRuleId = '';
+        renderRulesResults();
+      });
+      return;
+    }
+
     const poseObj = REGULATOR_RULES[pose];
     const sideInfo = poseObj.sides[approach];
 
@@ -1746,6 +2241,7 @@
 
     rootEl.innerHTML = `
       <div class="card">
+        ${subBar}
         <h2 style="margin-top: 0;">Հուշաթերթ · Խաչմերուկներ, կարգավորող և հիմնական թվեր</h2>
         <p style="color: var(--text-muted); margin-top: 0;">
           Արագ կրկնություն քննությունից առաջ՝ կարգավորողի ինտերակտիվ մարզիչ, գերակայության հերթականություն և բոլոր քննական թվերը մեկ տեղում։
@@ -1851,10 +2347,17 @@
     `;
   }
 
-  // ---------- Tab 5: Search & Browse ----------
+  // ---------- Tab 7: Search & Browse ----------
   function renderSearchResults() {
-    const { query, groupId, imagesOnly, showAnswers, page, pageSize } = session.search;
-    const filtered = Core.filterQuestions(DATA.groups, { query, groupId, imagesOnly });
+    const { query, groupId, imagesOnly, bookmarkedOnly, showAnswers, page, pageSize } = session.search;
+    const filtered = Core.filterQuestions(DATA.groups, {
+      query,
+      groupId,
+      imagesOnly,
+      bookmarkedOnly,
+      bookmarks: state.bookmarks,
+      i18nData: EXAM_I18N,
+    });
     const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
     const safePage = Math.min(Math.max(1, page), totalPages);
     session.search.page = safePage;
@@ -1873,7 +2376,9 @@
         ? '<div class="card empty-state"><h2>Հարցեր չեն գտնվել</h2><p>Փորձեք փոխել որոնման բառը կամ զտիչները։</p></div>'
         : slice
             .map((q) => {
-              const opts = q.options
+              const qText = getQText(q);
+              const qOpts = getQOptions(q);
+              const opts = qOpts
                 .map((opt, idx) => {
                   const isRight = showAnswers && idx === q.correctIndex;
                   return `<li class="${isRight ? 'is-correct' : ''}">${idx + 1}. ${escapeHtml(opt)} ${isRight ? '✓' : ''}</li>`;
@@ -1882,12 +2387,15 @@
               return `
                 <div class="search-result-card">
                   <div class="question-meta">
-                    <span><strong>Խումբ ${q.groupId}</strong> · Հարց №${q.number}</span>
-                    <button type="button" class="btn btn-sm btn-ghost" data-open-in-practice="${q.groupId}:${q.number}">
-                      Բացել ուսուցման մեջ
-                    </button>
+                    <span><strong>${t('groupWord')} ${q.groupId}</strong> · ${t('questionWord')} №${q.number}</span>
+                    <div class="toolbar-group">
+                      ${renderBookmarkBtnHtml(q.uid)}
+                      <button type="button" class="btn btn-sm btn-ghost" data-open-in-practice="${q.groupId}:${q.number}">
+                        Բացել ուսուցման մեջ
+                      </button>
+                    </div>
                   </div>
-                  <div style="font-weight: 600; margin-bottom: 10px;">${escapeHtml(q.text)}</div>
+                  <div style="font-weight: 600; margin-bottom: 10px;">${escapeHtml(qText)}${renderBilingualHintHtml(q)}</div>
                   ${renderImagesHtml(q.images)}
                   <ul class="search-options">${opts}</ul>
                   ${renderExplanationTabHtml(q, 'search')}
@@ -1921,11 +2429,11 @@
       return;
     }
 
-    const { query, groupId, imagesOnly, showAnswers } = session.search;
+    const { query, groupId, imagesOnly, bookmarkedOnly, showAnswers } = session.search;
     const groupOptions = [
       `<option value="all" ${groupId === 'all' ? 'selected' : ''}>Բոլոր խմբերը (1–10)</option>`,
       ...DATA.groups.map(
-        (g) => `<option value="${g.id}" ${Number(groupId) === g.id ? 'selected' : ''}>Խումբ ${g.id} (${g.questionCount})</option>`
+        (g) => `<option value="${g.id}" ${Number(groupId) === g.id ? 'selected' : ''}>${t('groupWord')} ${g.id} (${g.questionCount})</option>`
       ),
     ].join('');
 
@@ -1936,7 +2444,7 @@
             type="search"
             class="input"
             id="search-input"
-            placeholder="Որոնել հարցերում և պատասխաններում (օր.՝ հետադարձ, նշան, կանգառ)..."
+            placeholder="Որոնել հայերեն, ռուսերեն կամ անգլերեն..."
             value="${escapeHtml(query)}"
           />
           <select class="select" id="search-group">${groupOptions}</select>
@@ -1945,8 +2453,12 @@
             Միայն նկարով
           </label>
           <label class="checkbox-label">
+            <input type="checkbox" id="search-bookmarks-only" ${bookmarkedOnly ? 'checked' : ''} />
+            ★ Պահված
+          </label>
+          <label class="checkbox-label">
             <input type="checkbox" id="search-show-answers" ${showAnswers ? 'checked' : ''} />
-            Ցույց տալ պատասխանները
+            Պատասխանները
           </label>
         </div>
         <div id="search-meta-bar" style="margin-top: 10px; font-size: 13px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;"></div>
@@ -1970,6 +2482,11 @@
     });
     document.getElementById('search-images-only').addEventListener('change', (e) => {
       session.search.imagesOnly = e.target.checked;
+      session.search.page = 1;
+      renderSearchResults();
+    });
+    document.getElementById('search-bookmarks-only').addEventListener('change', (e) => {
+      session.search.bookmarkedOnly = e.target.checked;
       session.search.page = 1;
       renderSearchResults();
     });
@@ -2004,6 +2521,27 @@
       persist();
       render();
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+
+  document.querySelectorAll('.lang-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      state.ui.lang = btn.dataset.lang;
+      persist();
+      render();
+    });
+  });
+
+  const dailyGoalBtn = document.getElementById('btn-daily-goal');
+  if (dailyGoalBtn) {
+    dailyGoalBtn.addEventListener('click', () => {
+      const goals = [10, 20, 30, 50];
+      const cur = (state.study && state.study.dailyGoal) || 20;
+      const next = goals[(goals.indexOf(cur) + 1) % goals.length];
+      state = Core.setDailyGoal(state, next);
+      persist();
+      render();
+      showToast(`Օրական նպատակը՝ ${next} հարց`);
     });
   }
 
@@ -2075,6 +2613,37 @@
       return;
     }
 
+    const ruleRefBtn = e.target.closest('[data-open-rule]');
+    if (ruleRefBtn) {
+      const ruleId = ruleRefBtn.dataset.openRule;
+      const info = RULE_ID_LOOKUP[ruleId];
+      if (info) {
+        session.cheatsheet.subtab = 'rules';
+        session.cheatsheet.docId = info.docId;
+        session.cheatsheet.query = '';
+        session.cheatsheet.highlightRuleId = ruleId;
+        state.ui.activeTab = 'cheatsheet';
+        persist();
+        render();
+        setTimeout(() => {
+          const el = document.getElementById(`rule-${ruleId}`);
+          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 60);
+      }
+      return;
+    }
+
+    const bmBtn = e.target.closest('[data-toggle-bookmark]');
+    if (bmBtn) {
+      const uid = bmBtn.dataset.toggleBookmark;
+      const res = Core.toggleBookmark(state, uid);
+      state = res.state;
+      persist();
+      render();
+      showToast(res.bookmarked ? 'Հարցը պահվեց ընտրվածներում' : 'Հարցը հեռացվեց պահվածներից');
+      return;
+    }
+
     const pSignBtn = e.target.closest('[data-practice-sign]');
     if (pSignBtn) {
       const code = pSignBtn.dataset.practiceSign;
@@ -2122,6 +2691,31 @@
       return;
     }
 
+    if (e.target.id === 'btn-bookmarks-drill') {
+      const bmUids = Object.keys(state.bookmarks || {});
+      const bmQs = bmUids.map((uid) => QUESTIONS_BY_UID[uid]).filter(Boolean);
+      if (bmQs.length === 0) {
+        showToast('Պահված հարցեր չկան');
+        return;
+      }
+      session.practiceFocus = {
+        mode: 'bookmarks',
+        label: `★ Պահված հարցեր (${bmQs.length})`,
+        questions: bmQs,
+        index: 0,
+        attemptByUid: {},
+      };
+      render();
+      return;
+    }
+
+    if (e.target.id === 'btn-toggle-bilingual') {
+      state.ui.bilingual = !state.ui.bilingual;
+      persist();
+      render();
+      return;
+    }
+
     if (e.target.id === 'btn-exit-focus') {
       session.practiceFocus = null;
       render();
@@ -2138,8 +2732,9 @@
       // Also record into practice/mistakes so readiness stays up to date
       const res = Core.recordPracticeAnswer(state, q.uid, selIdx, q.correctIndex);
       state = res.state;
+      state = Core.recordStudyActivity(state);
       if (isCorrect && state.mistakes[q.uid]) {
-        state = Core.resolveMistake(state, q.uid);
+        state = Core.retryMistakeAnswer(state, q.uid, selIdx, q.correctIndex).state;
       } else if (!isCorrect && !res.newlyRecorded) {
         state = Core.retryMistakeAnswer(state, q.uid, selIdx, q.correctIndex).state;
       }
@@ -2188,6 +2783,9 @@
       if (!q) return;
       const res = Core.recordPracticeAnswer(state, q.uid, Number(practiceOpt.dataset.practiceOpt), q.correctIndex);
       state = res.state;
+      if (res.newlyRecorded) {
+        state = Core.recordStudyActivity(state);
+      }
       persist();
       render();
       return;
@@ -2363,13 +2961,12 @@
       if (!q || session.mistakes.attemptByUid[uid]) return;
       const selectedIndex = Number(mistakeOpt.dataset.mistakeOpt);
       const res = Core.retryMistakeAnswer(state, uid, selectedIndex, q.correctIndex);
-      state = res.state;
-      if (res.isCorrect) {
-        state = Core.resolveMistake(state, uid);
-      }
+      state = Core.recordStudyActivity(res.state);
       session.mistakes.attemptByUid[uid] = {
         selectedIndex,
         isCorrect: res.isCorrect,
+        resolved: res.resolved,
+        streak: res.streak,
       };
       persist();
       render();
@@ -2452,6 +3049,23 @@
       return;
     }
 
+    const signSectionBtn = e.target.closest('[data-signs-section]');
+    if (signSectionBtn) {
+      session.signs.section = signSectionBtn.dataset.signsSection;
+      session.signs.mode = 'browse';
+      session.signs.query = '';
+      renderSigns();
+      return;
+    }
+
+    const markingCatBtn = e.target.closest('[data-marking-cat]');
+    if (markingCatBtn) {
+      const val = markingCatBtn.dataset.markingCat;
+      session.signs.markingCatId = val === 'all' ? 'all' : Number(val);
+      renderSigns();
+      return;
+    }
+
     const signCatBtn = e.target.closest('[data-sign-cat]');
     if (signCatBtn) {
       const val = signCatBtn.dataset.signCat;
@@ -2526,7 +3140,22 @@
       return;
     }
 
-    // Cheat Sheet / Regulator interactions
+    // Cheat Sheet / Law & Rules interactions
+    const csSubBtn = e.target.closest('[data-cs-subtab]');
+    if (csSubBtn) {
+      session.cheatsheet.subtab = csSubBtn.dataset.csSubtab;
+      renderCheatSheet();
+      return;
+    }
+
+    const ruleDocBtn = e.target.closest('[data-rule-doc]');
+    if (ruleDocBtn) {
+      session.cheatsheet.docId = ruleDocBtn.dataset.ruleDoc;
+      session.cheatsheet.highlightRuleId = '';
+      renderCheatSheet();
+      return;
+    }
+
     const regPoseBtn = e.target.closest('[data-reg-pose]');
     if (regPoseBtn) {
       session.cheatsheet.pose = regPoseBtn.dataset.regPose;
@@ -2596,6 +3225,9 @@
         if (optIdx < q.options.length && !state.practice[q.uid]) {
           const res = Core.recordPracticeAnswer(state, q.uid, optIdx, q.correctIndex);
           state = res.state;
+          if (res.newlyRecorded) {
+            state = Core.recordStudyActivity(state);
+          }
           persist();
           render();
         }
@@ -2631,6 +3263,135 @@
   });
 
   render();
+
+  // ---------- Floating Draggable Yellow Sticky Note ----------
+  (function initStickyNote() {
+    const noteEl = document.getElementById('sticky-note');
+    const dragHandle = document.getElementById('sticky-note-drag');
+    const minBtn = document.getElementById('sticky-btn-min');
+    const delBtn = document.getElementById('sticky-btn-del');
+    const textarea = document.getElementById('sticky-note-text');
+    const openNoteBtn = document.getElementById('btn-open-note');
+    if (!noteEl || !dragHandle || !minBtn || !delBtn || !textarea || !openNoteBtn) return;
+
+    function clampPosition(x, y) {
+      const rect = noteEl.getBoundingClientRect();
+      const w = rect.width || 260;
+      const h = rect.height || 44;
+      const maxX = Math.max(8, window.innerWidth - w - 8);
+      const maxY = Math.max(8, window.innerHeight - h - 8);
+      return {
+        x: Math.min(Math.max(8, x), maxX),
+        y: Math.min(Math.max(8, y), maxY),
+      };
+    }
+
+    function applyNoteState() {
+      const sn = state.stickyNote || { visible: true, minimized: false, deleted: false, text: '', x: null, y: null };
+      if (sn.deleted || !sn.visible) {
+        noteEl.hidden = true;
+        return;
+      }
+      noteEl.hidden = false;
+      noteEl.classList.toggle('minimized', Boolean(sn.minimized));
+      minBtn.textContent = sn.minimized ? '▢' : '―';
+      minBtn.title = sn.minimized ? 'Բացել նշումը' : 'Փոքրացնել';
+      if (textarea.value !== sn.text) {
+        textarea.value = sn.text || '';
+      }
+      if (typeof sn.x === 'number' && typeof sn.y === 'number') {
+        noteEl.style.right = 'auto';
+        noteEl.style.bottom = 'auto';
+        const pos = clampPosition(sn.x, sn.y);
+        noteEl.style.left = `${pos.x}px`;
+        noteEl.style.top = `${pos.y}px`;
+      } else {
+        noteEl.style.left = '';
+        noteEl.style.top = '';
+        noteEl.style.right = '';
+        noteEl.style.bottom = '';
+      }
+    }
+
+    textarea.addEventListener('input', () => {
+      state.stickyNote.text = textarea.value;
+      persist();
+    });
+
+    minBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      state.stickyNote.minimized = !state.stickyNote.minimized;
+      persist();
+      applyNoteState();
+    });
+
+    delBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (state.stickyNote.text.trim() && !confirm('Ջնջե՞լ դեղին նշումը և դրա տեքստը։')) {
+        return;
+      }
+      state.stickyNote.text = '';
+      state.stickyNote.deleted = true;
+      state.stickyNote.visible = false;
+      state.stickyNote.minimized = false;
+      persist();
+      applyNoteState();
+      showToast('Նշումը ջնջվեց (կարող եք նորից բացել վերևի 📝 կոճակով)');
+    });
+
+    openNoteBtn.addEventListener('click', () => {
+      if (state.stickyNote.deleted || !state.stickyNote.visible) {
+        state.stickyNote.deleted = false;
+        state.stickyNote.visible = true;
+        state.stickyNote.minimized = false;
+      } else {
+        state.stickyNote.minimized = !state.stickyNote.minimized;
+      }
+      persist();
+      applyNoteState();
+      if (!state.stickyNote.minimized) {
+        textarea.focus();
+      }
+    });
+
+    let dragCtx = null;
+    dragHandle.addEventListener('pointerdown', (e) => {
+      if (e.target.closest('button')) return;
+      const rect = noteEl.getBoundingClientRect();
+      dragCtx = {
+        pointerId: e.pointerId,
+        offsetX: e.clientX - rect.left,
+        offsetY: e.clientY - rect.top,
+      };
+      dragHandle.setPointerCapture(e.pointerId);
+      noteEl.style.right = 'auto';
+      noteEl.style.bottom = 'auto';
+      noteEl.style.left = `${rect.left}px`;
+      noteEl.style.top = `${rect.top}px`;
+    });
+
+    dragHandle.addEventListener('pointermove', (e) => {
+      if (!dragCtx || e.pointerId !== dragCtx.pointerId) return;
+      const pos = clampPosition(e.clientX - dragCtx.offsetX, e.clientY - dragCtx.offsetY);
+      noteEl.style.left = `${pos.x}px`;
+      noteEl.style.top = `${pos.y}px`;
+    });
+
+    function finishDrag(e) {
+      if (!dragCtx || e.pointerId !== dragCtx.pointerId) return;
+      const rect = noteEl.getBoundingClientRect();
+      state.stickyNote.x = Math.round(rect.left);
+      state.stickyNote.y = Math.round(rect.top);
+      persist();
+      dragCtx = null;
+    }
+
+    dragHandle.addEventListener('pointerup', finishDrag);
+    dragHandle.addEventListener('pointercancel', finishDrag);
+    window.addEventListener('resize', applyNoteState);
+
+    applyNoteState();
+  })();
 
   // Lightweight privacy-friendly unique-visitor & total-visits tracking on deployed hosts
   (function initVisitorTracking() {
