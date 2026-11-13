@@ -157,6 +157,7 @@
     signs: '/nshanner/',
     colortest: '/gunaenkalum/',
     cheatsheet: '/orenq-jek/',
+    game: '/khagh/',
     search: '/voronum/',
   };
 
@@ -175,6 +176,8 @@
     '/gunaenkalum/': 'colortest',
     '/orenq-jek': 'cheatsheet',
     '/orenq-jek/': 'cheatsheet',
+    '/khagh': 'game',
+    '/khagh/': 'game',
     '/voronum': 'search',
     '/voronum/': 'search',
     '/ru': 'home',
@@ -795,6 +798,15 @@
             <div class="feature-tile-body">
               <h3 class="feature-title">${escapeHtml(t('homeFeatGuideTitle'))}</h3>
               <p class="feature-desc">${escapeHtml(t('homeFeatGuideDesc'))}</p>
+            </div>
+            <span class="feature-arrow">→</span>
+          </button>
+
+          <button type="button" class="feature-tile" data-nav-tab="game">
+            <div class="feature-icon" aria-hidden="true">🚗</div>
+            <div class="feature-tile-body">
+              <h3 class="feature-title">${escapeHtml(t('homeFeatGameTitle'))}</h3>
+              <p class="feature-desc">${escapeHtml(t('homeFeatGameDesc'))}</p>
             </div>
             <span class="feature-arrow">→</span>
           </button>
@@ -1899,6 +1911,7 @@
           ${escapeHtml(t('signsTabVehicleId', vehicleIdCount))}
         </button>
         <button type="button" class="btn btn-sm btn-primary" id="btn-sign-mode-quiz">${escapeHtml(t('signsQuizBtn'))}</button>
+        <button type="button" class="btn btn-sm" id="btn-sign-mode-game" data-nav-tab="game">${escapeHtml(t('homeFeatGameTitle'))}</button>
       </div>
     `;
 
@@ -2524,8 +2537,26 @@
   }
 
   // ---------- Main Render & Event Delegation ----------
+  function renderGame() {
+    if (window.VarordakanGame && typeof window.VarordakanGame.mount === 'function') {
+      window.VarordakanGame.mount({
+        container: rootEl,
+        getLang,
+        t,
+        signsByCode: SIGN_INDEX.byCode,
+        getSignText,
+        navigateTo,
+      });
+    } else {
+      rootEl.innerHTML = '<div class="card empty-state"><h2>Game module not loaded</h2></div>';
+    }
+  }
+
   function render() {
     const tab = state.ui.activeTab;
+    if (tab !== 'game' && window.VarordakanGame && typeof window.VarordakanGame.unmount === 'function') {
+      window.VarordakanGame.unmount();
+    }
     if (tab === 'home') renderHome();
     else if (tab === 'practice') renderPractice();
     else if (tab === 'exam') renderExam();
@@ -2533,6 +2564,7 @@
     else if (tab === 'signs') renderSigns();
     else if (tab === 'colortest') renderColorTest();
     else if (tab === 'cheatsheet') renderCheatSheet();
+    else if (tab === 'game') renderGame();
     else if (tab === 'search') renderSearch();
     else {
       state.ui.activeTab = 'home';

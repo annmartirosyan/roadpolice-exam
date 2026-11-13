@@ -21,7 +21,7 @@ BASE_URL = "https://varordakan.com"
 ROOT = Path(__file__).resolve().parent.parent
 
 ASSETS = {
-    "styles": "styles.css?v=20261113m",
+    "styles": "styles.css?v=20261113o",
     "questions": "data/questions.js?v=20261113e",
     "questions_i18n": "data/questions_i18n.js?v=20261113k",
     "signs": "data/signs.js?v=20261113e",
@@ -29,9 +29,10 @@ ASSETS = {
     "markings": "data/markings.js?v=20261113e",
     "color_tests": "data/color_tests.js?v=20261113k",
     "rules": "data/rules.js?v=20261113e",
-    "app_i18n": "app-i18n.js?v=20261113n",
+    "app_i18n": "app-i18n.js?v=20261113o",
     "app_core": "app-core.js?v=20261113j",
-    "app": "app.js?v=20261113n",
+    "app_game": "app-game.js?v=20261113o",
+    "app": "app.js?v=20261113o",
 }
 
 CHROME_TEXT = {
@@ -45,6 +46,7 @@ CHROME_TEXT = {
         "signs": "Նշաններ և գծանշում",
         "colortest": "Գունաընկալում",
         "cheatsheet": "Օրենք և հուշաթերթ",
+        "game": "🚗 Խաղ",
         "search": "Որոնում",
         "footer": "ՀՀ ՃՈ Տեսական Քննություն · ABC Կարգեր",
         "og_locale": "hy_AM",
@@ -57,6 +59,7 @@ CHROME_TEXT = {
             ("/nshanner/", "Նշաններ"),
             ("/gunaenkalum/", "Գունաընկալում"),
             ("/orenq-jek/", "Օրենք և ՃԵԿ"),
+            ("/khagh/", "🚗 Խաղ"),
             ("/voronum/", "Որոնում"),
             ("/ru/", "Русский"),
             ("/en/", "English"),
@@ -72,6 +75,7 @@ CHROME_TEXT = {
         "signs": "Знаки и разметка",
         "colortest": "Цветовосприятие",
         "cheatsheet": "Законы и шпаргалка",
+        "game": "🚗 Игра",
         "search": "Поиск",
         "footer": "Теоретический экзамен Полиции РА · Категории ABC",
         "og_locale": "ru_RU",
@@ -82,6 +86,7 @@ CHROME_TEXT = {
             ("/nshanner/", "Дорожные знаки"),
             ("/gunaenkalum/", "Цветовосприятие"),
             ("/orenq-jek/", "ПДД и законы"),
+            ("/khagh/", "🚗 Игра"),
             ("/ru/", "Русский"),
             ("/en/", "English"),
         ],
@@ -96,6 +101,7 @@ CHROME_TEXT = {
         "signs": "Signs & Markings",
         "colortest": "Color Test",
         "cheatsheet": "Rules & Guide",
+        "game": "🚗 Drive Game",
         "search": "Search",
         "footer": "Armenia Road Police Theory Exam · ABC Categories",
         "og_locale": "en_US",
@@ -106,6 +112,7 @@ CHROME_TEXT = {
             ("/nshanner/", "Road Signs"),
             ("/gunaenkalum/", "Color Test"),
             ("/orenq-jek/", "Traffic Rules"),
+            ("/khagh/", "🚗 Drive Game"),
             ("/ru/", "Русский"),
             ("/en/", "English"),
         ],
@@ -295,6 +302,30 @@ PAGES = [
             (
                 "Ինչպե՞ս արագ հիշել կարգավորողի ազդանշանները։",
                 "Երբ աջ ձեռքը պարզված է առաջ՝ ձախից կարելի է գնալ բոլոր ուղղություններով, կրծքից՝ միայն աջ, աջից և թիկունքից՝ արգելված է։ Կարգավորողի ինտերակտիվ մարզիչը ցույց է տալիս նաև տրամվայի ուղղությունները։",
+            ),
+        ],
+    },
+    {
+        "out": "khagh/index.html",
+        "path": "/khagh/",
+        "lang": "hy",
+        "route_lang": "hy",
+        "route_tab": "game",
+        "hreflang_group": False,
+        "title": "Ճանապարհային խաղ · Վարիր և կարդա նշանները | Varordakan",
+        "description": "Ինտերակտիվ վարորդական խաղ․ ավտոմեքենան ընթանում է ճանապարհով, իսկ դուք կառավարում եք այն՝ ըստ մոտեցող ՀՀ ճանապարհային նշանների (Ձախ, Ուղիղ, Աջ, Արգելակել)։",
+        "keywords": "վարորդական խաղ, ճանապարհային նշանների խաղ, ճո խաղ օնլայն, պդդ խաղ հայերեն",
+        "h1": "Ճանապարհային խաղ · Վարիր ավտոմեքենան նշաններով",
+        "lead": "Վարժեցրեք արագ կողմնորոշումը իրական ճանապարհային իրավիճակներում․ մեքենան ընթանում է առաջ, իսկ մոտեցող նշանները հուշում են՝ թեքվել ձախ, աջ, շարունակել ուղիղ, թե արգելակել։",
+        "bullets": [
+            "20 իրական ճանապարհային իրավիճակ ՀՀ ՃԵԿ պաշտոնական նշաններով",
+            "Արագ խաղի (8 վրկ) և հանգիստ ուսուցման ռեժիմներ",
+            "Կլավիատուրայի (← ↑ → ↓ / Space) և հեռախոսի հարմար կառավարում",
+        ],
+        "faqs": [
+            (
+                "Ինչպե՞ս է աշխատում ճանապարհային նշանների խաղը։",
+                "Յուրաքանչյուր փուլում մեքենան մոտենում է իրական ճանապարհային նշանի (STOP, զիջեք ճանապարհը, շրջանցում, արգելող կամ թելադրող նշաններ)։ Ընտրեք ճիշտ մանևրը մինչև նշանին հասնելը։",
             ),
         ],
     },
@@ -527,6 +558,7 @@ def render_page(page: dict) -> str:
       <button type="button" class="tab-btn" data-tab="signs">{html.escape(ch["signs"])}</button>
       <button type="button" class="tab-btn" data-tab="colortest">{html.escape(ch["colortest"])}</button>
       <button type="button" class="tab-btn" data-tab="cheatsheet">{html.escape(ch["cheatsheet"])}</button>
+      <button type="button" class="tab-btn" data-tab="game">{html.escape(ch["game"])}</button>
       <button type="button" class="tab-btn" data-tab="search">{html.escape(ch["search"])}</button>
     </nav>
   </header>
@@ -603,6 +635,7 @@ def render_page(page: dict) -> str:
   <script src="{ASSETS["rules"]}"></script>
   <script src="{ASSETS["app_i18n"]}"></script>
   <script src="{ASSETS["app_core"]}"></script>
+  <script src="{ASSETS["app_game"]}"></script>
   <script src="{ASSETS["app"]}"></script>
 </body>
 </html>
