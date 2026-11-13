@@ -1,28 +1,40 @@
-const CACHE_NAME = 'varordakan-v6';
+const CACHE_NAME = 'varordakan-v7';
 const CORE_ASSETS = [
   './',
   './index.html',
-  './styles.css',
-  './app-core.js',
-  './app.js',
+  './styles.css?v=20261113b',
+  './app-core.js?v=20261113b',
+  './app.js?v=20261113b',
   './manifest.webmanifest',
   './icon.svg',
-  './data/questions.js',
-  './data/signs.js',
-  './data/color_tests.js',
+  './data/questions.js?v=20261113b',
+  './data/signs.js?v=20261113b',
+  './data/color_tests.js?v=20261113b',
 ];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(CORE_ASSETS)).then(() => self.skipWaiting())
+    caches
+      .open(CACHE_NAME)
+      .then((cache) =>
+        Promise.all(
+          CORE_ASSETS.map((url) =>
+            fetch(url, { cache: 'no-cache' }).then((resp) => {
+              if (resp && resp.ok) return cache.put(url, resp);
+            })
+          )
+        )
+      )
+      .then(() => self.skipWaiting())
   );
 });
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
-    ).then(() => self.clients.claim())
+    caches
+      .keys()
+      .then((keys) => Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k))))
+      .then(() => self.clients.claim())
   );
 });
 
@@ -35,7 +47,6 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Network-first for HTML/code/data so updates arrive fast, cache fallback for offline
   const isAssetImage =
     url.pathname.includes('/data/images/') ||
     url.pathname.includes('/data/signs/') ||
@@ -58,7 +69,7 @@ self.addEventListener('fetch', (event) => {
   }
 
   event.respondWith(
-    fetch(req)
+    fetch(req, { cache: 'no-cache' })
       .then((resp) => {
         if (resp && resp.ok) {
           const copy = resp.clone();

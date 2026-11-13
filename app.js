@@ -1995,7 +1995,6 @@
 
   // ---------- Main Render & Event Delegation ----------
   function render() {
-    updateHeaderStats();
     const tab = state.ui.activeTab;
     if (tab === 'home') renderHome();
     else if (tab === 'practice') renderPractice();
@@ -2005,6 +2004,11 @@
     else if (tab === 'colortest') renderColorTest();
     else if (tab === 'cheatsheet') renderCheatSheet();
     else if (tab === 'search') renderSearch();
+    else {
+      state.ui.activeTab = 'home';
+      renderHome();
+    }
+    updateHeaderStats();
   }
 
   const brandHomeBtn = document.getElementById('btn-brand-home');
