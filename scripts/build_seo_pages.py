@@ -21,7 +21,7 @@ BASE_URL = "https://varordakan.com"
 ROOT = Path(__file__).resolve().parent.parent
 
 ASSETS = {
-    "styles": "styles.css?v=20261113o",
+    "styles": "styles.css?v=20261113p",
     "questions": "data/questions.js?v=20261113e",
     "questions_i18n": "data/questions_i18n.js?v=20261113k",
     "signs": "data/signs.js?v=20261113e",
@@ -31,7 +31,7 @@ ASSETS = {
     "rules": "data/rules.js?v=20261113e",
     "app_i18n": "app-i18n.js?v=20261113o",
     "app_core": "app-core.js?v=20261113j",
-    "app_game": "app-game.js?v=20261113o",
+    "app_game": "app-game.js?v=20261113p",
     "app": "app.js?v=20261113o",
 }
 

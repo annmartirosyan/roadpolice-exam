@@ -532,7 +532,7 @@
       feedback: null, // { ok, timeout, action, title, explain }
       // Canvas animation state
       roadScroll: 0,
-      propProgress: 0.08, // 0 (horizon) -> 1 (car line)
+      propProgress: 0.14, // 0.08 (horizon) -> 1.0 (car line)
       timeLeft: ARCADE_TIME_SEC,
       carX: 0, // -1 left lane, 0 right lane, +1 far right bay
       carY: 0, // offset
@@ -542,6 +542,7 @@
       animProgress: 0,
       blinkTimer: 0,
       lastFrameMs: 0,
+      puffs: [],
     };
 
     function currentScenario() {
@@ -562,7 +563,7 @@
       const sc = currentScenario();
       game.phase = 'driving';
       game.feedback = null;
-      game.propProgress = 0.08;
+      game.propProgress = 0.14;
       game.timeLeft = ARCADE_TIME_SEC;
       game.carX = 0;
       game.carY = 0;
@@ -570,6 +571,7 @@
       game.carSpeed = sc.initialSpeed || 50;
       game.targetAction = null;
       game.animProgress = 0;
+      game.puffs = [];
       renderShell();
     }
 
@@ -692,7 +694,10 @@
 
           <div class="game-stage">
             <div class="game-canvas-wrap">
-              <canvas id="game-road-canvas" width="720" height="390"></canvas>
+              <canvas id="game-road-canvas" width="960" height="540"></canvas>
+              <div class="game-canvas-hud">
+                <div class="game-speedo" id="hud-speed-pill">50 ${escapeHtml(ui.speedUnit)}</div>
+              </div>
               <div class="game-timer-bar" id="game-timer-wrap" ${game.mode === 'relaxed' ? 'hidden' : ''}>
                 <div class="game-timer-fill" id="game-timer-fill"></div>
               </div>
@@ -764,6 +769,8 @@
       if (hEl) hEl.textContent = `${'❤️'.repeat(game.hearts)}${'🤍'.repeat(3 - game.hearts)}`;
       if (sEl) sEl.textContent = `${ui.scoreLabel}: ${game.score}${game.streak > 1 ? ` (🔥x${game.streak})` : ''}`;
       if (spEl) spEl.textContent = `${Math.round(game.carSpeed)} ${ui.speedUnit}`;
+      const spPill = document.getElementById('hud-speed-pill');
+      if (spPill) spPill.textContent = `${Math.round(game.carSpeed)} ${ui.speedUnit}`;
       if (bEl) bEl.textContent = `${ui.bestLabel}: ${game.bestScore}`;
       if (tFill && game.mode === 'arcade') {
         const pct = Math.max(0, Math.min(100, (game.timeLeft / ARCADE_TIME_SEC) * 100));
@@ -802,22 +809,22 @@
       const W = canvasEl.width;
       const H = canvasEl.height;
       const sc = currentScenario();
+      const ui = UI_TEXT[getLang()] || UI_TEXT.hy;
 
       // Update motion
       game.blinkTimer += dt;
       if (game.phase === 'driving') {
-        const pxPerSec = game.carSpeed * 3.4;
-        game.roadScroll = (game.roadScroll + pxPerSec * dt) % 80;
+        const pxPerSec = (game.carSpeed / 50) * 1.45;
+        game.roadScroll = (game.roadScroll + pxPerSec * dt) % 1;
         if (game.mode === 'arcade') {
           game.timeLeft = Math.max(0, game.timeLeft - dt);
-          game.propProgress = 0.08 + (1 - game.timeLeft / ARCADE_TIME_SEC) * 0.62;
+          game.propProgress = 0.14 + (1 - game.timeLeft / ARCADE_TIME_SEC) * 0.54;
           if (game.timeLeft <= 0) {
             commitAction('straight', true);
           }
         } else {
-          // Gently glide up to decision zone (0.48) and hold steady
-          if (game.propProgress < 0.48) {
-            game.propProgress = Math.min(0.48, game.propProgress + dt * 0.25);
+          if (game.propProgress < 0.44) {
+            game.propProgress = Math.min(0.44, game.propProgress + dt * 0.22);
           }
         }
       } else if (game.phase === 'animating') {
@@ -825,40 +832,40 @@
         const p = game.animProgress;
         const act = game.targetAction;
         if (act === 'brake') {
-          game.carSpeed = Math.max(0, (sc.initialSpeed || 50) * (1 - p * 0.92));
-          game.roadScroll = (game.roadScroll + game.carSpeed * 3.2 * dt) % 80;
-          game.propProgress = Math.min(0.76, game.propProgress + dt * 0.24);
+          game.carSpeed = Math.max(0, (sc.initialSpeed || 50) * (1 - p * 0.94));
+          game.roadScroll = (game.roadScroll + (game.carSpeed / 50) * 1.2 * dt) % 1;
+          game.propProgress = Math.min(0.72, game.propProgress + dt * 0.22);
+          game.carY = Math.sin(p * Math.PI) * 6;
         } else if (act === 'left') {
-          game.roadScroll = (game.roadScroll + game.carSpeed * 3.2 * dt) % 80;
-          game.propProgress = Math.min(0.9, game.propProgress + dt * 0.42);
+          game.roadScroll = (game.roadScroll + (game.carSpeed / 50) * 1.3 * dt) % 1;
+          game.propProgress = Math.min(0.86, game.propProgress + dt * 0.36);
           if (sc.scene === 'obstacle_center') {
-            game.carX = -Math.sin(p * Math.PI) * 0.95;
-            game.carAngle = -Math.sin(p * Math.PI * 2) * 0.16;
+            game.carX = -Math.sin(p * Math.PI) * 1.05;
+            game.carAngle = -Math.sin(p * Math.PI * 2) * 0.12;
           } else {
-            game.carX = -p * 1.35;
-            game.carY = -p * 34;
-            game.carAngle = -p * 0.65;
+            game.carX = -p * 1.45;
+            game.carY = -p * 16;
+            game.carAngle = -p * 0.36;
           }
         } else if (act === 'right') {
-          game.roadScroll = (game.roadScroll + game.carSpeed * 3.2 * dt) % 80;
-          game.propProgress = Math.min(0.9, game.propProgress + dt * 0.42);
+          game.roadScroll = (game.roadScroll + (game.carSpeed / 50) * 1.3 * dt) % 1;
+          game.propProgress = Math.min(0.86, game.propProgress + dt * 0.36);
           if (sc.scene === 'obstacle_center') {
-            game.carX = Math.sin(p * Math.PI) * 0.45;
-            game.carAngle = Math.sin(p * Math.PI * 2) * 0.14;
+            game.carX = Math.sin(p * Math.PI) * 0.42;
+            game.carAngle = Math.sin(p * Math.PI * 2) * 0.1;
           } else if (sc.scene === 'parking_bay') {
-            game.carX = p * 1.05;
-            game.carAngle = Math.sin(p * Math.PI) * 0.25;
+            game.carX = p * 1.1;
+            game.carAngle = Math.sin(p * Math.PI) * 0.2;
             game.carSpeed = Math.max(0, 35 * (1 - p));
           } else {
-            game.carX = p * 1.35;
-            game.carY = -p * 34;
-            game.carAngle = p * 0.65;
+            game.carX = p * 1.45;
+            game.carY = -p * 16;
+            game.carAngle = p * 0.36;
           }
         } else {
-          // straight
-          game.roadScroll = (game.roadScroll + game.carSpeed * 3.8 * dt) % 80;
-          game.propProgress = Math.min(1.05, game.propProgress + dt * 0.52);
-          game.carY = -Math.sin(p * Math.PI) * 14;
+          game.roadScroll = (game.roadScroll + (game.carSpeed / 50) * 1.65 * dt) % 1;
+          game.propProgress = Math.min(0.98, game.propProgress + dt * 0.44);
+          game.carY = -Math.sin(p * Math.PI) * 10;
         }
         if (game.animProgress >= 1) {
           game.phase = 'feedback';
@@ -866,166 +873,406 @@
         }
       }
 
-      // Sky & grass background
-      ctx.fillStyle = '#dcfce7';
-      ctx.fillRect(0, 0, W, H);
+      // Perspective helpers (0 = horizon, 1 = bottom camera plane)
+      const horizonY = 166;
+      const roadHeight = H - horizonY;
+      const cx = W / 2;
+      const roadHalfAt = (z) => 38 + z * 340; // width from 76px at horizon to 756px at bottom
+      const yAt = (z) => horizonY + Math.pow(z, 1.38) * roadHeight;
+      const scaleAt = (z) => 0.14 + Math.pow(z, 1.18) * 1.05;
 
-      // Side grass bands
-      ctx.fillStyle = '#86efac';
-      ctx.fillRect(0, 0, 170, H);
-      ctx.fillRect(W - 170, 0, 170, H);
+      // 1. Sky gradient + warm sun + clouds
+      const skyGrad = ctx.createLinearGradient(0, 0, 0, horizonY);
+      skyGrad.addColorStop(0, '#38bdf8');
+      skyGrad.addColorStop(0.55, '#bae6fd');
+      skyGrad.addColorStop(1, '#fef9c3');
+      ctx.fillStyle = skyGrad;
+      ctx.fillRect(0, 0, W, horizonY + 4);
 
-      // Asphalt road
-      const roadX = 180;
-      const roadW = 360;
-      ctx.fillStyle = '#334155';
-      ctx.fillRect(roadX, 0, roadW, H);
+      // Sun halo
+      const sunGrad = ctx.createRadialGradient(170, 58, 6, 170, 58, 68);
+      sunGrad.addColorStop(0, 'rgba(254, 240, 138, 0.98)');
+      sunGrad.addColorStop(0.35, 'rgba(253, 224, 71, 0.55)');
+      sunGrad.addColorStop(1, 'rgba(253, 224, 71, 0)');
+      ctx.fillStyle = sunGrad;
+      ctx.beginPath();
+      ctx.arc(170, 58, 68, 0, Math.PI * 2);
+      ctx.fill();
 
-      // Road shoulders
-      ctx.fillStyle = '#e2e8f0';
-      ctx.fillRect(roadX, 0, 6, H);
-      ctx.fillRect(roadX + roadW - 6, 0, 6, H);
+      // Soft drifting clouds
+      const cloudShift = (game.blinkTimer * 8) % (W + 240);
+      drawCloud(ctx, ((220 + cloudShift) % (W + 220)) - 110, 48, 1.0);
+      drawCloud(ctx, ((640 + cloudShift * 0.6) % (W + 220)) - 110, 68, 0.78);
+      drawCloud(ctx, ((880 + cloudShift * 0.4) % (W + 220)) - 110, 38, 0.65);
 
-      // Moving trees on grass
-      for (let i = -1; i < 6; i++) {
-        const ty = ((i * 95 + game.roadScroll * 1.2) % (H + 95)) - 45;
-        drawTree(ctx, 75, ty);
-        drawTree(ctx, W - 75, ty + 45);
+      // Distant Armenian mountains (Ararat-inspired twin peaks + foothills)
+      ctx.fillStyle = '#93c5fd';
+      ctx.beginPath();
+      ctx.moveTo(0, horizonY);
+      ctx.lineTo(140, 108);
+      ctx.lineTo(270, 138);
+      ctx.lineTo(420, 86);
+      ctx.lineTo(525, 128);
+      ctx.lineTo(615, 102);
+      ctx.lineTo(760, 142);
+      ctx.lineTo(890, 114);
+      ctx.lineTo(W, 144);
+      ctx.lineTo(W, horizonY);
+      ctx.closePath();
+      ctx.fill();
+
+      // Snow caps
+      ctx.fillStyle = 'rgba(255,255,255,0.82)';
+      ctx.beginPath();
+      ctx.moveTo(420, 86);
+      ctx.lineTo(388, 106);
+      ctx.lineTo(410, 102);
+      ctx.lineTo(424, 109);
+      ctx.lineTo(445, 102);
+      ctx.closePath();
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(615, 102);
+      ctx.lineTo(596, 117);
+      ctx.lineTo(615, 113);
+      ctx.lineTo(632, 118);
+      ctx.closePath();
+      ctx.fill();
+
+      // 2. Ground grass bands (gives crisp sense of speed)
+      const grassBands = 14;
+      for (let i = 0; i < grassBands; i++) {
+        const z0 = i / grassBands;
+        const z1 = (i + 1) / grassBands;
+        const y0 = yAt(z0);
+        const y1 = yAt(z1);
+        const stripe = Math.floor(i - game.roadScroll * 2) % 2 === 0;
+        ctx.fillStyle = stripe ? '#4ade80' : '#22c55e';
+        ctx.fillRect(0, y0, W, y1 - y0 + 1);
       }
 
-      // Scene-specific road geometry anchored around propY
-      const propY = 40 + game.propProgress * 225;
-      const centerX = W / 2;
-
-      // Dashed center line
-      ctx.strokeStyle = sc.scene === 'slow_car' ? '#f8fafc' : '#f1f5f9';
-      ctx.lineWidth = 5;
-      ctx.setLineDash([28, 22]);
-      ctx.lineDashOffset = -game.roadScroll;
+      // 3. Perspective asphalt road
+      const topHalf = roadHalfAt(0);
+      const botHalf = roadHalfAt(1);
+      const asphaltGrad = ctx.createLinearGradient(0, horizonY, 0, H);
+      asphaltGrad.addColorStop(0, '#475569');
+      asphaltGrad.addColorStop(0.45, '#334155');
+      asphaltGrad.addColorStop(1, '#1e293b');
+      ctx.fillStyle = asphaltGrad;
       ctx.beginPath();
-      ctx.moveTo(centerX, 0);
-      ctx.lineTo(centerX, H);
-      ctx.stroke();
-      ctx.setLineDash([]);
+      ctx.moveTo(cx - topHalf, horizonY);
+      ctx.lineTo(cx + topHalf, horizonY);
+      ctx.lineTo(cx + botHalf, H);
+      ctx.lineTo(cx - botHalf, H);
+      ctx.closePath();
+      ctx.fill();
 
-      // Draw scene props
+      // Alternating roadside curbs (clamped seamlessly from horizon to bottom)
+      const curbSegs = 14;
+      const curbOffset = game.roadScroll % 2;
+      for (let i = -2; i <= curbSegs; i++) {
+        const raw0 = (i + curbOffset) / curbSegs;
+        const raw1 = (i + 1 + curbOffset) / curbSegs;
+        if (raw1 <= 0 || raw0 >= 1) continue;
+        const z0 = Math.max(0, raw0);
+        const z1 = Math.min(1, raw1);
+        const y0 = yAt(z0);
+        const y1 = yAt(z1);
+        const h0 = roadHalfAt(z0);
+        const h1 = roadHalfAt(z1);
+        const cw0 = 4 + z0 * 14;
+        const cw1 = 4 + z1 * 14;
+        const isRed = (((i % 2) + 2) % 2) === 0;
+        ctx.fillStyle = isRed ? '#ef4444' : '#f8fafc';
+        // Left curb
+        ctx.beginPath();
+        ctx.moveTo(cx - h0 - cw0, y0);
+        ctx.lineTo(cx - h0, y0);
+        ctx.lineTo(cx - h1, y1);
+        ctx.lineTo(cx - h1 - cw1, y1);
+        ctx.closePath();
+        ctx.fill();
+        // Right curb
+        ctx.beginPath();
+        ctx.moveTo(cx + h0, y0);
+        ctx.lineTo(cx + h0 + cw0, y0);
+        ctx.lineTo(cx + h1 + cw1, y1);
+        ctx.lineTo(cx + h1, y1);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      // Solid white edge lines
+      ctx.fillStyle = 'rgba(248, 250, 252, 0.9)';
+      ctx.beginPath();
+      ctx.moveTo(cx - topHalf + 2, horizonY);
+      ctx.lineTo(cx - topHalf + 4, horizonY);
+      ctx.lineTo(cx - botHalf + 18, H);
+      ctx.lineTo(cx - botHalf + 8, H);
+      ctx.closePath();
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(cx + topHalf - 4, horizonY);
+      ctx.lineTo(cx + topHalf - 2, horizonY);
+      ctx.lineTo(cx + botHalf - 8, H);
+      ctx.lineTo(cx + botHalf - 18, H);
+      ctx.closePath();
+      ctx.fill();
+
+      // Center dashed lane line (or solid for no-overtaking 3.20)
+      if (sc.scene === 'slow_car') {
+        ctx.fillStyle = '#f8fafc';
+        ctx.beginPath();
+        ctx.moveTo(cx - 1.5, horizonY);
+        ctx.lineTo(cx + 1.5, horizonY);
+        ctx.lineTo(cx + 6, H);
+        ctx.lineTo(cx - 6, H);
+        ctx.closePath();
+        ctx.fill();
+      } else {
+        const dashCount = 10;
+        for (let i = 0; i < dashCount; i++) {
+          const zStart = ((i / dashCount) + game.roadScroll / dashCount) % 1;
+          const zEnd = Math.min(1, zStart + 0.048);
+          if (zEnd <= zStart) continue;
+          const y0 = yAt(zStart);
+          const y1 = yAt(zEnd);
+          const dw0 = 1.5 + zStart * 4.5;
+          const dw1 = 1.5 + zEnd * 4.5;
+          ctx.fillStyle = 'rgba(248, 250, 252, 0.92)';
+          ctx.beginPath();
+          ctx.moveTo(cx - dw0, y0);
+          ctx.lineTo(cx + dw0, y0);
+          ctx.lineTo(cx + dw1, y1);
+          ctx.lineTo(cx - dw1, y1);
+          ctx.closePath();
+          ctx.fill();
+        }
+      }
+
+      // 4. Passing roadside trees & lamps in perspective
+      const objCount = 6;
+      for (let i = 0; i < objCount; i++) {
+        const z = ((i / objCount) + game.roadScroll / objCount) % 1;
+        if (z < 0.04) continue;
+        const ty = yAt(z);
+        const s = scaleAt(z);
+        const rh = roadHalfAt(z);
+        drawPerspectiveTree(ctx, cx - rh - 54 * s - 28, ty, s);
+        if (i % 2 === 0) {
+          drawPerspectiveLamp(ctx, cx + rh + 24 * s + 12, ty, s);
+        } else {
+          drawPerspectiveTree(ctx, cx + rh + 66 * s + 34, ty, s);
+        }
+      }
+
+      // 5. Scenario-specific road props at pz = game.propProgress
+      const pz = Math.max(0.08, Math.min(0.98, game.propProgress));
+      const propY = yAt(pz);
+      const pScale = scaleAt(pz);
+      const pHalf = roadHalfAt(pz);
+      const bandTopZ = Math.max(0.02, pz - 0.09);
+      const bandBotZ = Math.min(0.99, pz + 0.09);
+      const by0 = yAt(bandTopZ);
+      const by1 = yAt(bandBotZ);
+      const bh0 = roadHalfAt(bandTopZ);
+      const bh1 = roadHalfAt(bandBotZ);
+
       if (sc.scene === 'intersection' || sc.scene === 'stop_line' || sc.scene === 'yield_line') {
         ctx.fillStyle = '#334155';
-        ctx.fillRect(0, propY - 52, W, 104);
+        ctx.fillRect(0, by0, W, by1 - by0);
         ctx.fillStyle = '#e2e8f0';
-        ctx.fillRect(0, propY - 52, roadX, 5);
-        ctx.fillRect(roadX + roadW, propY - 52, W - (roadX + roadW), 5);
-        ctx.fillRect(0, propY + 47, roadX, 5);
-        ctx.fillRect(roadX + roadW, propY + 47, W - (roadX + roadW), 5);
+        ctx.fillRect(0, by0, cx - bh0, 3 + 3 * pz);
+        ctx.fillRect(cx + bh0, by0, W - (cx + bh0), 3 + 3 * pz);
+        ctx.fillRect(0, by1 - 4, cx - bh1, 4 + 3 * pz);
+        ctx.fillRect(cx + bh1, by1 - 4, W - (cx + bh1), 4 + 3 * pz);
         if (sc.scene === 'stop_line') {
           ctx.fillStyle = '#ffffff';
-          ctx.fillRect(centerX + 8, propY + 46, roadW / 2 - 18, 7);
+          ctx.fillRect(cx + 4, by1 - 2, bh1 - 16, 6 * pScale + 2);
         }
         if (sc.scene === 'yield_line') {
           ctx.fillStyle = '#ffffff';
-          for (let tx = centerX + 18; tx < roadX + roadW - 20; tx += 28) {
+          const step = Math.max(14, 24 * pScale);
+          for (let tx = cx + 10; tx < cx + bh1 - 18; tx += step) {
             ctx.beginPath();
-            ctx.moveTo(tx, propY + 45);
-            ctx.lineTo(tx + 14, propY + 45);
-            ctx.lineTo(tx + 7, propY + 57);
+            ctx.moveTo(tx, by1 - 6);
+            ctx.lineTo(tx + step * 0.55, by1 - 6);
+            ctx.lineTo(tx + step * 0.28, by1 + 6 * pScale);
             ctx.closePath();
             ctx.fill();
           }
-          // Cross car coming from left
-          drawOtherCar(ctx, 120 + Math.sin(game.blinkTimer * 2) * 30, propY + 12, '#ef4444', Math.PI / 2);
+          // Cross car approaching from left in perspective
+          const crossX = cx - bh0 * 0.8 + Math.sin(game.blinkTimer * 1.8) * 35 * pScale;
+          drawSideCar(ctx, crossX, (by0 + by1) / 2, pScale * 0.9, '#ef4444');
         }
       } else if (sc.scene === 't_right_straight') {
         ctx.fillStyle = '#334155';
-        ctx.fillRect(centerX, propY - 50, W - centerX, 100);
+        ctx.fillRect(cx, by0, W - cx, by1 - by0);
+        ctx.fillStyle = '#e2e8f0';
+        ctx.fillRect(cx + bh0, by0, W - (cx + bh0), 4);
+        ctx.fillRect(cx + bh1, by1 - 4, W - (cx + bh1), 4);
       } else if (sc.scene === 't_left_straight') {
         ctx.fillStyle = '#334155';
-        ctx.fillRect(0, propY - 50, centerX, 100);
+        ctx.fillRect(0, by0, cx, by1 - by0);
+        ctx.fillStyle = '#e2e8f0';
+        ctx.fillRect(0, by0, cx - bh0, 4);
+        ctx.fillRect(0, by1 - 4, cx - bh1, 4);
       } else if (sc.scene === 'roundabout') {
         ctx.fillStyle = '#334155';
         ctx.beginPath();
-        ctx.arc(centerX, propY - 10, 140, 0, Math.PI * 2);
+        ctx.ellipse(cx, propY, pHalf * 1.45, (by1 - by0) * 1.15, 0, 0, Math.PI * 2);
         ctx.fill();
-        ctx.fillStyle = '#22c55e';
+        // Green roundabout island
+        ctx.fillStyle = '#16a34a';
         ctx.beginPath();
-        ctx.arc(centerX, propY - 10, 56, 0, Math.PI * 2);
+        ctx.ellipse(cx, propY, pHalf * 0.58, (by1 - by0) * 0.5, 0, 0, Math.PI * 2);
         ctx.fill();
         ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 4;
+        ctx.lineWidth = Math.max(2, 4 * pScale);
         ctx.stroke();
+        // Center flower monument
+        ctx.fillStyle = '#facc15';
+        ctx.beginPath();
+        ctx.ellipse(cx, propY - 4 * pScale, 12 * pScale, 8 * pScale, 0, 0, Math.PI * 2);
+        ctx.fill();
       } else if (sc.scene === 'crosswalk') {
-        ctx.fillStyle = '#ffffff';
-        for (let sx = roadX + 18; sx < roadX + roadW - 24; sx += 34) {
-          ctx.fillRect(sx, propY - 16, 18, 42);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+        const stripes = 8;
+        const sw = (bh1 * 1.8) / stripes;
+        for (let i = 0; i < stripes; i++) {
+          const sx = cx - bh1 * 0.9 + i * sw + sw * 0.16;
+          ctx.fillRect(sx, by0 + 4, sw * 0.58, (by1 - by0) * 0.65);
         }
-        // Pedestrian walking across
-        const pedX = roadX + 90 + ((game.blinkTimer * 55) % 180);
-        ctx.fillStyle = '#f97316';
-        ctx.beginPath();
-        ctx.arc(pedX, propY + 4, 10, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = '#0f172a';
-        ctx.beginPath();
-        ctx.arc(pedX, propY + 4, 5, 0, Math.PI * 2);
-        ctx.fill();
+        // Animated walking pedestrian
+        const pedProg = (game.blinkTimer * 0.38) % 1;
+        const pedX = cx - bh0 * 0.75 + pedProg * (bh0 * 1.5);
+        drawPedestrian(ctx, pedX, propY - 4 * pScale, pScale, game.blinkTimer);
       } else if (sc.scene === 'railway') {
+        // Wooden sleepers & rails
         ctx.fillStyle = '#78350f';
-        ctx.fillRect(0, propY - 14, W, 28);
-        ctx.fillStyle = '#cbd5e1';
-        ctx.fillRect(0, propY - 10, W, 5);
-        ctx.fillRect(0, propY + 5, W, 5);
-        // Red & white gate
+        ctx.fillRect(0, propY - 10 * pScale, W, 20 * pScale);
+        ctx.fillStyle = '#e2e8f0';
+        ctx.fillRect(0, propY - 7 * pScale, W, 3 * pScale + 1);
+        ctx.fillRect(0, propY + 4 * pScale, W, 3 * pScale + 1);
+        // Red & white crossing barrier across road
         ctx.fillStyle = '#dc2626';
-        ctx.fillRect(roadX + 10, propY + 22, roadW - 20, 8);
+        ctx.fillRect(cx - pHalf, propY - 22 * pScale, pHalf * 2, 9 * pScale);
         ctx.fillStyle = '#ffffff';
-        for (let gx = roadX + 26; gx < roadX + roadW - 28; gx += 44) {
-          ctx.fillRect(gx, propY + 22, 20, 8);
+        const segW = (pHalf * 2) / 9;
+        for (let i = 1; i < 9; i += 2) {
+          ctx.fillRect(cx - pHalf + i * segW, propY - 22 * pScale, segW, 9 * pScale);
         }
-      } else if (sc.scene === 'obstacle_center') {
-        // Barrier in right lane ahead
-        const bx = centerX + 55;
-        ctx.fillStyle = '#f97316';
-        ctx.fillRect(bx - 38, propY - 12, 76, 20);
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(bx - 22, propY - 12, 16, 20);
-        ctx.fillRect(bx + 8, propY - 12, 16, 20);
-      } else if (sc.scene === 'slow_car') {
-        // Slow yellow truck ahead in right lane
-        drawTruck(ctx, centerX + 78, propY + 18);
-      } else if (sc.scene === 'narrow_bridge') {
-        ctx.fillStyle = '#94a3b8';
-        ctx.fillRect(roadX, propY - 48, 86, 96);
-        ctx.fillRect(roadX + roadW - 86, propY - 48, 86, 96);
-        drawOtherCar(ctx, centerX, propY - 26, '#e11d48', Math.PI);
-      } else if (sc.scene === 'slippery') {
-        ctx.fillStyle = 'rgba(56, 189, 248, 0.38)';
+        // Flashing red railway warning lights on left post
+        const flashA = Math.floor(game.blinkTimer * 4) % 2 === 0;
+        const lx = cx - pHalf - 16 * pScale;
+        ctx.fillStyle = '#334155';
+        ctx.fillRect(lx - 3 * pScale, propY - 46 * pScale, 6 * pScale, 48 * pScale);
+        ctx.fillStyle = flashA ? '#ef4444' : '#7f1d1d';
         ctx.beginPath();
-        ctx.ellipse(centerX + 60, propY + 8, 72, 26, 0.2, 0, Math.PI * 2);
+        ctx.arc(lx - 8 * pScale, propY - 44 * pScale, 5 * pScale, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = !flashA ? '#ef4444' : '#7f1d1d';
+        ctx.beginPath();
+        ctx.arc(lx + 8 * pScale, propY - 44 * pScale, 5 * pScale, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (sc.scene === 'obstacle_center') {
+        // Construction barrier & orange cones in right lane
+        const bx = cx + pHalf * 0.44;
+        const bw = 96 * pScale;
+        const bh = 26 * pScale;
+        ctx.fillStyle = 'rgba(15,23,42,0.35)';
+        ctx.fillRect(bx - bw / 2 + 4, propY + 2, bw, 8 * pScale);
+        ctx.fillStyle = '#f97316';
+        ctx.fillRect(bx - bw / 2, propY - bh, bw, bh);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(bx - bw * 0.3, propY - bh, bw * 0.16, bh);
+        ctx.fillRect(bx + bw * 0.12, propY - bh, bw * 0.16, bh);
+        // Amber blinking hazard beacon
+        const beaconOn = Math.floor(game.blinkTimer * 5) % 2 === 0;
+        ctx.fillStyle = beaconOn ? '#fde047' : '#ca8a04';
+        ctx.beginPath();
+        ctx.arc(bx, propY - bh - 6 * pScale, 6 * pScale, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (sc.scene === 'slow_car') {
+        drawPerspectiveTruck(ctx, cx + pHalf * 0.48, propY, pScale);
+      } else if (sc.scene === 'narrow_bridge') {
+        // Stone bridge walls narrowing road + oncoming red car
+        const wallW = pHalf * 0.38;
+        ctx.fillStyle = '#94a3b8';
+        ctx.fillRect(cx - pHalf, by0 - 12 * pScale, wallW, by1 - by0 + 16 * pScale);
+        ctx.fillRect(cx + pHalf - wallW, by0 - 12 * pScale, wallW, by1 - by0 + 16 * pScale);
+        ctx.fillStyle = '#cbd5e1';
+        ctx.fillRect(cx - pHalf, by0 - 12 * pScale, wallW, 5 * pScale);
+        ctx.fillRect(cx + pHalf - wallW, by0 - 12 * pScale, wallW, 5 * pScale);
+        drawOncomingCar(ctx, cx - pHalf * 0.22, propY - 10 * pScale, pScale * 0.95);
+      } else if (sc.scene === 'slippery') {
+        const iceGrad = ctx.createRadialGradient(
+          cx + pHalf * 0.35,
+          propY,
+          8 * pScale,
+          cx + pHalf * 0.35,
+          propY,
+          85 * pScale
+        );
+        iceGrad.addColorStop(0, 'rgba(125, 211, 252, 0.72)');
+        iceGrad.addColorStop(1, 'rgba(56, 189, 248, 0.12)');
+        ctx.fillStyle = iceGrad;
+        ctx.beginPath();
+        ctx.ellipse(cx + pHalf * 0.35, propY, 85 * pScale, 28 * pScale, 0.08, 0, Math.PI * 2);
         ctx.fill();
       } else if (sc.scene === 'no_stop_curb') {
-        ctx.fillStyle = '#dc2626';
-        ctx.fillRect(roadX + roadW - 14, propY - 70, 12, 140);
+        ctx.fillStyle = '#ef4444';
+        ctx.beginPath();
+        ctx.moveTo(cx + bh0 - 6, by0);
+        ctx.lineTo(cx + bh0 + 8, by0);
+        ctx.lineTo(cx + bh1 + 14, by1);
+        ctx.lineTo(cx + bh1 - 8, by1);
+        ctx.closePath();
+        ctx.fill();
       } else if (sc.scene === 'parking_bay') {
+        const bayW = 76 * pScale + 18;
         ctx.fillStyle = '#334155';
-        ctx.fillRect(roadX + roadW, propY - 48, 72, 96);
+        ctx.fillRect(cx + bh0, by0, bayW, by1 - by0);
         ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 3;
-        ctx.strokeRect(roadX + roadW + 4, propY - 44, 62, 88);
+        ctx.lineWidth = Math.max(2, 3 * pScale);
+        ctx.strokeRect(cx + bh0 + 4, by0 + 4, bayW - 8, by1 - by0 - 8);
         ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 26px sans-serif';
+        ctx.font = `bold ${Math.round(28 * pScale + 8)}px sans-serif`;
         ctx.textAlign = 'center';
-        ctx.fillText('P', roadX + roadW + 35, propY + 9);
+        ctx.fillText('P', cx + bh0 + bayW / 2, (by0 + by1) / 2 + 8 * pScale);
       }
 
-      // Roadside Signpost (scales up slightly as it approaches)
-      const signScale = 0.65 + game.propProgress * 0.45;
-      const postX = roadX + roadW + 52;
-      const postY = propY + 10;
+      // 6. 3D Roadside Signpost on right shoulder
+      const postX = cx + pHalf + 48 * pScale + 14;
+      const postBaseY = propY + 8 * pScale;
+      const poleH = 88 * pScale + 16;
+      const signTopY = postBaseY - poleH;
+      const signSize = 58 * pScale + 18;
+
+      // Ground shadow under signpost
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.25)';
+      ctx.beginPath();
+      ctx.ellipse(postX + 8 * pScale, postBaseY, 16 * pScale + 4, 5 * pScale + 2, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Metal pole
+      ctx.fillStyle = '#cbd5e1';
+      ctx.fillRect(postX - 3 * pScale, signTopY, 6 * pScale, poleH);
       ctx.fillStyle = '#64748b';
-      ctx.fillRect(postX - 3, postY, 6, 36 * signScale);
-      const signSize = 54 * signScale;
+      ctx.fillRect(postX, signTopY, 3 * pScale, poleH);
+
+      // Sign plaque + subtle pulse ring
+      if (game.phase === 'driving') {
+        const pulse = 0.5 + 0.5 * Math.sin(game.blinkTimer * 5);
+        ctx.strokeStyle = `rgba(37, 99, 235, ${0.22 + pulse * 0.28})`;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(postX, signTopY, signSize * 0.62 + pulse * 6, 0, Math.PI * 2);
+        ctx.stroke();
+      }
       ctx.fillStyle = '#ffffff';
       ctx.beginPath();
-      ctx.arc(postX, postY, signSize * 0.56, 0, Math.PI * 2);
+      ctx.arc(postX, signTopY, signSize * 0.56, 0, Math.PI * 2);
       ctx.fill();
       ctx.strokeStyle = '#94a3b8';
       ctx.lineWidth = 2;
@@ -1038,18 +1285,46 @@
         const ratio = Math.min(signSize / iw, signSize / ih);
         const dw = iw * ratio;
         const dh = ih * ratio;
-        ctx.drawImage(img, postX - dw / 2, postY - dh / 2, dw, dh);
+        ctx.drawImage(img, postX - dw / 2, signTopY - dh / 2, dw, dh);
       }
 
-      // Draw Player Car
-      const baseCarX = centerX + 82 + game.carX * 92;
-      const baseCarY = H - 72 + game.carY;
+      // 7. Exhaust puffs + Chase-camera Player Car
+      const baseCarX = cx + 110 + game.carX * 145;
+      const suspensionBounce = game.carSpeed > 2 ? Math.sin(game.blinkTimer * 18) * 1.4 : 0;
+      const baseCarY = H - 74 + game.carY + suspensionBounce;
+      if (game.carSpeed > 8 && Math.random() < 0.35) {
+        game.puffs.push({ x: baseCarX - 28, y: baseCarY + 34, r: 3.5, a: 0.45 });
+      }
+      for (let i = game.puffs.length - 1; i >= 0; i--) {
+        const pf = game.puffs[i];
+        pf.y += 45 * dt;
+        pf.x -= 8 * dt;
+        pf.r += 14 * dt;
+        pf.a -= 0.9 * dt;
+        if (pf.a <= 0) {
+          game.puffs.splice(i, 1);
+        } else {
+          ctx.fillStyle = `rgba(226, 232, 240, ${pf.a})`;
+          ctx.beginPath();
+          ctx.arc(pf.x, pf.y, pf.r, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
       const braking = game.targetAction === 'brake' && game.phase !== 'driving';
       const blinkSide =
         game.phase === 'animating' && (game.targetAction === 'left' || game.targetAction === 'right')
           ? game.targetAction
           : null;
-      drawPlayerCar(ctx, baseCarX, baseCarY, game.carAngle, braking, blinkSide, Math.floor(game.blinkTimer * 6) % 2 === 0);
+      drawChaseCar(
+        ctx,
+        baseCarX,
+        baseCarY,
+        game.carAngle,
+        braking,
+        blinkSide,
+        Math.floor(game.blinkTimer * 7) % 2 === 0
+      );
 
       // Update live timer fill & speed in HUD
       const tFill = document.getElementById('game-timer-fill');
@@ -1059,111 +1334,272 @@
         tFill.style.background = pct < 30 ? '#dc2626' : pct < 60 ? '#f59e0b' : '#16a34a';
       }
       const spEl = document.getElementById('hud-speed');
-      if (spEl) {
-        const ui = UI_TEXT[getLang()] || UI_TEXT.hy;
-        spEl.textContent = `${Math.round(game.carSpeed)} ${ui.speedUnit}`;
-      }
+      if (spEl) spEl.textContent = `${Math.round(game.carSpeed)} ${ui.speedUnit}`;
+      const spPill = document.getElementById('hud-speed-pill');
+      if (spPill) spPill.textContent = `${Math.round(game.carSpeed)} ${ui.speedUnit}`;
     }
 
-    function drawTree(c, x, y) {
+    function drawCloud(c, x, y, s) {
+      c.fillStyle = 'rgba(255, 255, 255, 0.85)';
+      c.beginPath();
+      c.arc(x, y, 20 * s, 0, Math.PI * 2);
+      c.arc(x + 22 * s, y - 6 * s, 24 * s, 0, Math.PI * 2);
+      c.arc(x + 46 * s, y, 18 * s, 0, Math.PI * 2);
+      c.fill();
+    }
+
+    function drawPerspectiveTree(c, x, y, s) {
+      // Shadow
+      c.fillStyle = 'rgba(15, 23, 42, 0.16)';
+      c.beginPath();
+      c.ellipse(x + 8 * s, y, 22 * s, 7 * s, 0, 0, Math.PI * 2);
+      c.fill();
+      // Trunk
+      c.fillStyle = '#78350f';
+      c.fillRect(x - 4 * s, y - 30 * s, 8 * s, 30 * s);
+      // Canopy
       c.fillStyle = '#15803d';
       c.beginPath();
-      c.arc(x, y, 22, 0, Math.PI * 2);
+      c.arc(x, y - 42 * s, 22 * s, 0, Math.PI * 2);
       c.fill();
       c.fillStyle = '#22c55e';
       c.beginPath();
-      c.arc(x - 5, y - 5, 14, 0, Math.PI * 2);
+      c.arc(x - 6 * s, y - 48 * s, 15 * s, 0, Math.PI * 2);
       c.fill();
     }
 
-    function drawTruck(c, x, y) {
-      c.save();
-      c.translate(x, y);
-      c.fillStyle = 'rgba(15,23,42,0.28)';
-      c.fillRect(-21, -34, 46, 74);
-      c.fillStyle = '#f59e0b';
-      c.fillRect(-22, -16, 44, 52);
-      c.fillStyle = '#fbbf24';
-      c.fillRect(-20, -36, 40, 20);
-      c.fillStyle = '#1e293b';
-      c.fillRect(-16, -32, 32, 8);
-      c.restore();
+    function drawPerspectiveLamp(c, x, y, s) {
+      c.fillStyle = '#475569';
+      c.fillRect(x - 2 * s, y - 78 * s, 4 * s, 78 * s);
+      c.fillRect(x - 16 * s, y - 78 * s, 16 * s, 3 * s);
+      c.fillStyle = '#fef08a';
+      c.beginPath();
+      c.arc(x - 15 * s, y - 74 * s, 4 * s, 0, Math.PI * 2);
+      c.fill();
     }
 
-    function drawOtherCar(c, x, y, color, angle) {
+    function drawPedestrian(c, x, y, s, t) {
+      const swing = Math.sin(t * 10) * 6 * s;
+      // Shadow
+      c.fillStyle = 'rgba(15, 23, 42, 0.25)';
+      c.beginPath();
+      c.ellipse(x, y + 2 * s, 9 * s, 4 * s, 0, 0, Math.PI * 2);
+      c.fill();
+      // Legs
+      c.strokeStyle = '#1e293b';
+      c.lineWidth = Math.max(2, 4 * s);
+      c.beginPath();
+      c.moveTo(x - 2 * s, y - 14 * s);
+      c.lineTo(x - 3 * s + swing, y);
+      c.moveTo(x + 2 * s, y - 14 * s);
+      c.lineTo(x + 3 * s - swing, y);
+      c.stroke();
+      // Jacket
+      c.fillStyle = '#f97316';
+      c.beginPath();
+      c.roundRect(x - 6 * s, y - 30 * s, 12 * s, 17 * s, 4 * s);
+      c.fill();
+      // Head
+      c.fillStyle = '#fed7aa';
+      c.beginPath();
+      c.arc(x, y - 36 * s, 5.5 * s, 0, Math.PI * 2);
+      c.fill();
+    }
+
+    function drawSideCar(c, x, y, s, color) {
       c.save();
       c.translate(x, y);
-      c.rotate(angle || 0);
-      c.fillStyle = 'rgba(15,23,42,0.25)';
-      c.fillRect(-17, -28, 36, 58);
+      c.scale(s, s);
+      c.fillStyle = 'rgba(15, 23, 42, 0.28)';
+      c.fillRect(-34, 8, 68, 12);
       c.fillStyle = color;
       c.beginPath();
-      c.roundRect(-18, -30, 36, 58, 9);
+      c.roundRect(-34, -14, 68, 24, 7);
       c.fill();
       c.fillStyle = '#1e293b';
-      c.fillRect(-13, -14, 26, 16);
+      c.beginPath();
+      c.roundRect(-18, -26, 36, 14, 5);
+      c.fill();
+      c.fillStyle = '#0f172a';
+      c.beginPath();
+      c.arc(-18, 10, 8, 0, Math.PI * 2);
+      c.arc(18, 10, 8, 0, Math.PI * 2);
+      c.fill();
       c.restore();
     }
 
-    function drawPlayerCar(c, x, y, angle, braking, blinkSide, blinkOn) {
+    function drawOncomingCar(c, x, y, s) {
       c.save();
       c.translate(x, y);
-      c.rotate(angle || 0);
-
-      // Headlight beams
-      const grad = c.createLinearGradient(0, -34, 0, -95);
-      grad.addColorStop(0, 'rgba(254, 240, 138, 0.42)');
-      grad.addColorStop(1, 'rgba(254, 240, 138, 0)');
-      c.fillStyle = grad;
+      c.scale(s, s);
+      c.fillStyle = 'rgba(15, 23, 42, 0.3)';
       c.beginPath();
-      c.moveTo(-16, -32);
-      c.lineTo(-32, -95);
-      c.lineTo(32, -95);
-      c.lineTo(16, -32);
-      c.closePath();
+      c.ellipse(0, 18, 34, 9, 0, 0, Math.PI * 2);
       c.fill();
+      c.fillStyle = '#dc2626';
+      c.beginPath();
+      c.roundRect(-30, -14, 60, 30, 8);
+      c.fill();
+      c.fillStyle = '#93c5fd';
+      c.beginPath();
+      c.roundRect(-22, -26, 44, 15, 6);
+      c.fill();
+      // Headlights
+      c.fillStyle = '#fef08a';
+      c.fillRect(-24, 0, 10, 6);
+      c.fillRect(14, 0, 10, 6);
+      c.restore();
+    }
 
+    function drawPerspectiveTruck(c, x, y, s) {
+      c.save();
+      c.translate(x, y);
+      c.scale(s, s);
       // Shadow
       c.fillStyle = 'rgba(15, 23, 42, 0.35)';
       c.beginPath();
-      c.roundRect(-19, -32, 42, 68, 11);
+      c.ellipse(0, 8, 44, 12, 0, 0, Math.PI * 2);
       c.fill();
-
-      // Car body
-      c.fillStyle = '#2563eb';
+      // Tires
+      c.fillStyle = '#0f172a';
+      c.fillRect(-38, -6, 12, 16);
+      c.fillRect(26, -6, 12, 16);
+      // Cargo box
+      c.fillStyle = '#f59e0b';
       c.beginPath();
-      c.roundRect(-20, -34, 40, 68, 10);
+      c.roundRect(-40, -74, 80, 70, 6);
+      c.fill();
+      c.strokeStyle = '#d97706';
+      c.lineWidth = 3;
+      c.strokeRect(-34, -68, 32, 58);
+      c.strokeRect(2, -68, 32, 58);
+      // Taillights
+      c.fillStyle = '#ef4444';
+      c.fillRect(-36, -12, 12, 6);
+      c.fillRect(24, -12, 12, 6);
+      c.restore();
+    }
+
+    function drawChaseCar(c, x, y, angle, braking, blinkSide, blinkOn) {
+      c.save();
+      c.translate(x, y);
+      c.rotate(angle || 0);
+
+      // Soft ground shadow
+      c.fillStyle = 'rgba(15, 23, 42, 0.45)';
+      c.beginPath();
+      c.ellipse(0, 34, 62, 15, 0, 0, Math.PI * 2);
       c.fill();
 
-      // Roof & windshield
+      // Rear tires
+      c.fillStyle = '#0f172a';
+      c.beginPath();
+      c.roundRect(-54, 10, 16, 28, 4);
+      c.roundRect(38, 10, 16, 28, 4);
+      c.fill();
+
+      // Lower bumper & diffuser
       c.fillStyle = '#1e293b';
       c.beginPath();
-      c.roundRect(-15, -16, 30, 34, 6);
+      c.roundRect(-52, 14, 104, 18, 6);
       c.fill();
-      c.fillStyle = '#60a5fa';
+
+      // Twin exhaust tips
+      c.fillStyle = '#94a3b8';
       c.beginPath();
-      c.roundRect(-13, -6, 26, 18, 4);
+      c.arc(-30, 27, 4, 0, Math.PI * 2);
+      c.arc(30, 27, 4, 0, Math.PI * 2);
       c.fill();
 
-      // Headlights
-      c.fillStyle = '#fef08a';
-      c.fillRect(-16, -35, 8, 4);
-      c.fillRect(8, -35, 8, 4);
+      // Main metallic blue rear body
+      const bodyGrad = c.createLinearGradient(0, -18, 0, 22);
+      bodyGrad.addColorStop(0, '#3b82f6');
+      bodyGrad.addColorStop(0.55, '#2563eb');
+      bodyGrad.addColorStop(1, '#1d4ed8');
+      c.fillStyle = bodyGrad;
+      c.beginPath();
+      c.moveTo(-54, 16);
+      c.lineTo(-48, -12);
+      c.lineTo(48, -12);
+      c.lineTo(54, 16);
+      c.closePath();
+      c.fill();
 
-      // Brake lights
-      c.fillStyle = braking ? '#ff2d2d' : '#991b1b';
-      c.fillRect(-16, 31, 9, 4);
-      c.fillRect(7, 31, 9, 4);
+      // Side mirrors
+      c.fillStyle = '#1d4ed8';
+      c.beginPath();
+      c.roundRect(-58, -16, 12, 8, 3);
+      c.roundRect(46, -16, 12, 8, 3);
+      c.fill();
 
-      // Turn blinkers
+      // Cabin & sloped rear windshield
+      c.fillStyle = '#1d4ed8';
+      c.beginPath();
+      c.moveTo(-40, -12);
+      c.lineTo(-30, -34);
+      c.lineTo(30, -34);
+      c.lineTo(40, -12);
+      c.closePath();
+      c.fill();
+
+      const glassGrad = c.createLinearGradient(-24, -30, 24, -10);
+      glassGrad.addColorStop(0, '#0f172a');
+      glassGrad.addColorStop(0.5, '#1e293b');
+      glassGrad.addColorStop(1, '#334155');
+      c.fillStyle = glassGrad;
+      c.beginPath();
+      c.moveTo(-34, -12);
+      c.lineTo(-26, -30);
+      c.lineTo(26, -30);
+      c.lineTo(34, -12);
+      c.closePath();
+      c.fill();
+
+      // Glass glare streak
+      c.strokeStyle = 'rgba(148, 163, 184, 0.38)';
+      c.lineWidth = 3;
+      c.beginPath();
+      c.moveTo(-18, -28);
+      c.lineTo(-6, -14);
+      c.stroke();
+
+      // License plate
+      c.fillStyle = '#f8fafc';
+      c.beginPath();
+      c.roundRect(-17, 5, 34, 10, 2);
+      c.fill();
+      c.fillStyle = '#2563eb';
+      c.fillRect(-17, 5, 5, 10);
+
+      // Tail-lights (glow brightly when braking)
+      if (braking) {
+        c.fillStyle = 'rgba(239, 68, 68, 0.45)';
+        c.beginPath();
+        c.arc(-39, 1, 16, 0, Math.PI * 2);
+        c.arc(39, 1, 16, 0, Math.PI * 2);
+        c.fill();
+      }
+      c.fillStyle = braking ? '#ff2a2a' : '#b91c1c';
+      c.beginPath();
+      c.roundRect(-48, -4, 18, 10, 3);
+      c.roundRect(30, -4, 18, 10, 3);
+      c.fill();
+
+      // Center high-mount brake strip
+      c.fillStyle = braking ? '#ff3b3b' : '#7f1d1d';
+      c.fillRect(-12, -13, 24, 3);
+
+      // Turn signal blinkers
       if (blinkSide && blinkOn) {
-        c.fillStyle = '#f59e0b';
+        c.fillStyle = '#fbbf24';
         if (blinkSide === 'left') {
-          c.fillRect(-21, -30, 4, 8);
-          c.fillRect(-21, 22, 4, 8);
+          c.beginPath();
+          c.roundRect(-52, -4, 8, 10, 2);
+          c.fill();
         } else if (blinkSide === 'right') {
-          c.fillRect(17, -30, 4, 8);
-          c.fillRect(17, 22, 4, 8);
+          c.beginPath();
+          c.roundRect(44, -4, 8, 10, 2);
+          c.fill();
         }
       }
 

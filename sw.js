@@ -1,4 +1,4 @@
-const CACHE_NAME = 'varordakan-v20';
+const CACHE_NAME = 'varordakan-v21';
 const CORE_ASSETS = [
   './',
   './index.html',
@@ -12,10 +12,10 @@ const CORE_ASSETS = [
   './voronum/',
   './ru/',
   './en/',
-  './styles.css?v=20261113o',
+  './styles.css?v=20261113p',
   './app-i18n.js?v=20261113o',
   './app-core.js?v=20261113j',
-  './app-game.js?v=20261113o',
+  './app-game.js?v=20261113p',
   './app.js?v=20261113o',
   './manifest.webmanifest',
   './logo-192.png',
