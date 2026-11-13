@@ -2,7 +2,7 @@
 
 Interactive, offline-ready web application for preparing for the Armenian Road Police theoretical driver's license exam (ABC categories).
 
-**Live site:** https://annmartirosyan.github.io/roadpolice-exam/
+**Live site:** https://varordakan.com/ (also served via GitHub Pages)
 
 ## Features
 

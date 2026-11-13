@@ -27,7 +27,7 @@ jobs:
       - name: Prepare static artifact
         run: |
           mkdir -p _site
-          cp index.html styles.css app-core.js app.js .nojekyll _site/
+          cp index.html styles.css app-core.js app.js .nojekyll CNAME _site/
           cp -r data _site/
 
       - name: Setup Pages
