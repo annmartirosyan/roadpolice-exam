@@ -362,3 +362,15 @@ test('filterMarkings and filterRules filter across languages and Armenian normal
   assert.equal(Core.filterRules(docs, { docId: 'jek', query: 'և' }).length, 1);
   assert.equal(Core.filterRules(docs, { docId: 'law', query: 'և' }).length, 0);
 });
+
+test('importStateJson strips prototype-pollution keys and invalid ui entries', () => {
+  const malicious = '{"__proto__":{"polluted":true},"practice":{"constructor":{"selectedIndex":0,"correct":true},"g1-q1":{"selectedIndex":1,"correct":true}},"ui":{"activeQuestionIndexByGroup":{"__proto__":99,"1":-5,"2":4},"shuffleByGroup":{"prototype":true,"1":"bad","2":true}}}';
+  const imported = Core.importStateJson(malicious);
+  assert.equal(({}).polluted, undefined);
+  assert.equal(Object.prototype.hasOwnProperty.call(imported.practice, 'constructor'), false);
+  assert.equal(imported.practice['g1-q1'].selectedIndex, 1);
+  assert.equal(imported.ui.activeQuestionIndexByGroup['1'], undefined);
+  assert.equal(imported.ui.activeQuestionIndexByGroup['2'], 4);
+  assert.equal(imported.ui.shuffleByGroup['1'], undefined);
+  assert.equal(imported.ui.shuffleByGroup['2'], true);
+});

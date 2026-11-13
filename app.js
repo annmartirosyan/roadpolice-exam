@@ -285,7 +285,12 @@
     }, 2800);
   }
 
+  function isSafeAssetPath(src) {
+    return typeof src === 'string' && /^data\/[a-zA-Z0-9_./-]+\.(?:png|jpg|jpeg|webp|gif|svg)$/i.test(src) && !src.includes('..');
+  }
+
   function openLightbox(src) {
+    if (!isSafeAssetPath(src)) return;
     lightboxImgEl.src = src;
     lightboxEl.hidden = false;
   }
@@ -337,7 +342,8 @@
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
   }
 
   function formatDuration(sec) {

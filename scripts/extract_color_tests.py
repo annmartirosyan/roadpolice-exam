@@ -9,7 +9,6 @@ import html as html_lib
 import json
 import re
 import ssl
-import subprocess
 import sys
 import urllib.parse
 import urllib.request
@@ -60,6 +59,57 @@ def parse_varord_psycho_html(raw_html: str) -> list[dict]:
     return items
 
 
+def _js_object_array_to_json(arr_js: str) -> list[dict]:
+    """Safely convert a JS array of object literals with unquoted keys to Python dicts without executing JS."""
+    out: list[str] = []
+    i = 0
+    n = len(arr_js)
+    while i < n:
+        ch = arr_js[i]
+        if ch in ('"', "'"):
+            quote = ch
+            buf = ['"']
+            i += 1
+            while i < n:
+                c = arr_js[i]
+                if c == "\\" and i + 1 < n:
+                    nxt = arr_js[i + 1]
+                    if quote == "'" and nxt == "'":
+                        buf.append("'")
+                    else:
+                        buf.append("\\" + nxt)
+                    i += 2
+                    continue
+                if c == quote:
+                    i += 1
+                    break
+                if c == '"' and quote == "'":
+                    buf.append('\\"')
+                else:
+                    buf.append(c)
+                i += 1
+            buf.append('"')
+            out.append("".join(buf))
+            continue
+
+        if (ch.isalpha() or ch == "_") and (not out or out[-1].rstrip().endswith(("{", ","))):
+            j = i
+            while j < n and (arr_js[j].isalnum() or arr_js[j] == "_"):
+                j += 1
+            k = j
+            while k < n and arr_js[k].isspace():
+                k += 1
+            if k < n and arr_js[k] == ":":
+                out.append(f'"{arr_js[i:j]}"')
+                i = j
+                continue
+
+        out.append(ch)
+        i += 1
+
+    return json.loads("".join(out))
+
+
 def parse_agdrive_js_chunk(js_text: str) -> list[dict]:
     anchor = js_text.find("options_am:")
     if anchor == -1:
@@ -76,19 +126,7 @@ def parse_agdrive_js_chunk(js_text: str) -> list[dict]:
         raise ValueError("Could not find array end in agdrive bundle")
     arr_js = js_text[start : end + 2]
 
-    # Convert JS object literal keys to valid JSON using node
-    node_code = (
-        "const arr = "
-        + arr_js
-        + "; console.log(JSON.stringify(arr));"
-    )
-    proc = subprocess.run(
-        ["node", "-e", node_code],
-        check=True,
-        capture_output=True,
-        text=True,
-    )
-    raw_items = json.loads(proc.stdout)
+    raw_items = _js_object_array_to_json(arr_js)
     out: list[dict] = []
     for item in raw_items:
         opts = [_clean(str(o)) for o in item.get("options_am", [])]

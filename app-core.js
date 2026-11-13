@@ -57,6 +57,12 @@
     return Boolean(val) && typeof val === 'object' && !Array.isArray(val);
   }
 
+  const _FORBIDDEN_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
+
+  function _isSafeKey(k) {
+    return typeof k === 'string' && k.length > 0 && !_FORBIDDEN_KEYS.has(k);
+  }
+
   function _sanitizeState(raw) {
     if (!_isPlainObject(raw)) return null;
     const base = createInitialState();
@@ -67,9 +73,12 @@
 
     if (_isPlainObject(raw.practice)) {
       for (const [uid, entry] of Object.entries(raw.practice)) {
+        if (!_isSafeKey(uid)) continue;
         if (
           _isPlainObject(entry) &&
           typeof entry.selectedIndex === 'number' &&
+          Number.isInteger(entry.selectedIndex) &&
+          entry.selectedIndex >= 0 &&
           typeof entry.correct === 'boolean'
         ) {
           base.practice[uid] = {
@@ -82,14 +91,18 @@
 
     if (_isPlainObject(raw.mistakes)) {
       for (const [uid, entry] of Object.entries(raw.mistakes)) {
-        if (_isPlainObject(entry) && typeof entry.wrongCount === 'number') {
+        if (!_isSafeKey(uid)) continue;
+        if (_isPlainObject(entry) && typeof entry.wrongCount === 'number' && Number.isFinite(entry.wrongCount)) {
           base.mistakes[uid] = {
-            wrongCount: Math.max(1, entry.wrongCount),
+            wrongCount: Math.max(1, Math.round(entry.wrongCount)),
             streak:
-              typeof entry.streak === 'number'
-                ? Math.max(0, Math.min(MISTAKE_CLEAR_STREAK - 1, entry.streak))
+              typeof entry.streak === 'number' && Number.isFinite(entry.streak)
+                ? Math.max(0, Math.min(MISTAKE_CLEAR_STREAK - 1, Math.round(entry.streak)))
                 : 0,
-            lastWrongAt: typeof entry.lastWrongAt === 'number' ? entry.lastWrongAt : Date.now(),
+            lastWrongAt:
+              typeof entry.lastWrongAt === 'number' && Number.isFinite(entry.lastWrongAt)
+                ? entry.lastWrongAt
+                : Date.now(),
           };
         }
       }
@@ -97,7 +110,8 @@
 
     if (_isPlainObject(raw.bookmarks)) {
       for (const [uid, ts] of Object.entries(raw.bookmarks)) {
-        if (typeof ts === 'number' || ts === true) {
+        if (!_isSafeKey(uid)) continue;
+        if ((typeof ts === 'number' && Number.isFinite(ts)) || ts === true) {
           base.bookmarks[uid] = typeof ts === 'number' ? ts : Date.now();
         }
       }
@@ -157,10 +171,18 @@
         base.ui.activeGroupId = raw.ui.activeGroupId;
       }
       if (_isPlainObject(raw.ui.activeQuestionIndexByGroup)) {
-        base.ui.activeQuestionIndexByGroup = { ...raw.ui.activeQuestionIndexByGroup };
+        for (const [gidKey, qIdx] of Object.entries(raw.ui.activeQuestionIndexByGroup)) {
+          if (_isSafeKey(gidKey) && typeof qIdx === 'number' && Number.isInteger(qIdx) && qIdx >= 0) {
+            base.ui.activeQuestionIndexByGroup[gidKey] = qIdx;
+          }
+        }
       }
       if (_isPlainObject(raw.ui.shuffleByGroup)) {
-        base.ui.shuffleByGroup = { ...raw.ui.shuffleByGroup };
+        for (const [gidKey, shuf] of Object.entries(raw.ui.shuffleByGroup)) {
+          if (_isSafeKey(gidKey) && typeof shuf === 'boolean') {
+            base.ui.shuffleByGroup[gidKey] = shuf;
+          }
+        }
       }
     }
 
