@@ -1,11 +1,20 @@
-const CACHE_NAME = 'varordakan-v18';
+const CACHE_NAME = 'varordakan-v19';
 const CORE_ASSETS = [
   './',
   './index.html',
+  './usucum/',
+  './qnnutyun/',
+  './skhalner/',
+  './nshanner/',
+  './gunaenkalum/',
+  './orenq-jek/',
+  './voronum/',
+  './ru/',
+  './en/',
   './styles.css?v=20261113m',
-  './app-i18n.js?v=20261113m',
+  './app-i18n.js?v=20261113n',
   './app-core.js?v=20261113j',
-  './app.js?v=20261113m',
+  './app.js?v=20261113n',
   './manifest.webmanifest',
   './logo-192.png',
   './logo-512.png',

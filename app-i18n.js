@@ -2,6 +2,16 @@
   const I18N = {
     hy: {
       pageTitle: 'Varordakan · ՃՈ Քննական Հարցաշար (ABC)',
+      tabTitles: {
+        home: 'Varordakan · Վարորդական թեստեր և ՃՈ քննական հարցաշար 2026 (ABC)',
+        practice: 'Ուսուցում · 1050 ՃՈ հարցեր բացատրություններով | Varordakan',
+        exam: 'Վարորդական օնլայն քննություն (20 հարց · 30 րոպե) | Varordakan',
+        mistakes: 'Սխալների ուղղում և կրկնություն | Varordakan',
+        signs: 'Ճանապարհային նշաններ և գծանշումներ | Varordakan',
+        colortest: 'Գունաընկալման թեստ (53 աղյուսակ) | Varordakan',
+        cheatsheet: 'ՀՀ ՃԵԿ, կարգավորողի ազդանշաններ և հուշաթերթ | Varordakan',
+        search: 'Հարցաշարի որոնում (1050 հարց) | Varordakan',
+      },
       brandTitle: 'Varordakan · ՃՈ Քննական Հարցաշար',
       loading: 'Բեռնվում է կայքը...',
       headerProgress: (total, ans, pct) => `Ընդամենը՝ ${total} հարց · Անցած՝ ${ans} (${pct}% ճիշտ)`,
@@ -347,10 +357,13 @@
       ],
       footerLinks: [
         ['/', 'Հարցաշար (ՀԱՅ)'],
+        ['/usucum/', 'Ուսուցում'],
         ['/qnnutyun/', 'Քննություն (20)'],
+        ['/skhalner/', 'Սխալներ'],
         ['/nshanner/', 'Նշաններ'],
         ['/gunaenkalum/', 'Գունաընկալում'],
         ['/orenq-jek/', 'Օրենք և ՃԵԿ'],
+        ['/voronum/', 'Որոնում'],
         ['/ru/', 'Русский'],
         ['/en/', 'English'],
       ],
@@ -358,6 +371,16 @@
 
     ru: {
       pageTitle: 'Varordakan · ПДД Экзамен Армении (ABC)',
+      tabTitles: {
+        home: 'Varordakan · ПДД Армении 2026: 1050 вопросов и онлайн тест',
+        practice: 'Обучение · 1050 вопросов ПДД Армении с объяснениями | Varordakan',
+        exam: 'Пробный экзамен ПДД Армении (20 вопросов · 30 мин) | Varordakan',
+        mistakes: 'Работа над ошибками ПДД Армении | Varordakan',
+        signs: 'Дорожные знаки и разметка Армении | Varordakan',
+        colortest: 'Тест на цветовосприятие (53 таблицы) | Varordakan',
+        cheatsheet: 'Законы, ПДД Армении и регулировщик | Varordakan',
+        search: 'Поиск по 1050 вопросам ПДД Армении | Varordakan',
+      },
       brandTitle: 'Varordakan · ПДД Экзамен Армении',
       loading: 'Загрузка сайта...',
       headerProgress: (total, ans, pct) => `Всего: ${total} · Пройдено: ${ans} (${pct}% верно)`,
@@ -695,10 +718,13 @@
       ],
       footerLinks: [
         ['/', 'Армянская версия'],
+        ['/usucum/', 'Обучение'],
         ['/qnnutyun/', 'Экзамен (20)'],
+        ['/skhalner/', 'Ошибки'],
         ['/nshanner/', 'Дорожные знаки'],
         ['/gunaenkalum/', 'Цветовосприятие'],
         ['/orenq-jek/', 'ПДД и законы'],
+        ['/voronum/', 'Поиск'],
         ['/ru/', 'Русский'],
         ['/en/', 'English'],
       ],
@@ -706,6 +732,16 @@
 
     en: {
       pageTitle: 'Varordakan · Armenia Driving Theory Exam (ABC)',
+      tabTitles: {
+        home: 'Varordakan · Armenia Driving Theory Exam 2026 (1,050 Official ABC Questions)',
+        practice: 'Practice · 1,050 Armenia Driving Exam Questions | Varordakan',
+        exam: 'Mock Exam (20 Questions · 30 Min) · Armenia Driving Test | Varordakan',
+        mistakes: 'Mistake Review · Armenia Driving Exam | Varordakan',
+        signs: 'Armenia Road Signs & Markings | Varordakan',
+        colortest: 'Color Perception Test (53 Plates) | Varordakan',
+        cheatsheet: 'Armenia Traffic Rules, Law & Regulator Simulator | Varordakan',
+        search: 'Search 1,050 Armenia Driving Exam Questions | Varordakan',
+      },
       brandTitle: 'Varordakan · Armenia Driving Exam',
       loading: 'Loading...',
       headerProgress: (total, ans, pct) => `Total: ${total} · Done: ${ans} (${pct}% right)`,
@@ -1043,10 +1079,13 @@
       ],
       footerLinks: [
         ['/', 'Armenian Version'],
+        ['/usucum/', 'Practice'],
         ['/qnnutyun/', 'Mock Exam (20)'],
+        ['/skhalner/', 'Mistakes'],
         ['/nshanner/', 'Road Signs'],
         ['/gunaenkalum/', 'Color Test'],
         ['/orenq-jek/', 'Traffic Rules'],
+        ['/voronum/', 'Search'],
         ['/ru/', 'Русский'],
         ['/en/', 'English'],
       ],

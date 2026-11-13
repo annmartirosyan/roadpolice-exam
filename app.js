@@ -149,11 +149,89 @@
   const ROUTE_HTML_LANG = document.documentElement.getAttribute('lang') || 'hy';
   const ROUTE_HAS_EXPLICIT_ENTRY = Boolean(ROUTE_LANG_META || ROUTE_TAB_META);
 
+  const TAB_TO_PATH = {
+    home: '/',
+    practice: '/usucum/',
+    exam: '/qnnutyun/',
+    mistakes: '/skhalner/',
+    signs: '/nshanner/',
+    colortest: '/gunaenkalum/',
+    cheatsheet: '/orenq-jek/',
+    search: '/voronum/',
+  };
+
+  const PATH_TO_TAB = {
+    '/': 'home',
+    '/index.html': 'home',
+    '/usucum': 'practice',
+    '/usucum/': 'practice',
+    '/qnnutyun': 'exam',
+    '/qnnutyun/': 'exam',
+    '/skhalner': 'mistakes',
+    '/skhalner/': 'mistakes',
+    '/nshanner': 'signs',
+    '/nshanner/': 'signs',
+    '/gunaenkalum': 'colortest',
+    '/gunaenkalum/': 'colortest',
+    '/orenq-jek': 'cheatsheet',
+    '/orenq-jek/': 'cheatsheet',
+    '/voronum': 'search',
+    '/voronum/': 'search',
+    '/ru': 'home',
+    '/ru/': 'home',
+    '/en': 'home',
+    '/en/': 'home',
+  };
+
+  const VALID_TABS = new Set(Object.keys(TAB_TO_PATH));
+  const CAN_USE_HISTORY_PATHS =
+    typeof window.history !== 'undefined' &&
+    typeof window.history.pushState === 'function' &&
+    (window.location.protocol === 'http:' || window.location.protocol === 'https:');
+
+  function parseRouteFromLocation() {
+    const pathname = window.location.pathname || '/';
+    const params = new URLSearchParams(window.location.search || '');
+    let lang = ROUTE_LANG_META || ROUTE_HTML_LANG || 'hy';
+    if (pathname === '/ru' || pathname.startsWith('/ru/')) lang = 'ru';
+    else if (pathname === '/en' || pathname.startsWith('/en/')) lang = 'en';
+    const qLang = params.get('lang');
+    if (qLang && STRINGS[qLang]) lang = qLang;
+
+    let tab = PATH_TO_TAB[pathname] || ROUTE_TAB_META || 'home';
+    const qTab = params.get('tab');
+    if (qTab && VALID_TABS.has(qTab)) tab = qTab;
+    if (!VALID_TABS.has(tab)) tab = 'home';
+    if (!STRINGS[lang]) lang = 'hy';
+    return { tab, lang };
+  }
+
+  function buildRouteUrl(tab, lang) {
+    const safeTab = VALID_TABS.has(tab) ? tab : 'home';
+    const safeLang = STRINGS[lang] ? lang : 'hy';
+    if (safeLang === 'ru' || safeLang === 'en') {
+      return safeTab === 'home' ? `/${safeLang}/` : `/${safeLang}/?tab=${encodeURIComponent(safeTab)}`;
+    }
+    return TAB_TO_PATH[safeTab] || '/';
+  }
+
   if (ROUTE_LANG_META && STRINGS[ROUTE_LANG_META]) {
     state.ui.lang = ROUTE_LANG_META;
   }
-  if (ROUTE_TAB_META) {
+  if (ROUTE_TAB_META && VALID_TABS.has(ROUTE_TAB_META)) {
     state.ui.activeTab = ROUTE_TAB_META;
+  }
+  if (CAN_USE_HISTORY_PATHS) {
+    const initialRoute = parseRouteFromLocation();
+    state.ui.lang = initialRoute.lang;
+    state.ui.activeTab = initialRoute.tab;
+    try {
+      window.history.replaceState(
+        { tab: state.ui.activeTab, lang: state.ui.lang },
+        '',
+        buildRouteUrl(state.ui.activeTab, state.ui.lang)
+      );
+    } catch (_) {}
   }
 
   // Ephemeral session state (not persisted mid-flight unless completed)
@@ -319,6 +397,8 @@
     const expectedRouteTab = ROUTE_TAB_META || 'home';
     if (state.ui.activeTab === expectedRouteTab && lang === expectedRouteLang && INITIAL_SEO_TITLE) {
       document.title = INITIAL_SEO_TITLE;
+    } else if (strings.tabTitles && strings.tabTitles[state.ui.activeTab]) {
+      document.title = strings.tabTitles[state.ui.activeTab];
     } else {
       document.title = strings.pageTitle;
     }
@@ -2461,21 +2541,51 @@
     updateHeaderStats();
   }
 
+  function navigateTo(nextTab, nextLang, opts) {
+    const options = opts || {};
+    const tab = VALID_TABS.has(nextTab) ? nextTab : state.ui.activeTab || 'home';
+    const lang = STRINGS[nextLang] ? nextLang : getLang();
+    const changed = tab !== state.ui.activeTab || lang !== getLang();
+    if (tab === 'mistakes' && (changed || options.forceSyncMistakes)) {
+      syncMistakeQueue(true);
+    }
+    state.ui.activeTab = tab;
+    state.ui.lang = lang;
+    persist();
+    render();
+
+    if (CAN_USE_HISTORY_PATHS && options.push !== false && (changed || options.forcePush)) {
+      const targetUrl = buildRouteUrl(tab, lang);
+      try {
+        window.history.pushState({ tab, lang }, '', targetUrl);
+      } catch (_) {}
+    }
+
+    if (options.scrollTop) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  window.addEventListener('popstate', (e) => {
+    closeLightbox();
+    closeSignModal();
+    const route =
+      e.state && VALID_TABS.has(e.state.tab) && STRINGS[e.state.lang]
+        ? { tab: e.state.tab, lang: e.state.lang }
+        : parseRouteFromLocation();
+    navigateTo(route.tab, route.lang, { push: false, forceSyncMistakes: true });
+  });
+
   const brandHomeBtn = document.getElementById('btn-brand-home');
   if (brandHomeBtn) {
     brandHomeBtn.addEventListener('click', () => {
-      state.ui.activeTab = 'home';
-      persist();
-      render();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      navigateTo('home', getLang(), { scrollTop: true });
     });
   }
 
   document.querySelectorAll('.lang-btn').forEach((btn) => {
     btn.addEventListener('click', () => {
-      state.ui.lang = btn.dataset.lang;
-      persist();
-      render();
+      navigateTo(state.ui.activeTab, btn.dataset.lang);
     });
   });
 
@@ -2495,12 +2605,7 @@
   document.querySelectorAll('.tab-btn').forEach((btn) => {
     btn.addEventListener('click', () => {
       const target = btn.dataset.tab;
-      if (target === 'mistakes') {
-        syncMistakeQueue(true);
-      }
-      state.ui.activeTab = target;
-      persist();
-      render();
+      navigateTo(target, getLang(), { forceSyncMistakes: target === 'mistakes' });
       if (typeof btn.scrollIntoView === 'function') {
         btn.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
       }
@@ -2532,9 +2637,7 @@
             index: 0,
             attemptByUid: {},
           };
-          state.ui.activeTab = 'practice';
-          persist();
-          render();
+          navigateTo('practice', getLang());
         }
       }
     });
@@ -2544,13 +2647,7 @@
     const navTabBtn = e.target.closest('[data-nav-tab]');
     if (navTabBtn) {
       const target = navTabBtn.dataset.navTab;
-      if (target === 'mistakes') {
-        syncMistakeQueue(true);
-      }
-      state.ui.activeTab = target;
-      persist();
-      render();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      navigateTo(target, getLang(), { scrollTop: true, forceSyncMistakes: target === 'mistakes' });
       return;
     }
 
@@ -2569,9 +2666,7 @@
         session.cheatsheet.docId = info.docId;
         session.cheatsheet.query = '';
         session.cheatsheet.highlightRuleId = ruleId;
-        state.ui.activeTab = 'cheatsheet';
-        persist();
-        render();
+        navigateTo('cheatsheet', getLang());
         setTimeout(() => {
           const el = document.getElementById(`rule-${ruleId}`);
           if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -2603,9 +2698,7 @@
           index: 0,
           attemptByUid: {},
         };
-        state.ui.activeTab = 'practice';
-        persist();
-        render();
+        navigateTo('practice', getLang());
       }
       return;
     }
@@ -3126,9 +3219,7 @@
       state.ui.shuffleByGroup[gid] = false;
       state.ui.activeGroupId = gid;
       state.ui.activeQuestionIndexByGroup[gid] = Math.max(0, qnum - 1);
-      state.ui.activeTab = 'practice';
-      persist();
-      render();
+      navigateTo('practice', getLang());
       return;
     }
 
